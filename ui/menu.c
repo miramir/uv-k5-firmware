@@ -90,7 +90,6 @@ const t_menu_item MenuList[] =
     {"BLMin",       MENU_ABR_MIN       },
     {"BLMax",       MENU_ABR_MAX       },
     {"BLTxRx",      MENU_ABR_ON_TX_RX  },
-    {"Beep",        MENU_BEEP          },
     {"Roger",       MENU_ROGER         },
     {"STE",         MENU_STE           },
     {"RP STE",      MENU_RP_STE        },
@@ -709,7 +708,6 @@ void UI_DisplayMenu(void)
             #endif
         #endif
         case MENU_BCL:
-        case MENU_BEEP:
         case MENU_S_ADD1:
         case MENU_S_ADD2:
         case MENU_S_ADD3:

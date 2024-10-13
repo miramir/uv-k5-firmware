@@ -41,7 +41,6 @@
     #include "app/uart.h"
 #endif
 #include "ARMCM0.h"
-#include "audio.h"
 #include "board.h"
 #include "bsp/dp32g030/gpio.h"
 #ifdef ENABLE_FEAT_F4HWN_SLEEP
@@ -74,6 +73,7 @@
 #include "ui/menu.h"
 #include "ui/status.h"
 #include "ui/ui.h"
+#include "audio.h"
 
 static bool flagSaveVfo;
 static bool flagSaveSettings;
@@ -907,8 +907,6 @@ void APP_Update(void)
 
         APP_EndTransmission();
 
-        AUDIO_PlayBeep(BEEP_880HZ_60MS_DOUBLE_BEEP);
-
         RADIO_SetVfoState(VFO_STATE_TIMEOUT);
 
         GUI_DisplayScreen();
@@ -1395,7 +1393,6 @@ void cancelUserInputModes(void)
     if (gDTMF_InputMode || gDTMF_InputBox_Index > 0)
     {
         DTMF_clear_input_box();
-        gBeepToPlay           = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
         gRequestDisplayScreen = DISPLAY_MAIN;
         gUpdateDisplay        = true;
     }
@@ -1405,7 +1402,6 @@ void cancelUserInputModes(void)
         gWasFKeyPressed     = false;
         gInputBoxIndex      = 0;
         gKeyInputCountdown  = 0;
-        gBeepToPlay         = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
         gUpdateStatus       = true;
         gUpdateDisplay      = true;
     }
@@ -1431,11 +1427,6 @@ void APP_TimeSlice500ms(void)
             if (IS_MR_CHANNEL(gTxVfo->CHANNEL_SAVE) && (gInputBoxIndex == 1 || gInputBoxIndex == 2))
             {
                 channelMoveSwitch();
-
-                if (gBeepToPlay == BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL) {
-                    AUDIO_PlayBeep(gBeepToPlay);
-                }
-
                 SETTINGS_SaveVfoIndices();
             }
 
@@ -1602,19 +1593,6 @@ void APP_TimeSlice500ms(void)
                 BACKLIGHT_TurnOff();
             }
 
-            if (gInputBoxIndex > 0 || gDTMF_InputMode) {
-                AUDIO_PlayBeep(BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL);
-            }
-/*
-            if (SCANNER_IsScanning()) {
-                BK4819_StopScan();
-
-                RADIO_ConfigureChannel(0, VFO_CONFIGURE_RELOAD);
-                RADIO_ConfigureChannel(1, VFO_CONFIGURE_RELOAD);
-
-                RADIO_SetupRegisters(true);
-            }
-*/
             DTMF_clear_input_box();
 
             gWasFKeyPressed  = false;
@@ -1668,7 +1646,6 @@ void APP_TimeSlice500ms(void)
         if (gDTMF_DecodeRingCountdown_500ms > 0) {
             // make "ring-ring" sound
             gDTMF_DecodeRingCountdown_500ms--;
-            AUDIO_PlayBeep(BEEP_880HZ_200MS);
         }
     } else {
         gDTMF_DecodeRingCountdown_500ms = 0;
@@ -1723,7 +1700,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
     if (Key == KEY_EXIT && !BACKLIGHT_IsOn() && gEeprom.BACKLIGHT_TIME > 0)
     {   // just turn the light on for now so the user can see what's what
         BACKLIGHT_TurnOn();
-        gBeepToPlay = BEEP_NONE;
         return;
     }
 
@@ -1798,8 +1774,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         if (gDTMF_DecodeRingCountdown_500ms > 0) { // cancel the ringing
             gDTMF_DecodeRingCountdown_500ms = 0;
 
-            AUDIO_PlayBeep(BEEP_1KHZ_60MS_OPTIONAL);
-
             if (Key != KEY_PTT) {
                 gPttWasReleased = true;
                 return;
@@ -1828,7 +1802,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         if(Key == KEY_EXIT && bKeyPressed && lowBatPopup) {
             gLowBatteryConfirmed = true;
             gUpdateDisplay = true;
-            AUDIO_PlayBeep(BEEP_1KHZ_60MS_OPTIONAL);
             return;
         }
 
@@ -1837,7 +1810,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
                 return;
 
             if (!bKeyHeld) { // keypad is locked, tell the user
-                AUDIO_PlayBeep(BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL);
                 gKeypadLocked  = 4;      // 2 seconds
                 gUpdateDisplay = true;
                 return;
@@ -1854,7 +1826,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
                 return;
 
             // keypad is locked, tell the user
-            AUDIO_PlayBeep(BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL);
             gKeypadLocked  = 4;          // 2 seconds
             gUpdateDisplay = true;
             return;
@@ -1865,7 +1836,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         //if (gScanStateDir != SCAN_OFF || gCssBackgroundScan) { // FREQ/CTCSS/DCS scanning
         if (gCssBackgroundScan) { // FREQ/CTCSS/DCS scanning
             if (bKeyPressed && !bKeyHeld)
-                AUDIO_PlayBeep(BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL);
             return;
         }
     }
@@ -1992,16 +1962,8 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
     ) {
         ACTION_Handle(Key, bKeyPressed, bKeyHeld);
     }
-    else if (!bKeyHeld && bKeyPressed) {
-        gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
-    }
-
+    
 Skip:
-    if (gBeepToPlay != BEEP_NONE) {
-        AUDIO_PlayBeep(gBeepToPlay);
-        gBeepToPlay = BEEP_NONE;
-    }
-
     if (gFlagAcceptSetting) {
         gMenuCountdown = menu_timeout_500ms;
 

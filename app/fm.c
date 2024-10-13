@@ -21,7 +21,6 @@
 #include "app/action.h"
 #include "app/fm.h"
 #include "app/generic.h"
-#include "audio.h"
 #include "bsp/dp32g030/gpio.h"
 #include "driver/bk1080.h"
 #include "driver/eeprom.h"
@@ -229,7 +228,6 @@ static void Key_DIGITS(KEY_Code_t Key, uint8_t state)
         uint8_t State;
 
         if (gAskToDelete) {
-            gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
             return;
         }
 
@@ -238,7 +236,6 @@ static void Key_DIGITS(KEY_Code_t Key, uint8_t state)
         }
         else {
             if (gFM_ScanState != FM_SCAN_OFF) {
-                gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
                 return;
             }
 
@@ -264,7 +261,6 @@ static void Key_DIGITS(KEY_Code_t Key, uint8_t state)
                 Frequency = StrToUL(INPUTBOX_GetAscii());
 
                 if (Frequency < BK1080_GetFreqLoLimit(gEeprom.FM_Band) || BK1080_GetFreqHiLimit(gEeprom.FM_Band) < Frequency) {
-                    gBeepToPlay           = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
                     gRequestDisplayScreen = DISPLAY_FM;
                     return;
                 }
@@ -298,7 +294,6 @@ static void Key_DIGITS(KEY_Code_t Key, uint8_t state)
                 return;
             }
 
-            gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
             return;
         }
     }
@@ -311,7 +306,6 @@ static void Key_FUNC(KEY_Code_t Key, uint8_t state)
     if (state == BUTTON_EVENT_SHORT || state == BUTTON_EVENT_HELD) {
         bool autoScan = gWasFKeyPressed || (state == BUTTON_EVENT_HELD);
 
-        gBeepToPlay           = BEEP_1KHZ_60MS_OPTIONAL;
         gWasFKeyPressed       = false;
         gUpdateStatus         = true;
         gRequestDisplayScreen = DISPLAY_FM;
@@ -338,8 +332,6 @@ static void Key_FUNC(KEY_Code_t Key, uint8_t state)
                     BK1080_SetFrequency(gEeprom.FM_FrequencyPlaying, gEeprom.FM_Band/*, gEeprom.FM_Space*/);
                     gRequestSaveFM = true;
                 }
-                else
-                    gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
                 break;
 
             case KEY_STAR:
@@ -347,7 +339,6 @@ static void Key_FUNC(KEY_Code_t Key, uint8_t state)
                 break;
 
             default:
-                gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
                 break;
         }
     }
@@ -357,8 +348,6 @@ static void Key_EXIT(uint8_t state)
 {
     if (state != BUTTON_EVENT_SHORT)
         return;
-
-    gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
 
     if (gFM_ScanState == FM_SCAN_OFF) {
         if (gInputBoxIndex == 0) {
@@ -401,7 +390,6 @@ static void Key_MENU(uint8_t state)
 
 
     gRequestDisplayScreen = DISPLAY_FM;
-    gBeepToPlay           = BEEP_1KHZ_60MS_OPTIONAL;
 
     if (gFM_ScanState == FM_SCAN_OFF) {
         if (!gEeprom.FM_IsMrMode) {
@@ -425,7 +413,6 @@ static void Key_MENU(uint8_t state)
     }
     else {
         if (gFM_AutoScan || !gFM_FoundFrequency) {
-            gBeepToPlay    = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
             gInputBoxIndex = 0;
             return;
         }
@@ -442,11 +429,9 @@ static void Key_UP_DOWN(uint8_t state, int8_t Step)
 {
     if (state == BUTTON_EVENT_PRESSED) {
         if (gInputBoxIndex) {
-            gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
             return;
         }
 
-        gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
     } else if (gInputBoxIndex || state!=BUTTON_EVENT_HELD) {
         return;
     }
@@ -459,7 +444,6 @@ static void Key_UP_DOWN(uint8_t state, int8_t Step)
 
     if (gFM_ScanState != FM_SCAN_OFF) {
         if (gFM_AutoScan) {
-            gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
             return;
         }
 
@@ -526,8 +510,6 @@ void FM_ProcessKeys(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
             GENERIC_Key_PTT(bKeyPressed);
             break;
         default:
-            if (!bKeyHeld && bKeyPressed)
-                gBeepToPlay = BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL;
             break;
     }
 }

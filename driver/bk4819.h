@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_BK4819_h
-#define DRIVER_BK4819_h
+#ifndef BK4819_H
+#define BK4819_H
 
 #include <stdbool.h>
 #include <stdint.h>

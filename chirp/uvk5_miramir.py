@@ -191,7 +191,7 @@ u8 NoaaChannel_B;
 #seekto 0xe90;
 
 u8 keyM_longpress_action:7,
-   button_beep:1;
+   _unused:1;
 
 u8 key1_shortpress_action;
 u8 key1_longpress_action;
@@ -1507,10 +1507,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             elif elname == "freq_mode_allowed":
                 _mem.freq_mode_allowed = int(element.value)
 
-            # Beep control
-            elif elname == "button_beep":
-                _mem.button_beep = int(element.value)
-
             # Scan resume mode
             elif elname == "scan_resume_mode":
                 _mem.scan_resume_mode = int(element.value)
@@ -2378,7 +2374,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         p_on_msg_setting = RadioSetting("welcome_mode", "Power On Display Message (POnMsg)", val)
         p_on_msg_setting.set_doc('POnMsg: When powering up the radio, what to display:\n' + \
                                  '* ALL : message line 1 + voltage + sound\n' + \
-                                 '* SOUND : beep beep 2 only\n' + \
                                  '* MESSAGE : message lines 1 and 2 only\n' + \
                                  '* VOLTAGE : battery voltage only\n' + \
                                  '* NONE : nothing')
@@ -2439,11 +2434,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                                 '* TX/RX : ON when TX and RX')
 
         
-        val = RadioSettingValueBoolean(_mem.button_beep)
-        beep_setting = RadioSetting("button_beep", "Keypad Beep (Beep)", val)
-        beep_setting.set_doc('Beep: Beep sound when a key is pressed')
-
-
         tmpalarmmode = list_def(_mem.roger_beep, ROGER_LIST, 0)
         val = RadioSettingValueList(ROGER_LIST, None, tmpalarmmode)
         roger_setting = RadioSetting("roger_beep", "End Of Transmission Beep (Roger)", val)
@@ -3304,7 +3294,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         if _mem.BUILD_OPTIONS.ENABLE_VOX:
             basic.append(vox_setting)
         basic.append(mic_gain_setting)
-        basic.append(beep_setting)
         basic.append(roger_setting)
         basic.append(ste_setting)
         basic.append(rp_ste_setting)

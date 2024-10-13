@@ -19,7 +19,6 @@
 
 #include "settings.h"
 
-#include "../audio.h"
 #include "../bsp/dp32g030/gpio.h"
 #include "../bsp/dp32g030/portcon.h"
 
@@ -27,6 +26,7 @@
 #include "gpio.h"
 #include "system.h"
 #include "systick.h"
+#include "../audio.h"
 
 
 #ifndef ARRAY_SIZE

@@ -15,7 +15,6 @@
  */
 #include "app/spectrum.h"
 #include "am_fix.h"
-#include "audio.h"
 #include "misc.h"
 
 #ifdef ENABLE_SCAN_RANGES
@@ -26,6 +25,7 @@
 #include "frequencies.h"
 #include "ui/helper.h"
 #include "ui/main.h"
+#include "audio.h"
 
 #ifdef ENABLE_FEAT_F4HWN_SCREENSHOT
 #include "screenshot.h"

@@ -29,7 +29,6 @@
     #include "app/fm.h"
 #endif
 #include "app/scanner.h"
-#include "audio.h"
 #include "bsp/dp32g030/gpio.h"
 #ifdef ENABLE_FMRADIO
     #include "driver/bk1080.h"
@@ -238,8 +237,6 @@ void ACTION_Handle(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         }
 
         // side1 btn pressed
-
-        gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
         gRequestDisplayScreen = DISPLAY_MAIN;
 
         if (gDTMF_InputBox_Index <= 0) {
@@ -276,11 +273,6 @@ void ACTION_Handle(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
     {
         return;
     }
-
-    // held or released beyond this point
-
-    if(!(bKeyHeld && !bKeyPressed)) // don't beep on released after hold
-        gBeepToPlay = BEEP_1KHZ_60MS_OPTIONAL;
 
     if (bKeyHeld || bKeyPressed) // held
     {

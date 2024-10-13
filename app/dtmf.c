@@ -23,7 +23,6 @@
 #endif
 #include "app/scanner.h"
 #include "bsp/dp32g030/gpio.h"
-#include "audio.h"
 #include "driver/bk4819.h"
 #include "driver/eeprom.h"
 #include "driver/gpio.h"
@@ -33,6 +32,7 @@
 #include "misc.h"
 #include "settings.h"
 #include "ui/ui.h"
+#include "audio.h"
 
 char              gDTMF_String[15];
 

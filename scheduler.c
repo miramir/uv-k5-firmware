@@ -19,7 +19,6 @@
     #include "app/fm.h"
 #endif
 #include "app/scanner.h"
-#include "audio.h"
 #include "functions.h"
 #include "helper/battery.h"
 #include "misc.h"

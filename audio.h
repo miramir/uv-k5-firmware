@@ -17,37 +17,9 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #include "bsp/dp32g030/gpio.h"
 #include "driver/gpio.h"
 
-enum BEEP_Type_t
-{
-    BEEP_NONE = 0,
-    BEEP_1KHZ_60MS_OPTIONAL,
-    BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL,
-    BEEP_440HZ_500MS,
-#ifdef ENABLE_DTMF_CALLING
-    BEEP_880HZ_200MS,
-    BEEP_880HZ_500MS,
-#endif
-    BEEP_500HZ_60MS_DOUBLE_BEEP,
-#ifdef ENABLE_FEAT_F4HWN
-    BEEP_400HZ_30MS,
-    BEEP_500HZ_30MS,
-    BEEP_600HZ_30MS,
-#endif
-    BEEP_880HZ_60MS_DOUBLE_BEEP
-};
-
-typedef enum BEEP_Type_t BEEP_Type_t;
-
-extern BEEP_Type_t       gBeepToPlay;
-
-void AUDIO_PlayBeep(BEEP_Type_t Beep);
-    
 static inline void AUDIO_AudioPathOn(void) {
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_AUDIO_PATH);
 }

@@ -143,7 +143,6 @@ endif
 ifeq ($(ENABLE_AM_FIX), 1)
 	OBJS += am_fix.o
 endif
-OBJS += audio.o
 OBJS += bitmaps.o
 OBJS += board.o
 OBJS += dcs.o

@@ -1,5 +1,4 @@
 #include "app/chFrScanner.h"
-#include "audio.h"
 #include "functions.h"
 #include "misc.h"
 #include "settings.h"

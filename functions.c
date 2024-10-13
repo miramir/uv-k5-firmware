@@ -20,7 +20,6 @@
 #if defined(ENABLE_FMRADIO)
     #include "app/fm.h"
 #endif
-#include "audio.h"
 #include "bsp/dp32g030/gpio.h"
 #include "dcs.h"
 #include "driver/backlight.h"
@@ -39,6 +38,7 @@
 #include "settings.h"
 #include "ui/status.h"
 #include "ui/ui.h"
+#include "audio.h"
 
 FUNCTION_Type_t gCurrentFunction;
 

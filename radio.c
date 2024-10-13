@@ -22,7 +22,6 @@
 #ifdef ENABLE_FMRADIO
     #include "app/fm.h"
 #endif
-#include "audio.h"
 #include "bsp/dp32g030/gpio.h"
 #include "dcs.h"
 #include "driver/bk4819.h"
@@ -36,6 +35,7 @@
 #include "radio.h"
 #include "settings.h"
 #include "ui/menu.h"
+#include "audio.h"
 
 VFO_Info_t    *gTxVfo;
 VFO_Info_t    *gRxVfo;
@@ -1017,7 +1017,6 @@ void RADIO_PrepareTX(void)
 #ifdef ENABLE_DTMF_CALLING
         gDTMF_ReplyState = DTMF_REPLY_NONE;
 #endif
-        AUDIO_PlayBeep(BEEP_500HZ_60MS_DOUBLE_BEEP_OPTIONAL);
         return;
     }
 

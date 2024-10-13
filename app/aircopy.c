@@ -21,7 +21,6 @@
 //#endif
 
 #include "app/aircopy.h"
-#include "audio.h"
 #include "driver/bk4819.h"
 #include "driver/crc.h"
 #include "driver/eeprom.h"

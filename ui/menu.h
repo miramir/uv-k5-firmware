@@ -20,7 +20,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "audio.h"     // VOICE_ID_t
 #include "settings.h"
 
 typedef struct {
@@ -61,7 +60,6 @@ enum
     MENU_ABR_MIN,
     MENU_ABR_MAX,
     MENU_TDR,
-    MENU_BEEP,
     MENU_SC_REV,
     MENU_AUTOLK,
     MENU_S_ADD1,
