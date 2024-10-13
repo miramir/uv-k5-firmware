@@ -1,6 +1,7 @@
 *.d
 *.o
 external/
+build/
 firmware
 /firmware.packed.bin
 /firmware.bin
