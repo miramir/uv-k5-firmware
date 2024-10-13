@@ -112,7 +112,7 @@ void (*action_opt_table[])(void) = {
     [ACTION_OPT_WN] = &ACTION_Wn,
     [ACTION_OPT_BACKLIGHT] = &ACTION_BackLight,
 #else
-    [ACTION_OPT_RXMODE] = &FUNCTION_NOP,
+//    [ACTION_OPT_RXMODE] = &FUNCTION_NOP,
 #endif
 };
 

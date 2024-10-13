@@ -887,11 +887,10 @@ void UI_DisplayMain(void)
                 uint8_t countList = 0;
                 uint8_t shiftList = 0;
 
+                const ChannelAttributes_t att = gMR_ChannelAttributes[gEeprom.ScreenChannel[vfo_num]];
+
                 if(gMR_ChannelExclude[gEeprom.ScreenChannel[vfo_num]] == false)
                 {
-                    // show the scan list assigment symbols
-                    const ChannelAttributes_t att = gMR_ChannelAttributes[gEeprom.ScreenChannel[vfo_num]];
-
                     countList = att.scanlist1 + att.scanlist2 + att.scanlist3;
 
                     if(countList == 0)
@@ -1119,7 +1118,9 @@ void UI_DisplayMain(void)
                 break;
             }
             default:
+#ifdef ENABLE_FEAT_F4HWN
                 t = gModulationStr[mod];
+#endif
             break;
         }
 
@@ -1193,13 +1194,15 @@ void UI_DisplayMain(void)
             uint8_t currentPower = vfoInfo->OUTPUT_POWER % 8;
             uint8_t arrowPos = 19;
             bool userPower = false;
-
+            
+            #ifdef ENABLE_FEAT_F4HWN
             if(currentPower == OUTPUT_POWER_USER)
             {
                 currentPower = gSetting_set_pwr;
                 userPower = true;
             }
             else
+            #endif
             {
                 currentPower--;
                 userPower = false;

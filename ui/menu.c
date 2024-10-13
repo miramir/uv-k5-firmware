@@ -595,10 +595,12 @@ void UI_DisplayMenu(void)
             {
                 strcpy(String, gSubMenu_TXP[gSubMenuSelection]);
             }
+            #ifdef ENABLE_FEAT_F4HWN
             else
             {
                 sprintf(String, "%s\n%sW", gSubMenu_TXP[gSubMenuSelection], gSubMenu_SET_PWR[gSubMenuSelection - 1]);
             }
+            #endif
             break;
 
         case MENU_R_DCS:

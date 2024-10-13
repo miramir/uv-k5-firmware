@@ -500,6 +500,7 @@ void RADIO_ConfigureSquelchAndOutputPower(VFO_Info_t *pInfo)
     uint8_t Op = 0; // Low eeprom calibration data 
     uint8_t currentPower = pInfo->OUTPUT_POWER;
 
+#ifdef ENABLE_FEAT_F4HWN
     if(currentPower == OUTPUT_POWER_USER)
     {
         if(gSetting_set_pwr == 5)
@@ -513,6 +514,7 @@ void RADIO_ConfigureSquelchAndOutputPower(VFO_Info_t *pInfo)
         currentPower = gSetting_set_pwr;
     }
     else
+#endif
     {
         if (currentPower == OUTPUT_POWER_MID)
         {
