@@ -126,11 +126,6 @@ void ACTION_Power(void)
     gRequestSaveChannel = 1;
 
     gRequestDisplayScreen = gScreenToDisplay;
-
-#ifdef ENABLE_VOICE
-    gAnotherVoiceID   = VOICE_ID_POWER;
-#endif
-
 }
 
 void ACTION_Monitor(void)
@@ -195,9 +190,6 @@ void ACTION_Scan(bool bRestart)
 
         if (!IS_MR_CHANNEL(gNextMrChannel)) {
             CHFRSCANNER_Stop();
-#ifdef ENABLE_VOICE
-            gAnotherVoiceID = VOICE_ID_SCANNING_STOP;
-#endif
             return;
         }
 
@@ -211,11 +203,6 @@ void ACTION_Scan(bool bRestart)
     } else {
         // start scanning
         CHFRSCANNER_Start(true, SCAN_FWD);
-
-#ifdef ENABLE_VOICE
-        AUDIO_SetVoiceID(0, VOICE_ID_SCANNING_BEGIN);
-        AUDIO_PlaySingleVoice(true);
-#endif
 
         // clear the other vfo's rssi level (to hide the antenna symbol)
         gVFO_RSSI_bar_level[(gEeprom.RX_VFO + 1) & 1U] = 0;
@@ -264,9 +251,6 @@ void ACTION_Handle(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         // DTMF codes are in the input box
         gDTMF_InputBox[--gDTMF_InputBox_Index] = '-'; // delete one code
 
-#ifdef ENABLE_VOICE
-        gAnotherVoiceID   = VOICE_ID_CANCEL;
-#endif
         return;
     }
 
@@ -358,9 +342,6 @@ static void ACTION_Scan_FM(bool bRestart)
     if (gFM_ScanState != FM_SCAN_OFF) {
         FM_PlayAndUpdate();
 
-#ifdef ENABLE_VOICE
-        gAnotherVoiceID = VOICE_ID_SCANNING_STOP;
-#endif
         return;
     }
 
@@ -379,11 +360,6 @@ static void ACTION_Scan_FM(bool bRestart)
 
     BK1080_GetFrequencyDeviation(freq);
     FM_Tune(freq, 1, bRestart);
-
-#ifdef ENABLE_VOICE
-    gAnotherVoiceID = VOICE_ID_SCANNING_BEGIN;
-#endif
-
 }
 
 #endif
@@ -428,10 +404,6 @@ void ACTION_Vox(void)
     gRequestSaveSettings = true;
     gFlagReconfigureVfos = true;
     gUpdateStatus        = true;
-
-    #ifdef ENABLE_VOICE
-        gAnotherVoiceID  = VOICE_ID_VOX;
-    #endif
 }
 #endif
 

@@ -121,16 +121,6 @@ enum ACTION_OPT_t {
     ACTION_OPT_LEN
 };
 
-#ifdef ENABLE_VOICE
-    enum VOICE_Prompt_t
-    {
-        VOICE_PROMPT_OFF = 0,
-        VOICE_PROMPT_CHINESE,
-        VOICE_PROMPT_ENGLISH
-    };
-    typedef enum VOICE_Prompt_t VOICE_Prompt_t;
-#endif
-
 enum ALARM_Mode_t {
     ALARM_MODE_SITE = 0,
     ALARM_MODE_TONE
@@ -185,9 +175,6 @@ typedef struct {
 #endif
     bool                  VOX_SWITCH;
     uint8_t               VOX_LEVEL;
-#ifdef ENABLE_VOICE
-    VOICE_Prompt_t    VOICE_PROMPT;
-#endif
     bool                  BEEP_CONTROL;
     uint8_t               CHANNEL_DISPLAY_MODE;
     bool                  TAIL_TONE_ELIMINATION;

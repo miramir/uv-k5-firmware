@@ -157,9 +157,6 @@ static void AIRCOPY_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
     gRequestDisplayScreen = DISPLAY_AIRCOPY;
 
     if (gInputBoxIndex < 6) {
-#ifdef ENABLE_VOICE
-        gAnotherVoiceID = (VOICE_ID_t)Key;
-#endif
         return;
     }
 
@@ -174,10 +171,6 @@ static void AIRCOPY_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         if (TX_freq_check(Frequency)) {
             continue;
         }
-
-#ifdef ENABLE_VOICE
-        gAnotherVoiceID = (VOICE_ID_t)Key;
-#endif
 
         Frequency = FREQUENCY_RoundToStep(Frequency, gRxVfo->StepFrequency);
         gRxVfo->Band = i;

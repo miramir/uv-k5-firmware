@@ -128,9 +128,6 @@ void SETTINGS_InitEEPROM(void)
 
     // 0EA0..0EA7
     EEPROM_ReadBuffer(0x0EA0, Data, 8);
-    #ifdef ENABLE_VOICE
-    gEeprom.VOICE_PROMPT = (Data[0] < 3) ? Data[0] : VOICE_PROMPT_ENGLISH;
-    #endif
     #ifdef ENABLE_RSSI_BAR
         if((Data[1] < 200 && Data[1] > 90) && (Data[2] < Data[1]-9 && Data[1] < 160  && Data[2] > 50)) {
             gEeprom.S0_LEVEL = Data[1];
@@ -611,9 +608,6 @@ void SETTINGS_SaveSettings(void)
     #endif
 
     memset(State, 0xFF, sizeof(State));
-#ifdef ENABLE_VOICE
-    State[0] = gEeprom.VOICE_PROMPT;
-#endif
 #ifdef ENABLE_RSSI_BAR
     State[1] = gEeprom.S0_LEVEL;
     State[2] = gEeprom.S9_LEVEL;
@@ -885,9 +879,6 @@ void SETTINGS_WriteBuildOptions(void)
 State[0] = 0
 #ifdef ENABLE_FMRADIO
     | (1 << 0)
-#endif
-#ifdef ENABLE_VOICE
-    | (1 << 2)
 #endif
 #ifdef ENABLE_VOX
     | (1 << 3)

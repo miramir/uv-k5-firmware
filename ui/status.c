@@ -110,15 +110,6 @@ void UI_DisplayStatus()
     }
     x += 10;  // font character width
 
-#ifdef ENABLE_VOICE
-    // VOICE indicator
-    if (gEeprom.VOICE_PROMPT != VOICE_PROMPT_OFF){
-        memcpy(line + x, BITMAP_VoicePrompt, sizeof(BITMAP_VoicePrompt));
-        x1 = x + sizeof(BITMAP_VoicePrompt);
-    }
-    x += sizeof(BITMAP_VoicePrompt);
-#endif
-
     if(!SCANNER_IsScanning()) {
     #ifdef ENABLE_FEAT_F4HWN_RX_TX_TIMER
         if(gCurrentFunction == FUNCTION_TRANSMIT && gSetting_set_tmr == true)

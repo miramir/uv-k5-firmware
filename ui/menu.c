@@ -91,9 +91,6 @@ const t_menu_item MenuList[] =
     {"BLMax",       MENU_ABR_MAX       },
     {"BLTxRx",      MENU_ABR_ON_TX_RX  },
     {"Beep",        MENU_BEEP          },
-#ifdef ENABLE_VOICE
-    {"Voice",       MENU_VOICE         },
-#endif
     {"Roger",       MENU_ROGER         },
     {"STE",         MENU_STE           },
     {"RP STE",      MENU_RP_STE        },
@@ -219,15 +216,6 @@ const char* const gSubMenu_RXMode[] =
     "CROSS\nBAND",      // TX on main, RX on secondary
     "MAIN TX\nDUAL RX"  // always TX on main, but RX on both
 };
-
-#ifdef ENABLE_VOICE
-    const char gSubMenu_VOICE[][4] =
-    {
-        "OFF",
-        "CHI",
-        "ENG"
-    };
-#endif
 
 const char* const gSubMenu_MDF[] =
 {
@@ -819,12 +807,6 @@ void UI_DisplayMenu(void)
         case MENU_TOT:
             sprintf(String, "%02dm:%02ds", (((gSubMenuSelection + 1) * 5) / 60), (((gSubMenuSelection + 1) * 5) % 60));
             break;
-
-        #ifdef ENABLE_VOICE
-            case MENU_VOICE:
-                strcpy(String, gSubMenu_VOICE[gSubMenuSelection]);
-                break;
-        #endif
 
         case MENU_SC_REV:
             if(gSubMenuSelection == 0)

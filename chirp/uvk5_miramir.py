@@ -381,7 +381,7 @@ u8 ENABLE_DTMF_CALLING:1,
    ENABLE_TX1750:1,
    ENABLE_ALARM:1,
    ENABLE_VOX:1,
-   ENABLE_VOICE:1,
+   __UNUSED2:1,
    __UNUSED1:1,
    ENABLE_FMRADIO:1;
 u8 __UNUSED:2,
@@ -3308,8 +3308,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         basic.append(roger_setting)
         basic.append(ste_setting)
         basic.append(rp_ste_setting)
-        if _mem.BUILD_OPTIONS.ENABLE_VOICE:
-            basic.append(voice_setting)
         if _mem.BUILD_OPTIONS.ENABLE_ALARM:
             basic.append(alarm_setting)
 

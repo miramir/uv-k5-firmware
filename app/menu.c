@@ -103,10 +103,6 @@ void MENU_CssScanFound(void)
 void MENU_StopCssScan(void)
 {
     gCssBackgroundScan = false;
-
-#ifdef ENABLE_VOICE
-    gAnotherVoiceID       = VOICE_ID_SCANNING_STOP;
-#endif
     gUpdateDisplay = true;
     gUpdateStatus = true;
 }
@@ -166,13 +162,6 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             //*pMin = 0;
             *pMax = ARRAY_SIZE(gSubMenu_RXMode) - 1;
             break;
-
-        #ifdef ENABLE_VOICE
-            case MENU_VOICE:
-                //*pMin = 0;
-                *pMax = ARRAY_SIZE(gSubMenu_VOICE) - 1;
-                break;
-        #endif
 
         case MENU_SC_REV:
             //*pMin = 0;
@@ -616,13 +605,6 @@ void MENU_AcceptSetting(void)
         case MENU_TOT:
             gEeprom.TX_TIMEOUT_TIMER = gSubMenuSelection;
             break;
-
-        #ifdef ENABLE_VOICE
-            case MENU_VOICE:
-                gEeprom.VOICE_PROMPT = gSubMenuSelection;
-                gUpdateStatus        = true;
-                break;
-        #endif
 
         case MENU_SC_REV:
             gEeprom.SCAN_RESUME_MODE = gSubMenuSelection;
@@ -1089,12 +1071,6 @@ void MENU_ShowCurrentSetting(void)
             gSubMenuSelection = gEeprom.TX_TIMEOUT_TIMER;
             break;
 
-#ifdef ENABLE_VOICE
-        case MENU_VOICE:
-            gSubMenuSelection = gEeprom.VOICE_PROMPT;
-            break;
-#endif
-
         case MENU_SC_REV:
             gSubMenuSelection = gEeprom.SCAN_RESUME_MODE;
             break;
@@ -1430,15 +1406,8 @@ static void MENU_Key_0_to_9(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 
         if (gInputBoxIndex < 6)
         {   // invalid frequency
-            #ifdef ENABLE_VOICE
-                gAnotherVoiceID = (VOICE_ID_t)Key;
-            #endif
             return;
         }
-
-        #ifdef ENABLE_VOICE
-            gAnotherVoiceID = (VOICE_ID_t)Key;
-        #endif
 
         Frequency = StrToUL(INPUTBOX_GetAscii())*100;
         gSubMenuSelection = FREQUENCY_RoundToStep(Frequency, gTxVfo->StepFrequency);
@@ -1455,9 +1424,6 @@ static void MENU_Key_0_to_9(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 
         if (gInputBoxIndex < 3)
         {
-            #ifdef ENABLE_VOICE
-                gAnotherVoiceID   = (VOICE_ID_t)Key;
-            #endif
             gRequestDisplayScreen = DISPLAY_MENU;
             return;
         }
@@ -1468,9 +1434,6 @@ static void MENU_Key_0_to_9(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 
         if (IS_MR_CHANNEL(Value))
         {
-            #ifdef ENABLE_VOICE
-                gAnotherVoiceID = (VOICE_ID_t)Key;
-            #endif
             gSubMenuSelection = Value;
             return;
         }
@@ -1534,10 +1497,6 @@ static void MENU_Key_EXIT(bool bKeyPressed, bool bKeyHeld)
                 gIsInSubMenu        = false;
                 gInputBoxIndex      = 0;
                 gFlagRefreshSetting = true;
-
-                #ifdef ENABLE_VOICE
-                    gAnotherVoiceID = VOICE_ID_CANCEL;
-                #endif
             }
             else
                 gInputBox[--gInputBoxIndex] = 10;
@@ -1547,10 +1506,6 @@ static void MENU_Key_EXIT(bool bKeyPressed, bool bKeyHeld)
             gRequestDisplayScreen = DISPLAY_MENU;
             return;
         }
-
-        #ifdef ENABLE_VOICE
-            gAnotherVoiceID = VOICE_ID_CANCEL;
-        #endif
 
         gRequestDisplayScreen = DISPLAY_MAIN;
 
@@ -1562,10 +1517,6 @@ static void MENU_Key_EXIT(bool bKeyPressed, bool bKeyHeld)
     else
     {
         MENU_StopCssScan();
-
-        #ifdef ENABLE_VOICE
-            gAnotherVoiceID   = VOICE_ID_SCANNING_STOP;
-        #endif
 
         gRequestDisplayScreen = DISPLAY_MENU;
     }
@@ -1583,10 +1534,6 @@ static void MENU_Key_MENU(const bool bKeyPressed, const bool bKeyHeld)
 
     if (!gIsInSubMenu)
     {
-        #ifdef ENABLE_VOICE
-            if (UI_MENU_GetCurrentMenuId() != MENU_SCR)
-                gAnotherVoiceID = MenuList[gMenuCursor].voice_id;
-        #endif
         if (UI_MENU_GetCurrentMenuId() == MENU_UPCODE 
             || UI_MENU_GetCurrentMenuId() == MENU_DWCODE 
 #ifdef ENABLE_DTMF_CALLING 
@@ -1672,11 +1619,6 @@ static void MENU_Key_MENU(const bool bKeyPressed, const bool bKeyHeld)
 
                     if (UI_MENU_GetCurrentMenuId() == MENU_RESET)
                     {
-                        #ifdef ENABLE_VOICE
-                            AUDIO_SetVoiceID(0, VOICE_ID_CONFIRM);
-                            AUDIO_PlaySingleVoice(true);
-                        #endif
-
                         MENU_AcceptSetting();
 
                         #if defined(ENABLE_OVERLAY)
@@ -1699,13 +1641,6 @@ static void MENU_Key_MENU(const bool bKeyPressed, const bool bKeyHeld)
     }
 
     SCANNER_Stop();
-
-    #ifdef ENABLE_VOICE
-        if (UI_MENU_GetCurrentMenuId() == MENU_SCR)
-            gAnotherVoiceID = (gSubMenuSelection == 0) ? VOICE_ID_SCRAMBLER_OFF : VOICE_ID_SCRAMBLER_ON;
-        else
-            gAnotherVoiceID = VOICE_ID_CONFIRM;
-    #endif
 
     gInputBoxIndex = 0;
 }
