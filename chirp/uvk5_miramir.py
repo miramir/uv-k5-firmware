@@ -377,7 +377,7 @@ struct {
 #seekto 0x1FF0;
 struct {
 u8 ENABLE_DTMF_CALLING:1,
-   ENABLE_PWRON_PASSWORD:1,
+   __UNUSED3:1,
    ENABLE_TX1750:1,
    ENABLE_ALARM:1,
    ENABLE_VOX:1,
@@ -3322,8 +3322,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         advanced.append(bat_type_setting)
         advanced.append(s0_level_setting)
         advanced.append(s9_level_setting)
-#        if _mem.BUILD_OPTIONS.ENABLE_PWRON_PASSWORD:
-#            advanced.append(pswd_setting)
 
         if _mem.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
             dtmf.append(sep_code_setting)

@@ -47,7 +47,6 @@
 #include "helper/battery.h"
 #include "helper/boot.h"
 
-#include "ui/lock.h"
 #include "ui/welcome.h"
 #include "ui/menu.h"
 void _putchar(__attribute__((unused)) char c)
@@ -202,15 +201,6 @@ void Main(void)
             }
             RADIO_SetupRegisters(true);
         }
-
-#ifdef ENABLE_PWRON_PASSWORD
-        if (gEeprom.POWER_ON_PASSWORD < 1000000)
-        {
-            bIsInLockScreen = true;
-            UI_DisplayLock();
-            bIsInLockScreen = false;
-        }
-#endif
 
         BOOT_ProcessMode(BootMode);
 

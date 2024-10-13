@@ -119,13 +119,6 @@ void SETTINGS_InitEEPROM(void)
 #else
     gEeprom.POWER_ON_DISPLAY_MODE        = (Data[7] < 4)              ? Data[7] : POWER_ON_DISPLAY_MODE_VOLTAGE;
 #endif
-
-    // 0E98..0E9F
-    #ifdef ENABLE_PWRON_PASSWORD
-        EEPROM_ReadBuffer(0x0E98, Data, 8);
-        memcpy(&gEeprom.POWER_ON_PASSWORD, Data, 4);
-    #endif
-
     // 0EA0..0EA7
     EEPROM_ReadBuffer(0x0EA0, Data, 8);
     #ifdef ENABLE_RSSI_BAR
@@ -543,10 +536,6 @@ void SETTINGS_SaveSettings(void)
     uint8_t  State[8];
     uint8_t tmp = 0;
 
-    #ifdef ENABLE_PWRON_PASSWORD
-        uint32_t Password[2];
-    #endif
-
     State[0] = gEeprom.CHAN_1_CALL;
     State[1] = gEeprom.SQUELCH_LEVEL;
     State[2] = gEeprom.TX_TIMEOUT_TIMER;
@@ -600,12 +589,6 @@ void SETTINGS_SaveSettings(void)
     State[6] = gEeprom.AUTO_KEYPAD_LOCK;
     State[7] = gEeprom.POWER_ON_DISPLAY_MODE;
     EEPROM_WriteBuffer(0x0E90, State);
-
-    #ifdef ENABLE_PWRON_PASSWORD
-        memset(Password, 0xFF, sizeof(Password));
-        Password[0] = gEeprom.POWER_ON_PASSWORD;
-        EEPROM_WriteBuffer(0x0E98, Password);
-    #endif
 
     memset(State, 0xFF, sizeof(State));
 #ifdef ENABLE_RSSI_BAR
@@ -888,9 +871,6 @@ State[0] = 0
 #endif
 #ifdef ENABLE_TX1750
     | (1 << 5)
-#endif
-#ifdef ENABLE_PWRON_PASSWORD
-    | (1 << 6)
 #endif
 #ifdef ENABLE_DTMF_CALLING
     | (1 << 7)

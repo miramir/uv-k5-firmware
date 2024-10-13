@@ -10,7 +10,6 @@ ENABLE_AIRCOPY                	?= 1
 ENABLE_VOX                    	?= 1
 ENABLE_ALARM                  	?= 0
 ENABLE_TX1750                 	?= 1
-ENABLE_PWRON_PASSWORD         	?= 0
 ENABLE_DTMF_CALLING           	?= 0
 ENABLE_FLASHLIGHT             	?= 1
 
@@ -166,9 +165,6 @@ ifeq ($(ENABLE_FMRADIO),1)
 endif
 OBJS += ui/helper.o
 OBJS += ui/inputbox.o
-ifeq ($(ENABLE_PWRON_PASSWORD),1)
-	OBJS += ui/lock.o
-endif
 OBJS += ui/main.o
 OBJS += ui/menu.o
 OBJS += ui/scanner.o
@@ -303,9 +299,6 @@ ifeq ($(ENABLE_ALARM),1)
 endif
 ifeq ($(ENABLE_TX1750),1)
 	CFLAGS  += -DENABLE_TX1750
-endif
-ifeq ($(ENABLE_PWRON_PASSWORD),1)
-	CFLAGS  += -DENABLE_PWRON_PASSWORD
 endif
 ifeq ($(ENABLE_KEEP_MEM_NAME),1)
 	CFLAGS  += -DENABLE_KEEP_MEM_NAME
