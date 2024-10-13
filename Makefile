@@ -7,7 +7,6 @@
 ENABLE_FMRADIO                	?= 0
 ENABLE_UART                   	?= 1
 ENABLE_AIRCOPY                	?= 1
-ENABLE_NOAA                   	?= 0
 ENABLE_VOICE                  	?= 0
 ENABLE_VOX                    	?= 1
 ENABLE_ALARM                  	?= 0
@@ -297,9 +296,6 @@ endif
 ifeq ($(ENABLE_SMALL_BOLD),1)
 	CFLAGS  += -DENABLE_SMALL_BOLD
 endif
-ifeq ($(ENABLE_NOAA),1)
-	CFLAGS  += -DENABLE_NOAA
-endif
 ifeq ($(ENABLE_VOICE),1)
 	CFLAGS  += -DENABLE_VOICE
 endif
@@ -482,7 +478,6 @@ else
 	-$(MY_PYTHON) fw-pack.py $<.bin $(AUTHOR_STRING) $(VERSION_STRING) $<.packed.bin
 endif
 endif
-
 	$(SIZE) $<
 
 debug:
@@ -490,6 +485,9 @@ debug:
 
 flash:
 	/opt/openocd/bin/openocd -c "bindto 0.0.0.0" -f interface/jlink.cfg -f dp32g030.cfg -c "write_image firmware.bin 0; shutdown;"
+
+flashprog:
+	k5prog -b $(TARGET).bin -F -YYY
 
 version.o: .FORCE
 

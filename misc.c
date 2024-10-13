@@ -187,10 +187,6 @@ volatile uint16_t gTailNoteEliminationCountdown_10ms;
 
 volatile uint8_t    gVFOStateResumeCountdown_500ms;
 
-#ifdef ENABLE_NOAA
-    volatile uint16_t gNOAA_Countdown_10ms;
-#endif
-
 bool              gEnableSpeaker;
 uint8_t           gKeyInputCountdown = 0;
 uint8_t           gKeyLockCountdown;
@@ -266,11 +262,6 @@ uint8_t           gBackup_CROSS_BAND_RX_TX;
 uint8_t           gScanDelay_10ms;
 uint8_t           gFSKWriteIndex;
 
-#ifdef ENABLE_NOAA
-    bool          gIsNoaaMode;
-    uint8_t       gNoaaChannel;
-#endif
-
 bool              gUpdateDisplay;
 
 bool              gF_LOCK = false;
@@ -284,10 +275,6 @@ volatile uint8_t  gFoundCTCSSCountdown_10ms;
     volatile uint16_t gVoxStopCountdown_10ms;
 #endif
 volatile bool     gNextTimeslice40ms;
-#ifdef ENABLE_NOAA
-    volatile uint16_t gNOAACountdown_10ms = 0;
-    volatile bool     gScheduleNOAA       = true;
-#endif
 volatile bool     gFlagTailNoteEliminationComplete;
 #ifdef ENABLE_FMRADIO
     volatile bool gScheduleFM;

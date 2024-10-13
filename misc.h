@@ -251,9 +251,6 @@ extern volatile bool         gTxTimeoutReached;
 
 extern volatile uint16_t     gTailNoteEliminationCountdown_10ms;
 
-#ifdef ENABLE_NOAA
-    extern volatile uint16_t gNOAA_Countdown_10ms;
-#endif
 extern bool                  gEnableSpeaker;
 extern uint8_t               gKeyInputCountdown;
 extern uint8_t               gKeyLockCountdown;
@@ -338,10 +335,6 @@ extern uint8_t               gMenuListCount;
 extern uint8_t               gBackup_CROSS_BAND_RX_TX;
 extern uint8_t               gScanDelay_10ms;
 extern uint8_t               gFSKWriteIndex;
-#ifdef ENABLE_NOAA
-    extern bool              gIsNoaaMode;
-    extern uint8_t           gNoaaChannel;
-#endif
 extern volatile bool         gNextTimeslice;
 extern bool                  gUpdateDisplay;
 extern bool                  gF_LOCK;
@@ -355,10 +348,6 @@ extern volatile uint8_t      gFoundCTCSSCountdown_10ms;
     extern volatile uint16_t gVoxStopCountdown_10ms;
 #endif
 extern volatile bool         gNextTimeslice40ms;
-#ifdef ENABLE_NOAA
-    extern volatile uint16_t gNOAACountdown_10ms;
-    extern volatile bool     gScheduleNOAA;
-#endif
 extern volatile bool         gFlagTailNoteEliminationComplete;
 extern volatile uint8_t      gVFOStateResumeCountdown_500ms;
 #ifdef ENABLE_FMRADIO

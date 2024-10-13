@@ -382,7 +382,7 @@ u8 ENABLE_DTMF_CALLING:1,
    ENABLE_ALARM:1,
    ENABLE_VOX:1,
    ENABLE_VOICE:1,
-   ENABLE_NOAA:1,
+   __UNUSED1:1,
    ENABLE_FMRADIO:1;
 u8 __UNUSED:2,
    ENABLE_BANDSCOPE:1,
@@ -2186,10 +2186,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             ch_list.append("Channel M" + str(ch))
         for bnd in range(1, 8):
             ch_list.append("Band F" + str(bnd))
-        if _mem.BUILD_OPTIONS.ENABLE_NOAA:
-            for bnd in range(1, 11):
-                ch_list.append("NOAA N" + str(bnd))
-
+        
         tmpfreq0 = list_def(_mem.ScreenChannel_A, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpfreq0)
         freq0_setting = RadioSetting("VFO_A_chn",
@@ -3280,8 +3277,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         basic.append(bat_save_setting)
         basic.append(scn_rev_setting)
         
-        if _mem.BUILD_OPTIONS.ENABLE_NOAA:
-            basic.append(noaa_auto_scan_setting)
         if _mem.BUILD_OPTIONS.ENABLE_AM_FIX:
             basic.append(am_fix_setting)
 

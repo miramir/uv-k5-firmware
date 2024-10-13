@@ -9,8 +9,8 @@ This firmware will be created under the influence of IJV, but with some features
 
 ## Table of Contents
 
-* [My Features](#main-features)
-* [Main Features from Egzumer](#main-features-from-egzumer)
+* [Main Features](#main-features)
+* [Changes](#changes)
 * [Manual](#manual)
 * [Radio Performance](#radio-performance)
 * [Compiler](#compiler)
@@ -22,6 +22,10 @@ This firmware will be created under the influence of IJV, but with some features
 ## Main features:
 
 * See [original repo](https://github.com/armel/uv-k5-firmware-custom/blob/0a7e836656c1b66b8f4c2dc1995ab1600b397738/README.md)
+
+## Changes
+
+* Remove code for NOAA support
 
 ## Manual
 

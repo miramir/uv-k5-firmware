@@ -172,21 +172,6 @@ void RADIO_ConfigureChannel(const unsigned int VFO, const unsigned int configure
     uint8_t channel = gEeprom.ScreenChannel[VFO];
 
     if (IS_VALID_CHANNEL(channel)) {
-#ifdef ENABLE_NOAA
-        if (IS_NOAA_CHANNEL(channel))
-        {
-            RADIO_InitInfo(pVfo, gEeprom.ScreenChannel[VFO], NoaaFrequencyTable[channel - NOAA_CHANNEL_FIRST]);
-
-            if (gEeprom.CROSS_BAND_RX_TX == CROSS_BAND_OFF)
-                return;
-
-            gEeprom.CROSS_BAND_RX_TX = CROSS_BAND_OFF;
-
-            gUpdateStatus = true;
-            return;
-        }
-#endif
-
         if (IS_MR_CHANNEL(channel)) {
             channel = RADIO_FindNextChannel(channel, RADIO_CHANNEL_UP, false, VFO);
             if (channel == 0xFF) {
@@ -700,15 +685,7 @@ void RADIO_SetupRegisters(bool switchToForeground)
     // mic gain 0.5dB/step 0 to 31
     BK4819_WriteRegister(BK4819_REG_7D, 0xE940 | (gEeprom.MIC_SENSITIVITY_TUNING & 0x1f));
 
-    uint32_t Frequency;
-    #ifdef ENABLE_NOAA
-        if (!IS_NOAA_CHANNEL(gRxVfo->CHANNEL_SAVE) || !gIsNoaaMode)
-            Frequency = gRxVfo->pRX->Frequency;
-        else
-            Frequency = NoaaFrequencyTable[gNoaaChannel];
-    #else
-        Frequency = gRxVfo->pRX->Frequency;
-    #endif
+    uint32_t Frequency = gRxVfo->pRX->Frequency;
     BK4819_SetFrequency(Frequency);
 
     BK4819_SetupSquelch(
@@ -732,87 +709,68 @@ void RADIO_SetupRegisters(bool switchToForeground)
 
     uint16_t InterruptMask = BK4819_REG_3F_SQUELCH_FOUND | BK4819_REG_3F_SQUELCH_LOST;
 
-    #ifdef ENABLE_NOAA
-        if (!IS_NOAA_CHANNEL(gRxVfo->CHANNEL_SAVE))
-    #endif
-    {
-        if (gRxVfo->Modulation == MODULATION_FM)
-        {   // FM
-            uint8_t CodeType = gRxVfo->pRX->CodeType;
-            uint8_t Code     = gRxVfo->pRX->Code;
+    if (gRxVfo->Modulation == MODULATION_FM)
+    {   // FM
+        uint8_t CodeType = gRxVfo->pRX->CodeType;
+        uint8_t Code     = gRxVfo->pRX->Code;
 
-            switch (CodeType)
-            {
-                default:
-                case CODE_TYPE_OFF:
-                    BK4819_SetCTCSSFrequency(670);
+        switch (CodeType)
+        {
+            default:
+            case CODE_TYPE_OFF:
+                BK4819_SetCTCSSFrequency(670);
 
-                    //#ifndef ENABLE_CTCSS_TAIL_PHASE_SHIFT
-                        BK4819_SetTailDetection(550);       // QS's 55Hz tone method
-                    //#else
-                    //  BK4819_SetTailDetection(670);       // 67Hz
-                    //#endif
+                //#ifndef ENABLE_CTCSS_TAIL_PHASE_SHIFT
+                    BK4819_SetTailDetection(550);       // QS's 55Hz tone method
+                //#else
+                //  BK4819_SetTailDetection(670);       // 67Hz
+                //#endif
 
-                    InterruptMask = BK4819_REG_3F_CxCSS_TAIL | BK4819_REG_3F_SQUELCH_FOUND | BK4819_REG_3F_SQUELCH_LOST;
-                    break;
+                InterruptMask = BK4819_REG_3F_CxCSS_TAIL | BK4819_REG_3F_SQUELCH_FOUND | BK4819_REG_3F_SQUELCH_LOST;
+                break;
 
-                case CODE_TYPE_CONTINUOUS_TONE:
-                    BK4819_SetCTCSSFrequency(CTCSS_Options[Code]);
+            case CODE_TYPE_CONTINUOUS_TONE:
+                BK4819_SetCTCSSFrequency(CTCSS_Options[Code]);
 
-                    //#ifndef ENABLE_CTCSS_TAIL_PHASE_SHIFT
-                        BK4819_SetTailDetection(550);       // QS's 55Hz tone method
-                    //#else
-                    //  BK4819_SetTailDetection(CTCSS_Options[Code]);
-                    //#endif
+                //#ifndef ENABLE_CTCSS_TAIL_PHASE_SHIFT
+                    BK4819_SetTailDetection(550);       // QS's 55Hz tone method
+                //#else
+                //  BK4819_SetTailDetection(CTCSS_Options[Code]);
+                //#endif
 
-                    InterruptMask = 0
-                        | BK4819_REG_3F_CxCSS_TAIL
-                        | BK4819_REG_3F_CTCSS_FOUND
-                        | BK4819_REG_3F_CTCSS_LOST
-                        | BK4819_REG_3F_SQUELCH_FOUND
-                        | BK4819_REG_3F_SQUELCH_LOST;
+                InterruptMask = 0
+                    | BK4819_REG_3F_CxCSS_TAIL
+                    | BK4819_REG_3F_CTCSS_FOUND
+                    | BK4819_REG_3F_CTCSS_LOST
+                    | BK4819_REG_3F_SQUELCH_FOUND
+                    | BK4819_REG_3F_SQUELCH_LOST;
 
-                    break;
+                break;
 
-                case CODE_TYPE_DIGITAL:
-                case CODE_TYPE_REVERSE_DIGITAL:
-                    BK4819_SetCDCSSCodeWord(DCS_GetGolayCodeWord(CodeType, Code));
-                    InterruptMask = 0
-                        | BK4819_REG_3F_CxCSS_TAIL
-                        | BK4819_REG_3F_CDCSS_FOUND
-                        | BK4819_REG_3F_CDCSS_LOST
-                        | BK4819_REG_3F_SQUELCH_FOUND
-                        | BK4819_REG_3F_SQUELCH_LOST;
-                    break;
-            }
+            case CODE_TYPE_DIGITAL:
+            case CODE_TYPE_REVERSE_DIGITAL:
+                BK4819_SetCDCSSCodeWord(DCS_GetGolayCodeWord(CodeType, Code));
+                InterruptMask = 0
+                    | BK4819_REG_3F_CxCSS_TAIL
+                    | BK4819_REG_3F_CDCSS_FOUND
+                    | BK4819_REG_3F_CDCSS_LOST
+                    | BK4819_REG_3F_SQUELCH_FOUND
+                    | BK4819_REG_3F_SQUELCH_LOST;
+                break;
+        }
 
 #ifndef ENABLE_FEAT_F4HWN
-            if (gRxVfo->SCRAMBLING_TYPE > 0 && gSetting_ScrambleEnable)
-                BK4819_EnableScramble(gRxVfo->SCRAMBLING_TYPE - 1);
-            else
-                BK4819_DisableScramble();
-#else
-                BK4819_DisableScramble();
-#endif
-        }
-    }
-    #ifdef ENABLE_NOAA
+        if (gRxVfo->SCRAMBLING_TYPE > 0 && gSetting_ScrambleEnable)
+            BK4819_EnableScramble(gRxVfo->SCRAMBLING_TYPE - 1);
         else
-        {
-            BK4819_SetCTCSSFrequency(2625);
-            InterruptMask = 0
-                | BK4819_REG_3F_CTCSS_FOUND
-                | BK4819_REG_3F_CTCSS_LOST
-                | BK4819_REG_3F_SQUELCH_FOUND
-                | BK4819_REG_3F_SQUELCH_LOST;
-        }
-    #endif
+            BK4819_DisableScramble();
+#else
+            BK4819_DisableScramble();
+#endif
+    }
 
 #ifdef ENABLE_VOX
     if (gEeprom.VOX_SWITCH  && gCurrentVfo->Modulation == MODULATION_FM
-#ifdef ENABLE_NOAA
-        && !IS_NOAA_CHANNEL(gCurrentVfo->CHANNEL_SAVE)
-#endif
 #ifdef ENABLE_FMRADIO
         && !gFmRadioMode
 #endif
@@ -842,51 +800,6 @@ void RADIO_SetupRegisters(bool switchToForeground)
     if (switchToForeground)
         FUNCTION_Select(FUNCTION_FOREGROUND);
 }
-
-#ifdef ENABLE_NOAA
-    void RADIO_ConfigureNOAA(void)
-    {
-        uint8_t ChanAB;
-
-        gUpdateStatus = true;
-
-        if (gEeprom.NOAA_AUTO_SCAN)
-        {
-            if (gEeprom.DUAL_WATCH != DUAL_WATCH_OFF)
-            {
-                if (!IS_NOAA_CHANNEL(gEeprom.ScreenChannel[0]))
-                {
-                    if (!IS_NOAA_CHANNEL(gEeprom.ScreenChannel[1]))
-                    {
-                        gIsNoaaMode = false;
-                        return;
-                    }
-                    ChanAB = 1;
-                }
-                else
-                    ChanAB = 0;
-
-                if (!gIsNoaaMode)
-                    gNoaaChannel = gEeprom.VfoInfo[ChanAB].CHANNEL_SAVE - NOAA_CHANNEL_FIRST;
-
-                gIsNoaaMode = true;
-                return;
-            }
-
-            if (IS_NOAA_CHANNEL(gRxVfo->CHANNEL_SAVE))
-            {
-                gIsNoaaMode          = true;
-                gNoaaChannel         = gRxVfo->CHANNEL_SAVE - NOAA_CHANNEL_FIRST;
-                gNOAA_Countdown_10ms = NOAA_countdown_2_10ms;
-                gScheduleNOAA        = false;
-            }
-            else
-                gIsNoaaMode = false;
-        }
-        else
-            gIsNoaaMode = false;
-    }
-#endif
 
 void RADIO_SetTxParameters(void)
 {

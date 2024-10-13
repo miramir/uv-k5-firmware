@@ -1,5 +1,5 @@
-#ifndef APP_FLASHLIGHT_H
-#define APP_FLASHLIGHT_H
+#ifndef FLASHLIGHT_H
+#define FLASHLIGHT_H
 
 #ifdef ENABLE_FLASHLIGHT
 

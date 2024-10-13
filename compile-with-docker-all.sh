@@ -7,14 +7,12 @@ docker run --rm -v "${PWD}/compiled-firmware/:/app/compiled-firmware" $IMAGE_NAM
 ENABLE_SPECTRUM=1 \
 ENABLE_FMRADIO=0 \
 ENABLE_AIRCOPY=1 \
-ENABLE_NOAA=0 \
 TARGET=f4hwn.bandscope \
 && cp f4hwn.bandscope* compiled-firmware/"
 docker run --rm -v "${PWD}/compiled-firmware:/app/compiled-firmware" $IMAGE_NAME /bin/bash -c "cd /app && make -s \
 ENABLE_SPECTRUM=0 \
 ENABLE_FMRADIO=1 \
 ENABLE_AIRCOPY=1 \
-ENABLE_NOAA=0 \
 TARGET=f4hwn.broadcast \
 && cp f4hwn.broadcast* compiled-firmware/"
 docker run --rm -v "${PWD}/compiled-firmware:/app/compiled-firmware" $IMAGE_NAME /bin/bash -c "cd /app && make -s \
@@ -25,6 +23,5 @@ ENABLE_AIRCOPY=0 \
 ENABLE_AUDIO_BAR=0 \
 ENABLE_FEAT_F4HWN_SPECTRUM=0 \
 ENABLE_FEAT_F4HWN_SLEEP=0 \
-ENABLE_NOAA=0 \
 TARGET=f4hwn.voxless \
 && cp f4hwn.voxless* compiled-firmware/"

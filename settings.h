@@ -156,9 +156,6 @@ typedef struct {
     uint8_t               ScreenChannel[2]; // current channels set in the radio (memory or frequency channels)
     uint8_t               FreqChannel[2]; // last frequency channels used
     uint8_t               MrChannel[2]; // last memory channels used
-#ifdef ENABLE_NOAA
-    uint8_t           NoaaChannel[2];
-#endif
 
     // The actual VFO index (0-upper/1-lower) that is now used for RX, 
     // It is being alternated by dual watch, and flipped by crossband
@@ -256,9 +253,6 @@ typedef struct {
     bool                  PERMIT_REMOTE_KILL;
 #endif
     int16_t               BK4819_XTAL_FREQ_LOW;
-#ifdef ENABLE_NOAA
-    bool              NOAA_AUTO_SCAN;
-#endif
     uint8_t               VOLUME_GAIN;
     uint8_t               DAC_GAIN;
 

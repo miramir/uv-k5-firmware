@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef UI_MENU_H
-#define UI_MENU_H
+#ifndef MENU_H
+#define MENU_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -109,9 +109,6 @@ enum
     MENU_AM,
 #ifdef ENABLE_AM_FIX
     MENU_AM_FIX,
-#endif
-#ifdef ENABLE_NOAA
-    MENU_NOAA_S,
 #endif
     MENU_RESET,
     MENU_F_LOCK,

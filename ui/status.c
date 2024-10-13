@@ -70,14 +70,6 @@ void UI_DisplayStatus()
     x += 8;
     unsigned int x1 = x;
 
-#ifdef ENABLE_NOAA
-    if (gIsNoaaMode) { // NOASS SCAN indicator
-        memcpy(line + x, BITMAP_NOAA, sizeof(BITMAP_NOAA));
-        x1 = x + sizeof(BITMAP_NOAA);
-    }
-    x += sizeof(BITMAP_NOAA);
-#endif
-
 #ifdef ENABLE_DTMF_CALLING
     if (gSetting_KILLED) {
         memset(line + x, 0xFF, 10);

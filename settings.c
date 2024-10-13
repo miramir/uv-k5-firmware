@@ -46,9 +46,6 @@ void SETTINGS_InitEEPROM(void)
     gEeprom.CHAN_1_CALL          = IS_MR_CHANNEL(Data[0]) ? Data[0] : MR_CHANNEL_FIRST;
     gEeprom.SQUELCH_LEVEL        = (Data[1] < 10) ? Data[1] : 1;
     gEeprom.TX_TIMEOUT_TIMER     = (Data[2] > 4 && Data[2] < 180) ? Data[2] : 11;
-    #ifdef ENABLE_NOAA
-        gEeprom.NOAA_AUTO_SCAN   = (Data[3] <  2) ? Data[3] : false;
-    #endif
     gEeprom.KEY_LOCK             = (Data[4] <  2) ? Data[4] : false;
     #ifdef ENABLE_VOX
         gEeprom.VOX_SWITCH       = (Data[5] <  2) ? Data[5] : false;
@@ -79,10 +76,6 @@ void SETTINGS_InitEEPROM(void)
     gEeprom.MrChannel[1]       = IS_MR_CHANNEL(Data[4])    ? Data[4] : MR_CHANNEL_FIRST;
     gEeprom.FreqChannel[0]     = IS_FREQ_CHANNEL(Data[2])  ? Data[2] : (FREQ_CHANNEL_FIRST + BAND6_400MHz);
     gEeprom.FreqChannel[1]     = IS_FREQ_CHANNEL(Data[5])  ? Data[5] : (FREQ_CHANNEL_FIRST + BAND6_400MHz);
-#ifdef ENABLE_NOAA
-    gEeprom.NoaaChannel[0] = IS_NOAA_CHANNEL(Data[6])  ? Data[6] : NOAA_CHANNEL_FIRST;
-    gEeprom.NoaaChannel[1] = IS_NOAA_CHANNEL(Data[7])  ? Data[7] : NOAA_CHANNEL_FIRST;
-#endif
 
 #ifdef ENABLE_FMRADIO
     {   // 0E88..0E8F
@@ -539,21 +532,12 @@ void SETTINGS_SaveVfoIndices(void)
 {
     uint8_t State[8];
 
-    #ifndef ENABLE_NOAA
-        EEPROM_ReadBuffer(0x0E80, State, sizeof(State));
-    #endif
-
     State[0] = gEeprom.ScreenChannel[0];
     State[1] = gEeprom.MrChannel[0];
     State[2] = gEeprom.FreqChannel[0];
     State[3] = gEeprom.ScreenChannel[1];
     State[4] = gEeprom.MrChannel[1];
     State[5] = gEeprom.FreqChannel[1];
-    #ifdef ENABLE_NOAA
-        State[6] = gEeprom.NoaaChannel[0];
-        State[7] = gEeprom.NoaaChannel[1];
-    #endif
-
     EEPROM_WriteBuffer(0x0E80, State);
 }
 
@@ -569,11 +553,7 @@ void SETTINGS_SaveSettings(void)
     State[0] = gEeprom.CHAN_1_CALL;
     State[1] = gEeprom.SQUELCH_LEVEL;
     State[2] = gEeprom.TX_TIMEOUT_TIMER;
-    #ifdef ENABLE_NOAA
-        State[3] = gEeprom.NOAA_AUTO_SCAN;
-    #else
-        State[3] = false;
-    #endif
+    State[3] = false;
     State[4] = gEeprom.KEY_LOCK;
     #ifdef ENABLE_VOX
         State[5] = gEeprom.VOX_SWITCH;
@@ -774,11 +754,6 @@ void SETTINGS_SaveSettings(void)
 
 void SETTINGS_SaveChannel(uint8_t Channel, uint8_t VFO, const VFO_Info_t *pVFO, uint8_t Mode)
 {
-#ifdef ENABLE_NOAA
-    if (IS_NOAA_CHANNEL(Channel))
-        return;
-#endif
-
     uint16_t OffsetVFO = Channel * 16;
 
     if (IS_FREQ_CHANNEL(Channel)) { // it's a VFO, not a channel
@@ -856,50 +831,45 @@ void SETTINGS_SaveChannelName(uint8_t channel, const char * name)
 
 void SETTINGS_UpdateChannel(uint8_t channel, const VFO_Info_t *pVFO, bool keep, bool check, bool save)
 {
-#ifdef ENABLE_NOAA
-    if (!IS_NOAA_CHANNEL(channel))
-#endif
-    {
-        uint8_t  state[8];
-        ChannelAttributes_t  att = {
-            .band = 0x7,
-            .compander = 0,
-            .scanlist1 = 0,
-            .scanlist2 = 0,
-            .scanlist3 = 0,
-            };        // default attributes
+    uint8_t  state[8];
+    ChannelAttributes_t  att = {
+        .band = 0x7,
+        .compander = 0,
+        .scanlist1 = 0,
+        .scanlist2 = 0,
+        .scanlist3 = 0,
+        };        // default attributes
 
-        uint16_t offset = 0x0D60 + (channel & ~7u);
-        EEPROM_ReadBuffer(offset, state, sizeof(state));
+    uint16_t offset = 0x0D60 + (channel & ~7u);
+    EEPROM_ReadBuffer(offset, state, sizeof(state));
 
-        if (keep) {
-            att.band = pVFO->Band;
-            att.scanlist1 = pVFO->SCANLIST1_PARTICIPATION;
-            att.scanlist2 = pVFO->SCANLIST2_PARTICIPATION;
-            att.scanlist3 = pVFO->SCANLIST3_PARTICIPATION;
-            att.compander = pVFO->Compander;
-            if (check && state[channel & 7u] == att.__val)
-                return; // no change in the attributes
-        }
+    if (keep) {
+        att.band = pVFO->Band;
+        att.scanlist1 = pVFO->SCANLIST1_PARTICIPATION;
+        att.scanlist2 = pVFO->SCANLIST2_PARTICIPATION;
+        att.scanlist3 = pVFO->SCANLIST3_PARTICIPATION;
+        att.compander = pVFO->Compander;
+        if (check && state[channel & 7u] == att.__val)
+            return; // no change in the attributes
+    }
 
-        state[channel & 7u] = att.__val;
+    state[channel & 7u] = att.__val;
 
 #ifdef ENABLE_FEAT_F4HWN
-        if(save)
-        {
-            EEPROM_WriteBuffer(offset, state);
-        }
-#else
+    if(save)
+    {
         EEPROM_WriteBuffer(offset, state);
+    }
+#else
+    EEPROM_WriteBuffer(offset, state);
 #endif
 
-        gMR_ChannelAttributes[channel] = att;
+    gMR_ChannelAttributes[channel] = att;
 
-        if (IS_MR_CHANNEL(channel)) {   // it's a memory channel
-            if (!keep) {
-                // clear/reset the channel name
-                SETTINGS_SaveChannelName(channel, "");
-            }
+    if (IS_MR_CHANNEL(channel)) {   // it's a memory channel
+        if (!keep) {
+            // clear/reset the channel name
+            SETTINGS_SaveChannelName(channel, "");
         }
     }
 }
@@ -915,9 +885,6 @@ void SETTINGS_WriteBuildOptions(void)
 State[0] = 0
 #ifdef ENABLE_FMRADIO
     | (1 << 0)
-#endif
-#ifdef ENABLE_NOAA
-    | (1 << 1)
 #endif
 #ifdef ENABLE_VOICE
     | (1 << 2)

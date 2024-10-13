@@ -836,21 +836,6 @@ void UI_DisplayMain(void)
             sprintf(String, "F%u%s", 1 + gEeprom.ScreenChannel[vfo_num] - FREQ_CHANNEL_FIRST, buf);
             UI_PrintStringSmallNormal(String, x, 0, line + 1);
         }
-#ifdef ENABLE_NOAA
-        else
-        {
-            if (gInputBoxIndex == 0 || gEeprom.TX_VFO != vfo_num)
-            {   // channel number
-                sprintf(String, "N%u", 1 + gEeprom.ScreenChannel[vfo_num] - NOAA_CHANNEL_FIRST);
-            }
-            else
-            {   // user entering channel number
-                sprintf(String, "N%u%u", '0' + gInputBox[0], '0' + gInputBox[1]);
-            }
-            UI_PrintStringSmallNormal(String, 7, 0, line + 1);
-        }
-#endif
-
         // ************
 
         enum VfoState_t state = VfoState[vfo_num];
