@@ -29,6 +29,12 @@ This firmware will be created under the influence of IJV, but with some features
 * Remove code for VOICE support
 * Remove Beep function
 
+# Todo
+
+* Extended memory
+* Support si4732
+* FF-ing memory
+
 ## Manual
 
 

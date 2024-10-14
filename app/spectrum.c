@@ -27,10 +27,6 @@
 #include "ui/main.h"
 #include "audio.h"
 
-#ifdef ENABLE_FEAT_F4HWN_SCREENSHOT
-#include "screenshot.h"
-#endif
-
 #ifdef ENABLE_FEAT_F4HWN_SPECTRUM
 #include "driver/eeprom.h"
 #endif
@@ -721,10 +717,6 @@ static void ToggleBacklight()
     {
         BACKLIGHT_TurnOff();
     }
-// For screenshot
-#ifdef ENABLE_FEAT_F4HWN_SCREENSHOT
-    getScreenShot();
-#endif
 }
 
 static void ToggleStepsCount()
