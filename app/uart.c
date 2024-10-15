@@ -15,10 +15,7 @@
  */
 
 #include <string.h>
-
-#if !defined(ENABLE_OVERLAY)
-    #include "ARMCM0.h"
-#endif
+#include "ARMCM0.h"
 #ifdef ENABLE_FMRADIO
     #include "app/fm.h"
 #endif
@@ -37,10 +34,6 @@
 #include "misc.h"
 #include "settings.h"
 #include "version.h"
-
-#if defined(ENABLE_OVERLAY)
-    #include "sram-overlay.h"
-#endif
 
 #define UNUSED(x) (void)(x)
 
@@ -606,11 +599,7 @@ void UART_HandleCommand(void)
             break;
     
         case 0x05DD: // reset
-            #if defined(ENABLE_OVERLAY)
-                overlay_FLASH_RebootToBootloader();
-            #else
-                NVIC_SystemReset();
-            #endif
+            NVIC_SystemReset();
             break;
             
 #ifdef ENABLE_UART_RW_BK_REGS

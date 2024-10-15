@@ -16,10 +16,6 @@
 
 #ifdef ENABLE_AIRCOPY
 
-//#if !defined(ENABLE_OVERLAY)
-//  #include "ARMCM0.h"
-//#endif
-
 #include "app/aircopy.h"
 #include "driver/bk4819.h"
 #include "driver/crc.h"

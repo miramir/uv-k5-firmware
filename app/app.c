@@ -63,10 +63,6 @@
 #include "misc.h"
 #include "radio.h"
 #include "settings.h"
-
-#if defined(ENABLE_OVERLAY)
-    #include "sram-overlay.h"
-#endif
 #include "ui/battery.h"
 #include "ui/inputbox.h"
 #include "ui/main.h"
@@ -1534,11 +1530,7 @@ void APP_TimeSlice500ms(void)
 
         if (gBatteryCurrent > 500 || gBatteryCalibration[3] < gBatteryCurrentVoltage)
         {
-            #ifdef ENABLE_OVERLAY
-                overlay_FLASH_RebootToBootloader();
-            #else
-                NVIC_SystemReset();
-            #endif
+            NVIC_SystemReset();
         }
 
         return;

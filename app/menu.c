@@ -15,10 +15,7 @@
  */
 
 #include <string.h>
-
-#if !defined(ENABLE_OVERLAY)
-    #include "ARMCM0.h"
-#endif
+#include "ARMCM0.h"
 #include "app/dtmf.h"
 #include "app/generic.h"
 #include "app/menu.h"
@@ -34,9 +31,6 @@
 #include "helper/battery.h"
 #include "misc.h"
 #include "settings.h"
-#if defined(ENABLE_OVERLAY)
-    #include "sram-overlay.h"
-#endif
 #include "ui/inputbox.h"
 #include "ui/menu.h"
 #include "ui/ui.h"
@@ -1600,12 +1594,7 @@ static void MENU_Key_MENU(const bool bKeyPressed, const bool bKeyHeld)
                     if (UI_MENU_GetCurrentMenuId() == MENU_RESET)
                     {
                         MENU_AcceptSetting();
-
-                        #if defined(ENABLE_OVERLAY)
-                            overlay_FLASH_RebootToBootloader();
-                        #else
-                            NVIC_SystemReset();
-                        #endif
+                        NVIC_SystemReset();
                     }
 
                     gFlagAcceptSetting  = true;
