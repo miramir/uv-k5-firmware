@@ -304,8 +304,6 @@ endif
 ifeq ($(ENABLE_FEAT_F4HWN),1)
 	CFLAGS  += -DENABLE_FEAT_F4HWN
 	CFLAGS  += -DALERT_TOT=10
-	CFLAGS  += -DAUTHOR_STRING_1=\"$(AUTHOR_STRING_1)\" -DVERSION_STRING_1=\"$(VERSION_STRING_1)\"
-	CFLAGS  += -DAUTHOR_STRING_2=\"$(AUTHOR_STRING_2)\" -DVERSION_STRING_2=\"$(VERSION_STRING_2)\"
 endif
 ifeq ($(ENABLE_FEAT_F4HWN_SPECTRUM),1)
 	CFLAGS  += -DENABLE_FEAT_F4HWN_SPECTRUM
@@ -375,11 +373,7 @@ else ifneq (,$(HAS_CRCMOD))
 	$(info !!!!!!!! run: pip install crcmod)
 	$(info )
 else
-ifeq ($(ENABLE_FEAT_F4HWN),1)
-	-$(MY_PYTHON) fw-pack.py $<.bin $(AUTHOR_STRING_2) $(VERSION_STRING_2) $<.packed.bin
-else
 	-$(MY_PYTHON) fw-pack.py $<.bin $(AUTHOR_STRING) $(VERSION_STRING) $<.packed.bin
-endif
 endif
 	$(SIZE) $<
 
