@@ -177,15 +177,8 @@ void BOARD_PORTCON_Init(void)
         | PORTCON_PORTB_SEL1_B9_BITS_GPIOB9
         // SPI0 MOSI, wasn't cleared in previous step / relying on default value!
         | PORTCON_PORTB_SEL1_B10_BITS_SPI0_MOSI
-#if defined(ENABLE_SWD)
-        // SWD IO
-        | PORTCON_PORTB_SEL1_B11_BITS_SWDIO
-        // SWD CLK
-        | PORTCON_PORTB_SEL1_B14_BITS_SWCLK
-#else
         // ST7565
         | PORTCON_PORTB_SEL1_B11_BITS_GPIOB11
-#endif
         ;
 
     // PORT C pin selection
@@ -307,10 +300,8 @@ void BOARD_PORTCON_Init(void)
         | PORTCON_PORTB_IE_B9_MASK
         // SPI0 MOSI
         | PORTCON_PORTB_IE_B10_MASK
-#if !defined(ENABLE_SWD)
         // ST7565
         | PORTCON_PORTB_IE_B11_MASK
-#endif
         // BK1080
         | PORTCON_PORTB_IE_B15_MASK
         );

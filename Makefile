@@ -51,10 +51,6 @@ ENABLE_AM_FIX_SHOW_DATA       	?= 0
 ENABLE_AGC_SHOW_DATA          	?= 0
 ENABLE_UART_RW_BK_REGS        	?= 0
 
-# ---- COMPILER/LINKER OPTIONS ----
-ENABLE_SWD                    	?= 0
-ENABLE_LTO                    	?= 1
-
 #############################################################
 
 BIN_DIR := build
@@ -174,58 +170,28 @@ CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
 
-ifeq ($(ENABLE_FEAT_F4HWN),1)
-	AUTHOR_STRING_1 ?= EGZUMER
-	VERSION_STRING_1 ?= v0.22
-
-	AUTHOR_STRING_2 ?= F4HWN
-	VERSION_STRING_2 ?= v3.5
-
-	AUTHOR_STRING ?= $(AUTHOR_STRING_1)+$(AUTHOR_STRING_2)
-	VERSION_STRING ?= $(VERSION_STRING_2)
-else
-	AUTHOR_STRING ?= EGZUMER
-	# the user might not have/want git installed
-	# can set own version string here (max 7 chars)
-	ifneq (, $(shell $(WHERE) git))
-		VERSION_STRING ?= $(shell git describe --tags --exact-match 2>$(NULL_OUTPUT))
-		ifeq (, $(VERSION_STRING))
-            VERSION_STRING := $(shell git rev-parse --short HEAD)
-		endif
-	endif
-	# If there is still no VERSION_STRING we need to make one.
-	# It is needed for the firmware packing script
+ifneq (, $(shell $(WHERE) git))
+	VERSION_STRING ?= $(shell git describe --tags --exact-match 2>$(NULL_OUTPUT))
 	ifeq (, $(VERSION_STRING))
-		VERSION_STRING := NOGIT
+					VERSION_STRING := $(shell git rev-parse --short HEAD)
 	endif
-	#VERSION_STRING := 230930b
 endif
+# If there is still no VERSION_STRING we need to make one.
+# It is needed for the firmware packing script
+ifeq (, $(VERSION_STRING))
+	VERSION_STRING := NOGIT
+endif
+
+AUTHOR_STRING ?= miramir
 
 ASFLAGS = -c -mcpu=cortex-m0
-CFLAGS = -Os -Wall -Werror -mcpu=cortex-m0 -fshort-enums -fno-delete-null-pointer-checks -std=c2x -MMD
-
-ifeq ($(ENABLE_LTO),1)
-	CFLAGS += -flto=auto
-else
-	# We get most of the space savings if LTO creates problems
-	CFLAGS += -ffunction-sections -fdata-sections
-endif
-
-# May cause unhelpful build failures
-#CFLAGS += -Wpadded
-
-# catch any and all warnings
-CFLAGS += -Wextra
-#CFLAGS += -Wpedantic
+CFLAGS = -Os -Wall -Werror -Wextra -mcpu=cortex-m0 -fshort-enums -fno-delete-null-pointer-checks -flto=auto -std=c2x -MMD
 
 CFLAGS += -DPRINTF_INCLUDE_CONFIG_H
 CFLAGS += -DAUTHOR_STRING=\"$(AUTHOR_STRING)\" -DVERSION_STRING=\"$(VERSION_STRING)\"
 
 ifeq ($(ENABLE_SPECTRUM),1)
 CFLAGS += -DENABLE_SPECTRUM
-endif
-ifeq ($(ENABLE_SWD),1)
-	CFLAGS += -DENABLE_SWD
 endif
 ifeq ($(ENABLE_AIRCOPY),1)
 	CFLAGS += -DENABLE_AIRCOPY
