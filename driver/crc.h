@@ -17,10 +17,14 @@
 #ifndef DRIVER_CRC_H
 #define DRIVER_CRC_H
 
+#if defined(ENABLE_AIRCOPY) || defined(ENABLE_UART)
+
 #include <stdint.h>
 
 void CRC_Init(void);
 uint16_t CRC_Calculate(const void *pBuffer, uint16_t Size);
+
+#endif
 
 #endif
 

@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef APP_AIRCOPY_H
-#define APP_AIRCOPY_H
+#ifndef AIRCOPY_H
+#define AIRCOPY_H
 
 #ifdef ENABLE_AIRCOPY
 

@@ -14,8 +14,10 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_BK1080_H
-#define DRIVER_BK1080_H
+#ifndef BK1080_H
+#define BK1080_H
+
+#ifdef ENABLE_FMRADIO
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -33,6 +35,8 @@ uint16_t BK1080_GetFreqLoLimit(uint8_t band);
 uint16_t BK1080_GetFreqHiLimit(uint8_t band);
 void BK1080_SetFrequency(uint16_t frequency, uint8_t band/*, uint8_t space*/);
 void BK1080_GetFrequencyDeviation(uint16_t Frequency);
+
+#endif
 
 #endif
 

@@ -13,6 +13,9 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
+
+#ifdef ENABLE_SPECTRUM
+
 #include "app/spectrum.h"
 #include "am_fix.h"
 #include "misc.h"
@@ -1619,3 +1622,5 @@ void APP_RunSpectrum()
         Tick();
     }
 }
+
+#endif

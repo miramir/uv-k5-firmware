@@ -14,12 +14,16 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_AES_H
-#define DRIVER_AES_H
+#ifndef AES_H
+#define AES_H
+
+#ifdef ENABLE_UART
 
 #include <stdint.h>
 
 void AES_Encrypt(const void *pKey, const void *pIv, const void *pIn, void *pOut, uint8_t NumBlocks);
+
+#endif
 
 #endif
 

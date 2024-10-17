@@ -14,6 +14,8 @@
  *     limitations under the License.
  */
 
+#if defined(ENABLE_AIRCOPY) || defined(ENABLE_UART)
+
 #include "../bsp/dp32g030/crc.h"
 #include "crc.h"
 
@@ -47,3 +49,5 @@ uint16_t CRC_Calculate(const void *pBuffer, uint16_t Size)
 
     return Crc;
 }
+
+#endif

@@ -17,10 +17,10 @@
 
 #ifndef AM_FIXH
 
+#ifdef ENABLE_AM_FIX
+
 #include <stdint.h>
 #include <stdbool.h>
-
-#ifdef ENABLE_AM_FIX
     void AM_fix_init(void);
     void AM_fix_reset(const unsigned vfo);
     void AM_fix_10ms(const unsigned vfo);

@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef UI_FM_H
-#define UI_FM_H
+#ifndef FMRADIO_H
+#define FMRADIO_H
 
 #ifdef ENABLE_FMRADIO
     void UI_DisplayFM(void);
