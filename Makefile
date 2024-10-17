@@ -54,7 +54,7 @@ ENABLE_UART_RW_BK_REGS        	?= 0
 #############################################################
 
 BIN_DIR := build
-SRC_DIR := .
+SRC_DIR := src
 OBJ_DIR := obj
 
 TARGET = $(BIN_DIR)/firmware
@@ -75,28 +75,14 @@ BSP_DEFINITIONS := $(wildcard hardware/*/*.def)
 BSP_HEADERS     := $(patsubst hardware/%,bsp/%,$(BSP_DEFINITIONS))
 BSP_HEADERS     := $(patsubst %.def,%.h,$(BSP_HEADERS))
 
-ifeq ($(OS), Windows_NT) # windows
-    TOP := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-    RM = del /Q
-    FixPath = $(subst /,\,$1)
-    WHERE = where
-    NULL_OUTPUT = nul
-else # unix
-    TOP := $(shell pwd)
-    RM = rm -f
-    FixPath = $1
-    WHERE = which
-    NULL_OUTPUT = /dev/null
-endif
-
 AS = arm-none-eabi-gcc
 LD = arm-none-eabi-gcc
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
 
-ifneq (, $(shell $(WHERE) git))
-	VERSION_STRING ?= $(shell git describe --tags --exact-match 2>$(NULL_OUTPUT))
+ifneq (, $(shell which git))
+	VERSION_STRING ?= $(shell git describe --tags --exact-match 2>/dev/null)
 	ifeq (, $(VERSION_STRING))
 					VERSION_STRING := $(shell git rev-parse --short HEAD)
 	endif
@@ -261,39 +247,21 @@ ifeq ($(DEBUG),1)
 endif
 
 INC =
-INC += -I $(TOP)
-INC += -I $(TOP)/external/CMSIS_5/CMSIS/Core/Include/
-INC += -I $(TOP)/external/CMSIS_5/Device/ARM/ARMCM0/Include
+INC += -I .
+INC += -I ./src
+INC += -I ./src/external/CMSIS_5/CMSIS/Core/Include/
+INC += -I ./src/external/CMSIS_5/Device/ARM/ARMCM0/Include
 
 LIBS =
 
 DEPS = $(OBJS:.o=.d)
 
-ifneq (, $(shell $(WHERE) python))
-    MY_PYTHON := python
-else ifneq (, $(shell $(WHERE) python3))
-    MY_PYTHON := python3
-endif
-
-ifdef MY_PYTHON
-    HAS_CRCMOD := $(shell $(MY_PYTHON) -c "import crcmod" 2>&1)
-endif
-
 all: $(TARGET)
 	$(OBJCOPY) -O binary $< $<.bin
 
-ifndef MY_PYTHON
-	$(info )
-	$(info !!!!!!!! PYTHON NOT FOUND, *.PACKED.BIN WON'T BE BUILT)
-	$(info )
-else ifneq (,$(HAS_CRCMOD))
-	$(info )
-	$(info !!!!!!!! CRCMOD NOT INSTALLED, *.PACKED.BIN WON'T BE BUILT)
-	$(info !!!!!!!! run: pip install crcmod)
-	$(info )
-else
-	-$(MY_PYTHON) fw-pack.py $<.bin $(AUTHOR_STRING) $(VERSION_STRING) $<.packed.bin
-endif
+	$(OBJCOPY) -O binary $< $<.bin
+	-python fw-pack.py $<.bin $(AUTHOR_STRING) $(VERSION_STRING) $<.packed.bin
+	-python3 fw-pack.py $<.bin $(AUTHOR_STRING) $(VERSION_STRING) $<.packed.bin
 	$(SIZE) $<
 
 flash:
@@ -306,11 +274,11 @@ $(TARGET): $(OBJS)
 
 bsp/dp32g030/%.h: hardware/dp32g030/%.def
 
-$(OBJ_DIR)/%.o: %.c | $(BSP_HEADERS) $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(BSP_HEADERS) $(OBJ_DIR)
 	mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
-$(OBJ_DIR)/%.o: %.S | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.S | $(OBJ_DIR)
 	$(AS) $(ASFLAGS) $< -o $@
 
 $(BIN_DIR) $(OBJ_DIR):
@@ -321,7 +289,7 @@ $(BIN_DIR) $(OBJ_DIR):
 -include $(DEPS)
 
 clean:
-	$(RM) $(call FixPath, $(TARGET).bin $(TARGET).packed.bin $(TARGET) $(OBJS) $(DEPS))
+	rm -f $(TARGET).bin $(TARGET).packed.bin $(TARGET) $(OBJ_DIR)/*.o $(OBJ_DIR)/*.d $(OBJ_DIR)/**/*.o $(OBJ_DIR)/**/*.d
 
 doxygen:
 	doxygen
