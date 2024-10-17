@@ -55,7 +55,7 @@ ENABLE_UART_RW_BK_REGS        	?= 0
 
 BIN_DIR := build
 SRC_DIR := .
-OBJ_DIR := .
+OBJ_DIR := obj
 
 TARGET = $(BIN_DIR)/firmware
 
@@ -306,11 +306,15 @@ $(TARGET): $(OBJS)
 
 bsp/dp32g030/%.h: hardware/dp32g030/%.def
 
-%.o: %.c | $(BSP_HEADERS)
+$(OBJ_DIR)/%.o: %.c | $(BSP_HEADERS) $(OBJ_DIR)
+	mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
-%.o: %.S
+$(OBJ_DIR)/%.o: %.S | $(OBJ_DIR)
 	$(AS) $(ASFLAGS) $< -o $@
+
+$(BIN_DIR) $(OBJ_DIR):
+	mkdir -p $@
 
 .FORCE:
 
