@@ -256,16 +256,14 @@ void ST7565_Init(void)
     ST7565_FillScreen(0x00);
 }
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
-    void ST7565_ShutDown(void)
-    {
-        SPI_ToggleMasterMode(&SPI0->CR, false);
-        ST7565_WriteByte(ST7565_CMD_POWER_CIRCUIT | 0b000);   // VB=0 VR=1 VF=1
-        ST7565_WriteByte(ST7565_CMD_SET_START_LINE | 0);   // line 0
-        ST7565_WriteByte(ST7565_CMD_DISPLAY_ON_OFF | 0);   // D=1
-        SPI_ToggleMasterMode(&SPI0->CR, true);
-    }
-#endif
+void ST7565_ShutDown(void)
+{
+    SPI_ToggleMasterMode(&SPI0->CR, false);
+    ST7565_WriteByte(ST7565_CMD_POWER_CIRCUIT | 0b000);   // VB=0 VR=1 VF=1
+    ST7565_WriteByte(ST7565_CMD_SET_START_LINE | 0);   // line 0
+    ST7565_WriteByte(ST7565_CMD_DISPLAY_ON_OFF | 0);   // D=1
+    SPI_ToggleMasterMode(&SPI0->CR, true);
+}
 
 void ST7565_FixInterfGlitch(void)
 {

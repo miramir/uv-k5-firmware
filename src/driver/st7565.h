@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_ST7565_H
-#define DRIVER_ST7565_H
+#ifndef ST7565_H
+#define ST7565_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -33,9 +33,7 @@ void ST7565_BlitLine(unsigned line);
 void ST7565_BlitStatusLine(void);
 void ST7565_FillScreen(uint8_t Value);
 void ST7565_Init(void);
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
-    void ST7565_ShutDown(void);
-#endif
+void ST7565_ShutDown(void);
 void ST7565_FixInterfGlitch(void);
 void ST7565_HardwareReset(void);
 void ST7565_SelectColumnAndLine(uint8_t Column, uint8_t Line);

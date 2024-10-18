@@ -163,10 +163,8 @@ extern enum BacklightOnRxTx_t gSetting_backlight_on_tx_rx;
     extern bool              gSetting_AM_fix;
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP 
-    extern uint8_t           gSetting_set_off;
-    extern bool              gWakeUp;
-#endif
+extern uint8_t           gSetting_set_off;
+extern bool              gWakeUp;
 
 #ifdef ENABLE_FEAT_F4HWN
     extern uint8_t            gSetting_set_pwr;
@@ -244,9 +242,7 @@ extern volatile bool         gTxTimeoutReached;
     extern volatile uint16_t gTxTimerCountdownAlert_500ms;
     extern volatile bool     gTxTimeoutReachedAlert;
     extern volatile uint16_t gTxTimeoutToneAlert;
-    #ifdef ENABLE_FEAT_F4HWN_RX_TX_TIMER
-        extern volatile uint16_t gRxTimerCountdown_500ms;
-    #endif
+    extern volatile uint16_t gRxTimerCountdown_500ms;
 #endif
 
 extern volatile uint16_t     gTailNoteEliminationCountdown_10ms;

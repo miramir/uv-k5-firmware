@@ -34,7 +34,6 @@
 #include "ui/ui.h"
 #include "ui/status.h"
 
-#ifdef ENABLE_FEAT_F4HWN_RX_TX_TIMER
 static void convertTime(uint8_t *line, uint8_t type) 
 {
     uint16_t t = (type == 0) ? (gTxTimerCountdown_500ms / 2) : (3600 - gRxTimerCountdown_500ms / 2);
@@ -50,7 +49,6 @@ static void convertTime(uint8_t *line, uint8_t type)
 
     gUpdateStatus = true;
 }
-#endif
 
 void UI_DisplayStatus()
 {
@@ -111,7 +109,6 @@ void UI_DisplayStatus()
     x += 10;  // font character width
 
     if(!SCANNER_IsScanning()) {
-    #ifdef ENABLE_FEAT_F4HWN_RX_TX_TIMER
         if(gCurrentFunction == FUNCTION_TRANSMIT && gSetting_set_tmr == true)
         {
             convertTime(line, 0);
@@ -121,7 +118,6 @@ void UI_DisplayStatus()
             convertTime(line, 1);
         }
         else
-    #endif
         {
             uint8_t dw = (gEeprom.DUAL_WATCH != DUAL_WATCH_OFF) + (gEeprom.CROSS_BAND_RX_TX != CROSS_BAND_OFF) * 2;
             if(dw == 1 || dw == 3) { // DWR - dual watch + respond
@@ -187,12 +183,10 @@ void UI_DisplayStatus()
         memcpy(line + x + 1, gFontLight, sizeof(gFontLight));
     }
     #endif
-    #ifdef ENABLE_FEAT_F4HWN_CHARGING_C
     else if (gChargingWithTypeC)
     {
         memcpy(line + x + 1, BITMAP_USB_C, sizeof(BITMAP_USB_C));
     }
-    #endif
     
     // Battery
     unsigned int x2 = LCD_WIDTH - sizeof(BITMAP_BatteryLevel1) - 0;

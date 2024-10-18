@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_BACKLIGHT_H
-#define DRIVER_BACKLIGHT_H
+#ifndef BACKLIGHT_H
+#define BACKLIGHT_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -27,9 +27,7 @@ extern uint8_t gBacklightBrightness;
     extern const uint8_t value[11];
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
-    extern uint16_t gSleepModeCountdown_500ms;
-#endif
+extern uint16_t gSleepModeCountdown_500ms;
 
 #ifdef ENABLE_BLMIN_TMP_OFF
 typedef enum {

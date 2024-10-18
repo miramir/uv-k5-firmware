@@ -18,12 +18,10 @@ ENABLE_SPECTRUM               	?= 1
 ENABLE_BIG_FREQ               	?= 1
 ENABLE_SMALL_BOLD             	?= 1
 ENABLE_CUSTOM_MENU_LAYOUT     	?= 1
-ENABLE_KEEP_MEM_NAME          	?= 1
 ENABLE_WIDE_RX                	?= 1
 ENABLE_TX_WHEN_AM             	?= 0
 ENABLE_F_CAL_MENU             	?= 0
 ENABLE_CTCSS_TAIL_PHASE_SHIFT 	?= 0
-ENABLE_BOOT_BEEPS             	?= 0
 ENABLE_SHOW_CHARGE_LEVEL      	?= 0
 ENABLE_REVERSE_BAT_SYMBOL     	?= 0
 ENABLE_NO_CODE_SCAN_TIMEOUT   	?= 1
@@ -39,12 +37,6 @@ ENABLE_BLMIN_TMP_OFF          	?= 0
 ENABLE_SCAN_RANGES            	?= 1
 ENABLE_FEAT_F4HWN             	?= 1
 ENABLE_FEAT_F4HWN_SPECTRUM    	?= 1
-ENABLE_FEAT_F4HWN_RX_TX_TIMER   ?= 1
-ENABLE_FEAT_F4HWN_CHARGING_C    ?= 1
-ENABLE_FEAT_F4HWN_SLEEP			?= 1
-ENABLE_FEAT_F4HWN_PMR         	?= 0
-ENABLE_FEAT_F4HWN_GMRS_FRS_MURS	?= 0
-ENABLE_FEAT_F4HWN_CA         	?= 1
 
 # ---- DEBUGGING ----
 ENABLE_AM_FIX_SHOW_DATA       	?= 0
@@ -82,15 +74,12 @@ OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
 
 ifneq (, $(shell which git))
-# $(info "1")
 	VERSION_STRING ?= $(shell git describe --tags --exact-match 2>/dev/null)
 	ifeq (, $(VERSION_STRING))
-#		$(info "2")
 		VERSION_STRING := $(shell git rev-parse --short HEAD)
 	endif
 endif
 
-$(info ${VERSION_STRING})
 # If there is still no VERSION_STRING we need to make one.
 # It is needed for the firmware packing script
 ifeq (, $(VERSION_STRING))
@@ -132,9 +121,6 @@ endif
 ifeq ($(ENABLE_TX1750),1)
 	CFLAGS  += -DENABLE_TX1750
 endif
-ifeq ($(ENABLE_KEEP_MEM_NAME),1)
-	CFLAGS  += -DENABLE_KEEP_MEM_NAME
-endif
 ifeq ($(ENABLE_WIDE_RX),1)
 	CFLAGS  += -DENABLE_WIDE_RX
 endif
@@ -146,9 +132,6 @@ ifeq ($(ENABLE_F_CAL_MENU),1)
 endif
 ifeq ($(ENABLE_CTCSS_TAIL_PHASE_SHIFT),1)
 	CFLAGS  += -DENABLE_CTCSS_TAIL_PHASE_SHIFT
-endif
-ifeq ($(ENABLE_BOOT_BEEPS),1)
-	CFLAGS  += -DENABLE_BOOT_BEEPS
 endif
 ifeq ($(ENABLE_SHOW_CHARGE_LEVEL),1)
 	CFLAGS  += -DENABLE_SHOW_CHARGE_LEVEL
@@ -222,24 +205,6 @@ ifeq ($(ENABLE_FEAT_F4HWN),1)
 endif
 ifeq ($(ENABLE_FEAT_F4HWN_SPECTRUM),1)
 	CFLAGS  += -DENABLE_FEAT_F4HWN_SPECTRUM
-endif
-ifeq ($(ENABLE_FEAT_F4HWN_RX_TX_TIMER),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN_RX_TX_TIMER
-endif
-ifeq ($(ENABLE_FEAT_F4HWN_CHARGING_C),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN_CHARGING_C
-endif
-ifeq ($(ENABLE_FEAT_F4HWN_SLEEP),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN_SLEEP
-endif
-ifeq ($(ENABLE_FEAT_F4HWN_PMR),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN_PMR
-endif
-ifeq ($(ENABLE_FEAT_F4HWN_GMRS_FRS_MURS),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN_GMRS_FRS_MURS
-endif
-ifeq ($(ENABLE_FEAT_F4HWN_CA),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN_CA
 endif
 
 LDFLAGS = -z noexecstack -mcpu=cortex-m0 -nostartfiles -Wl,-T,firmware.ld -Wl,--gc-sections --specs=nano.specs

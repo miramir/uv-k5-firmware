@@ -140,9 +140,7 @@ const t_menu_item MenuList[] =
     {"SetMet",      MENU_SET_MET       },
     {"SetGui",      MENU_SET_GUI       },
     {"SetTmr",      MENU_SET_TMR       },
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
     {"SetOff",       MENU_SET_OFF      },
-#endif
 #endif
     // hidden menu items from here on
     // enabled if pressing both the PTT and upper side button at power-on
@@ -281,19 +279,10 @@ const char * const gSubMenu_F_LOCK[] =
 {
     "DEFAULT+\n137-174\n400-470",
     "FCC HAM\n144-148\n420-450",
-#ifdef ENABLE_FEAT_F4HWN_CA
-    "CA HAM\n144-148\n430-450",
-#endif
     "CE HAM\n144-146\n430-440",
     "GB HAM\n144-148\n430-440",
     "137-174\n400-430",
     "137-174\n400-438",
-#ifdef ENABLE_FEAT_F4HWN_PMR
-    "PMR 446",
-#endif
-#ifdef ENABLE_FEAT_F4HWN_GMRS_FRS_MURS
-    "GMRS\nFRS\nMURS",
-#endif
     "DISABLE\nALL",
     "UNLOCK\nALL",
 };
@@ -956,7 +945,6 @@ void UI_DisplayMenu(void)
             strcpy(String, gSubMenu_SIDEFUNCTIONS[gSubMenuSelection].name);
             break;
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
         case MENU_SET_OFF:
             if(gSubMenuSelection == 0)
             {
@@ -967,7 +955,6 @@ void UI_DisplayMenu(void)
                 sprintf(String, "%dh:%02dm", (gSubMenuSelection / 60), (gSubMenuSelection % 60));
             }
             break;
-#endif
 
 #ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:

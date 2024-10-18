@@ -34,9 +34,7 @@ bool backlightOn;
     const uint8_t value[] = {0, 3, 6, 9, 15, 24, 38, 62, 100, 159, 255};
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
-    uint16_t gSleepModeCountdown_500ms = 0;
-#endif
+uint16_t gSleepModeCountdown_500ms = 0;
 
 void BACKLIGHT_InitHardware()
 {
@@ -74,9 +72,7 @@ static void BACKLIGHT_Sound(void)
 
 void BACKLIGHT_TurnOn(void)
 {
-    #ifdef ENABLE_FEAT_F4HWN_SLEEP
-        gSleepModeCountdown_500ms = gSetting_set_off * 120;
-    #endif
+    gSleepModeCountdown_500ms = gSetting_set_off * 120;
 
     #ifdef ENABLE_FEAT_F4HWN
         gBacklightBrightnessOld = BACKLIGHT_GetBrightness();

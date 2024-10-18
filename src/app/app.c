@@ -43,9 +43,7 @@
 #include "ARMCM0.h"
 #include "board.h"
 #include "bsp/dp32g030/gpio.h"
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
-    #include "bsp/dp32g030/pwmplus.h"
-#endif
+#include "bsp/dp32g030/pwmplus.h"
 #include "driver/backlight.h"
 #ifdef ENABLE_FMRADIO
     #include "driver/bk1080.h"
@@ -465,9 +463,7 @@ void APP_StartListening(FUNCTION_Type_t function)
 {
     const unsigned int vfo = gEeprom.RX_VFO;
 
-#ifdef ENABLE_FEAT_F4HWN_RX_TX_TIMER
     gRxTimerCountdown_500ms = 7200;
-#endif
 
 #ifdef ENABLE_DTMF_CALLING
     if (gSetting_KILLED)
@@ -696,9 +692,7 @@ static void CheckRadioInterrupts(void)
         if (interrupts.sqlLost) {
             g_SquelchLost = true;
             BK4819_ToggleGpioOut(BK4819_GPIO6_PIN2_GREEN, true);
-            #ifdef ENABLE_FEAT_F4HWN_RX_TX_TIMER
-                gRxTimerCountdown_500ms = 7200;
-            #endif
+            gRxTimerCountdown_500ms = 7200;
         }
 
         if (interrupts.sqlFound) {
@@ -1015,7 +1009,6 @@ void APP_Update(void)
         {   // dual watch mode off or scanning or rssi update request
             // go back to sleep
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
             if(gWakeUp)
             {
                 gPowerSave_10ms = 1000; // Why ? Why not :) 10s
@@ -1024,9 +1017,7 @@ void APP_Update(void)
             {
                 gPowerSave_10ms = gEeprom.BATTERY_SAVE * 10;
             }
-#else
-            gPowerSave_10ms = gEeprom.BATTERY_SAVE * 10;
-#endif
+
             gRxIdleMode     = true;
             goToSleep = false;
 
@@ -1478,7 +1469,6 @@ void APP_TimeSlice500ms(void)
         BACKLIGHT_TurnOff();
     }
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
     if (gSleepModeCountdown_500ms == gSetting_set_off * 120 && gWakeUp) {
         //ST7565_Init();
         ST7565_FixInterfGlitch();
@@ -1522,7 +1512,6 @@ void APP_TimeSlice500ms(void)
         counter = (counter + 1) % 4;
         BK4819_ToggleGpioOut(BK4819_GPIO5_PIN1_RED, (counter == 0));
     }
-#endif
 
     if (gReducedService)
     {

@@ -359,11 +359,9 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             *pMax = gSubMenu_SIDEFUNCTIONS_size-1;
             break;
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP
         case MENU_SET_OFF:
             *pMax = 120;
             break;
-#endif
 
 #ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:
@@ -841,11 +839,9 @@ void MENU_AcceptSetting(void)
             }
             break;
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP 
         case MENU_SET_OFF:
             gSetting_set_off = gSubMenuSelection;
             break;
-#endif
 
 #ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:
@@ -1260,11 +1256,9 @@ void MENU_ShowCurrentSetting(void)
             break;
         }
 
-#ifdef ENABLE_FEAT_F4HWN_SLEEP 
         case MENU_SET_OFF:
             gSubMenuSelection = gSetting_set_off;
             break;
-#endif
 
 #ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:
