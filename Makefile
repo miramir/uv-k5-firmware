@@ -82,11 +82,15 @@ OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
 
 ifneq (, $(shell which git))
+# $(info "1")
 	VERSION_STRING ?= $(shell git describe --tags --exact-match 2>/dev/null)
 	ifeq (, $(VERSION_STRING))
-					VERSION_STRING := $(shell git rev-parse --short HEAD)
+#		$(info "2")
+		VERSION_STRING := $(shell git rev-parse --short HEAD)
 	endif
 endif
+
+$(info ${VERSION_STRING})
 # If there is still no VERSION_STRING we need to make one.
 # It is needed for the firmware packing script
 ifeq (, $(VERSION_STRING))
@@ -258,8 +262,6 @@ DEPS = $(OBJS:.o=.d)
 
 all: $(TARGET)
 	$(OBJCOPY) -O binary $< $<.bin
-
-	$(OBJCOPY) -O binary $< $<.bin
 	-python fw-pack.py $<.bin $(AUTHOR_STRING) $(VERSION_STRING) $<.packed.bin
 	-python3 fw-pack.py $<.bin $(AUTHOR_STRING) $(VERSION_STRING) $<.packed.bin
 	$(SIZE) $<
@@ -289,7 +291,7 @@ $(BIN_DIR) $(OBJ_DIR):
 -include $(DEPS)
 
 clean:
-	rm -f $(TARGET).bin $(TARGET).packed.bin $(TARGET) $(OBJ_DIR)/*.o $(OBJ_DIR)/*.d $(OBJ_DIR)/**/*.o $(OBJ_DIR)/**/*.d
+	rm -rf $(TARGET).bin $(TARGET).packed.bin $(TARGET) $(OBJ_DIR)/*
 
 doxygen:
 	doxygen

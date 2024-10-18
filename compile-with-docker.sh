@@ -1,5 +1,5 @@
 #!/bin/sh
-#export DOCKER_DEFAULT_PLATFORM=linux/amd64
-IMAGE_NAME="uvk5"
+IMAGE_NAME="uvk5-build"
 docker build -t $IMAGE_NAME .
-docker run --rm -v "${PWD}/compiled-firmware:/app/compiled-firmware" $IMAGE_NAME /bin/bash -c "rm ./compiled-firmware/*; cd /app && make && cp f4hwn* compiled-firmware/"
+docker run --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --user $(id -u) \
+  -v "${PWD}:/app" $IMAGE_NAME /bin/sh -c "cd /app && git submodule update --init --recursive && make clean && make"
