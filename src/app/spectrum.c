@@ -29,10 +29,7 @@
 #include "ui/helper.h"
 #include "ui/main.h"
 #include "audio.h"
-
-#ifdef ENABLE_FEAT_F4HWN_SPECTRUM
 #include "driver/eeprom.h"
-#endif
 
 struct FrequencyBandInfo
 {
@@ -109,7 +106,6 @@ RegisterSpec registerSpecs[] = {
 
 uint16_t statuslineUpdateTimer = 0;
 
-#ifdef ENABLE_FEAT_F4HWN_SPECTRUM
 static void LoadSettings()
 {
     uint8_t Data[8] = {0};
@@ -148,7 +144,6 @@ static void SaveSettings()
 
     EEPROM_WriteBuffer(0x1FF0, Data);
 }
-#endif
 
 static uint8_t DBm2S(int dbm)
 {
@@ -207,17 +202,6 @@ static void SetRegMenuValue(uint8_t st, bool add)
 
 // GUI functions
 
-#ifndef ENABLE_FEAT_F4HWN
-static void PutPixel(uint8_t x, uint8_t y, bool fill)
-{
-    UI_DrawPixelBuffer(gFrameBuffer, x, y, fill);
-}
-static void PutPixelStatus(uint8_t x, uint8_t y, bool fill)
-{
-    UI_DrawPixelBuffer(&gStatusLine, x, y, fill);
-}
-#endif
-
 static void DrawVLine(int sy, int ey, int nx, bool fill)
 {
     for (int i = sy; i <= ey; i++)
@@ -228,37 +212,6 @@ static void DrawVLine(int sy, int ey, int nx, bool fill)
         }
     }
 }
-
-#ifndef ENABLE_FEAT_F4HWN
-static void GUI_DisplaySmallest(const char *pString, uint8_t x, uint8_t y,
-                                bool statusbar, bool fill)
-{
-    uint8_t c;
-    uint8_t pixels;
-    const uint8_t *p = (const uint8_t *)pString;
-
-    while ((c = *p++) && c != '\0')
-    {
-        c -= 0x20;
-        for (int i = 0; i < 3; ++i)
-        {
-            pixels = gFont3x5[c][i];
-            for (int j = 0; j < 6; ++j)
-            {
-                if (pixels & 1)
-                {
-                    if (statusbar)
-                        PutPixelStatus(x + i, y + j, fill);
-                    else
-                        PutPixel(x + i, y + j, fill);
-                }
-                pixels >>= 1;
-            }
-        }
-        x += 4;
-    }
-}
-#endif
 
 // Utility functions
 
@@ -326,9 +279,7 @@ static void RestoreRegisters()
         BK4819_WriteRegister(registers_to_save[i], registers_stack[i]);
     }
 
-#ifdef ENABLE_FEAT_F4HWN
     gVfoConfigureMode = VFO_CONFIGURE;
-#endif
 }
 
 static void ToggleAFDAC(bool on)
@@ -911,7 +862,6 @@ static void DrawStatus()
     }
 }
 
-#ifdef ENABLE_FEAT_F4HWN_SPECTRUM
 static void ShowChannelName(uint32_t f)
 {
     unsigned int i;
@@ -933,7 +883,6 @@ static void ShowChannelName(uint32_t f)
         }
     }
 }
-#endif
 
 static void DrawF(uint32_t f)
 {
@@ -945,9 +894,7 @@ static void DrawF(uint32_t f)
     sprintf(String, "%4sk", bwOptions[settings.listenBw]);
     GUI_DisplaySmallest(String, 108, 7, false, true);
 
-#ifdef ENABLE_FEAT_F4HWN_SPECTRUM
     ShowChannelName(f);
-#endif
 }
 
 static void DrawNums()
@@ -1113,9 +1060,7 @@ static void OnKeyDown(uint8_t key)
             menuState = 0;
             break;
         }
-#ifdef ENABLE_FEAT_F4HWN_SPECTRUM
         SaveSettings();
-#endif
         DeInitSpectrum();
         break;
     default:
@@ -1569,9 +1514,7 @@ void APP_RunSpectrum()
 {
     // TX here coz it always? set to active VFO
     vfo = gEeprom.TX_VFO;
-#ifdef ENABLE_FEAT_F4HWN_SPECTRUM
     LoadSettings();
-#endif
     // set the current frequency in the middle of the display
 #ifdef ENABLE_SCAN_RANGES
     if (gScanRangeStart)
@@ -1602,11 +1545,7 @@ void APP_RunSpectrum()
     ToggleRX(true), ToggleRX(false); // hack to prevent noise when squelch off
     RADIO_SetModulation(settings.modulationType = gTxVfo->Modulation);
 
-#ifdef ENABLE_FEAT_F4HWN_SPECTRUM
     BK4819_SetFilterBandwidth(settings.listenBw, false);
-#else
-    BK4819_SetFilterBandwidth(settings.listenBw = BK4819_FILTER_BW_WIDE, false);
-#endif
 
     RelaunchScan();
 

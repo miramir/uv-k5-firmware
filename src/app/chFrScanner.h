@@ -1,5 +1,5 @@
-#ifndef APP_CHFRSCANNER_H
-#define APP_CHFRSCANNER_H
+#ifndef CHFRSCANNER_H
+#define CHFRSCANNER_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -20,9 +20,7 @@ void CHFRSCANNER_Stop(void);
 void CHFRSCANNER_Start(const bool storeBackupSettings, const int8_t scan_direction);
 void CHFRSCANNER_ContinueScanning(void);
 
-#ifdef ENABLE_FEAT_F4HWN
-    extern uint32_t lastFoundFrqOrChan;
-    extern uint32_t lastFoundFrqOrChanOld;
-#endif
+extern uint32_t lastFoundFrqOrChan;
+extern uint32_t lastFoundFrqOrChanOld;
 
 #endif

@@ -40,13 +40,9 @@ enum
     MENU_OFFSET,
     MENU_TOT,
     MENU_W_N,
-#ifndef ENABLE_FEAT_F4HWN
     MENU_SCR,
-#endif
     MENU_BCL,
-#ifdef ENABLE_FEAT_F4HWN
     MENU_TX_LOCK, 
-#endif
     MENU_MEM_CH,
     MENU_DEL_CH,
     MENU_MEM_NAME,
@@ -105,20 +101,15 @@ enum
     MENU_AM_FIX,
     MENU_RESET,
     MENU_F_LOCK,
-#ifndef ENABLE_FEAT_F4HWN
     MENU_200TX,
     MENU_350TX,
     MENU_500TX,
-#endif
     MENU_350EN,
-#ifndef ENABLE_FEAT_F4HWN
     MENU_SCREN,
-#endif
 #ifdef ENABLE_F_CAL_MENU
     MENU_F_CALI,  // reference xtal calibration
 #endif
     MENU_SET_OFF,
-#ifdef ENABLE_FEAT_F4HWN
     MENU_SET_PWR,
     MENU_SET_PTT,
     MENU_SET_TOT,
@@ -129,7 +120,6 @@ enum
     MENU_SET_MET,
     MENU_SET_GUI,
     MENU_SET_TMR,
-#endif
     MENU_BATCAL,  // battery voltage calibration
     MENU_F1SHRT,
     MENU_F1LONG,
@@ -158,30 +148,21 @@ extern const char* const gSubMenu_MDF[4];
 extern const char        gSubMenu_D_RSP[4][11];
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN
-    extern const char    gSubMenu_SET_PWR[7][6];
-    extern const char    gSubMenu_SET_PTT[2][8];
-    extern const char    gSubMenu_SET_TOT[4][7];
-    extern const char    gSubMenu_SET_LCK[2][9];
-    extern const char    gSubMenu_SET_MET[2][8];
-#endif
+extern const char    gSubMenu_SET_PWR[7][6];
+extern const char    gSubMenu_SET_PTT[2][8];
+extern const char    gSubMenu_SET_TOT[4][7];
+extern const char    gSubMenu_SET_LCK[2][9];
+extern const char    gSubMenu_SET_MET[2][8];
 
 extern const char* const gSubMenu_PTT_ID[5];
-#ifdef ENABLE_FEAT_F4HWN
-    extern const char        gSubMenu_PONMSG[5][8];
-#else
-    extern const char        gSubMenu_PONMSG[4][8];
-#endif
+extern const char        gSubMenu_PONMSG[5][8];
 extern const char        gSubMenu_ROGER[3][6];
 extern const char        gSubMenu_RESET[2][4];
 extern const char* const gSubMenu_F_LOCK[F_LOCK_LEN];
 extern const char        gSubMenu_RX_TX[4][6];
 extern const char        gSubMenu_BAT_TXT[3][8];
 extern const char        gSubMenu_BATTYP[3][9];
-
-#ifndef ENABLE_FEAT_F4HWN
-    extern const char        gSubMenu_SCRAMBLER[11][7];
-#endif
+extern const char        gSubMenu_SCRAMBLER[11][7];
 
 typedef struct {char* name; uint8_t id;} t_sidefunction;
 extern const uint8_t         gSubMenu_SIDEFUNCTIONS_size;

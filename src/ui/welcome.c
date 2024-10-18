@@ -31,9 +31,7 @@
 void UI_DisplayReleaseKeys(void)
 {
     memset(gStatusLine,  0, sizeof(gStatusLine));
-#ifdef ENABLE_FEAT_F4HWN
-        ST7565_ContrastAndInv();
-#endif
+    ST7565_ContrastAndInv();
     UI_DisplayClear();
 
     UI_PrintString("RELEASE", 0, 127, 1, 10);
@@ -51,21 +49,14 @@ void UI_DisplayWelcome(void)
 
     memset(gStatusLine,  0, sizeof(gStatusLine));
 
-#ifdef ENABLE_FEAT_F4HWN
-        ST7565_ContrastAndInv();
-#endif
+    ST7565_ContrastAndInv();
     UI_DisplayClear();
 
-#ifdef ENABLE_FEAT_F4HWN
     ST7565_BlitStatusLine();
     ST7565_BlitFullScreen();
     
     if (gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_NONE || gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_SOUND) {
         ST7565_FillScreen(0x00);
-#else
-    if (gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_NONE || gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_FULL_SCREEN) {
-        ST7565_FillScreen(0xFF);
-#endif
     } else {
         memset(WelcomeString0, 0, sizeof(WelcomeString0));
         memset(WelcomeString1, 0, sizeof(WelcomeString1));
@@ -83,7 +74,6 @@ void UI_DisplayWelcome(void)
             strcpy(WelcomeString0, "VOLTAGE");
             strcpy(WelcomeString1, WelcomeString2);
         }
-#ifdef ENABLE_FEAT_F4HWN
         else if(gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_ALL)
         {
             if(strlen(WelcomeString0) == 0 && strlen(WelcomeString1) == 0)
@@ -100,7 +90,6 @@ void UI_DisplayWelcome(void)
                 strcpy(WelcomeString1, WelcomeString2);
             }
         }
-#endif
         else if(gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_MESSAGE)
         {
             if(strlen(WelcomeString0) == 0)
@@ -117,7 +106,6 @@ void UI_DisplayWelcome(void)
         UI_PrintString(WelcomeString0, 0, 127, 0, 10);
         UI_PrintString(WelcomeString1, 0, 127, 2, 10);
 
-#ifdef ENABLE_FEAT_F4HWN
         UI_PrintStringSmallNormal(Version, 0, 128, 4);
 
         for (uint8_t i = 0; i < 128; i++)
@@ -141,11 +129,7 @@ void UI_DisplayWelcome(void)
             UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 6);
             memcpy(gFrameBuffer[6] + 95, BITMAP_Ready, sizeof(BITMAP_Ready));
         #endif
-#else
-        UI_PrintStringSmallNormal(Version, 0, 127, 6);
-#endif
 
-        //ST7565_BlitStatusLine();  // blank status line : I think it's useless
         ST7565_BlitFullScreen();
     }
 }

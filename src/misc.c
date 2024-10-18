@@ -44,19 +44,11 @@ const uint16_t    key_debounce_10ms                =    20 / 10;   // 20ms
 
 const uint8_t     scan_delay_10ms                  =   210 / 10;   // 210ms
 
-#ifdef ENABLE_FEAT_F4HWN
-    const uint16_t    dual_watch_count_after_tx_10ms   =  420;         // 4.2 sec after TX ends
-    const uint16_t    dual_watch_count_after_rx_10ms   =  1000 / 10;   // 1 sec after RX ends ?
-    const uint16_t    dual_watch_count_after_1_10ms    =  5000 / 10;   // 5 sec
-    const uint16_t    dual_watch_count_after_2_10ms    =  420;         // 4.2 sec
-    const uint16_t    dual_watch_count_noaa_10ms       =    70 / 10;   // 70ms
-#else
-    const uint16_t    dual_watch_count_after_tx_10ms   =  3600 / 10;   // 3.6 sec after TX ends
-    const uint16_t    dual_watch_count_after_rx_10ms   =  1000 / 10;   // 1 sec after RX ends ?
-    const uint16_t    dual_watch_count_after_1_10ms    =  5000 / 10;   // 5 sec
-    const uint16_t    dual_watch_count_after_2_10ms    =  3600 / 10;   // 3.6 sec
-    const uint16_t    dual_watch_count_noaa_10ms       =    70 / 10;   // 70ms
-#endif
+const uint16_t    dual_watch_count_after_tx_10ms   =  420;         // 4.2 sec after TX ends
+const uint16_t    dual_watch_count_after_rx_10ms   =  1000 / 10;   // 1 sec after RX ends ?
+const uint16_t    dual_watch_count_after_1_10ms    =  5000 / 10;   // 5 sec
+const uint16_t    dual_watch_count_after_2_10ms    =  420;         // 4.2 sec
+const uint16_t    dual_watch_count_noaa_10ms       =    70 / 10;   // 70ms
 
 #ifdef ENABLE_VOX
     const uint16_t dual_watch_count_after_vox_10ms  =   200 / 10;   // 200ms
@@ -88,18 +80,10 @@ const uint32_t    gDefaultAesKey[4]                = {0x4AA5CC60, 0x0312CC5F, 0x
 
 const uint8_t     gMicGain_dB2[5]                  = {3, 8, 16, 24, 31};
 
-#ifndef ENABLE_FEAT_F4HWN
-    bool              gSetting_350TX;
-#endif
-
 #ifdef ENABLE_DTMF_CALLING
 bool              gSetting_KILLED;
 #endif
 
-#ifndef ENABLE_FEAT_F4HWN
-bool              gSetting_200TX;
-bool              gSetting_500TX;
-#endif
 bool              gSetting_350EN;
 uint8_t           gSetting_F_LOCK;
 bool              gSetting_ScrambleEnable;
@@ -111,25 +95,26 @@ bool          gSetting_AM_fix = true;
 uint8_t       gSetting_set_off = 1;
 bool          gWakeUp = false;
 
-#ifdef ENABLE_FEAT_F4HWN
-    uint8_t       gSetting_set_pwr = 1;
-    bool          gSetting_set_ptt = 0;
-    uint8_t       gSetting_set_tot = 0;
-    uint8_t       gSetting_set_ctr = 11;
-    bool          gSetting_set_inv = false;
-    uint8_t       gSetting_set_eot = 0;
-    bool          gSetting_set_lck = false;
-    bool          gSetting_set_met = 0;
-    bool          gSetting_set_gui = 0;
-    bool          gSetting_set_tmr = 0;
-    bool          gSetting_set_ptt_session;
-    uint8_t       gDebug;
-    uint8_t       gDW = 0;
-    uint8_t       gCB = 0;
-    bool          gSaveRxMode = false;
+uint8_t       gSetting_set_pwr = 1;
+bool          gSetting_set_ptt = 0;
+uint8_t       gSetting_set_tot = 0;
+uint8_t       gSetting_set_ctr = 11;
+bool          gSetting_set_inv = false;
+uint8_t       gSetting_set_eot = 0;
+bool          gSetting_set_lck = false;
+bool          gSetting_set_met = 0;
+bool          gSetting_set_gui = 0;
+bool          gSetting_set_tmr = 0;
+bool          gSetting_set_ptt_session;
+uint8_t       gDebug;
+uint8_t       gDW = 0;
+uint8_t       gCB = 0;
+bool          gSaveRxMode = false;
+
+#ifdef ENABLE_AIRCOPY
     uint8_t       crc[15] = { 0 };
-    uint8_t       lErrorsDuringAirCopy = 0;
     uint8_t       gAircopyStep = 0;
+    uint8_t       lErrorsDuringAirCopy = 0;
 #endif
 
 #ifdef ENABLE_AUDIO_BAR
@@ -170,12 +155,10 @@ volatile bool     gNextTimeslice_500ms;
 volatile uint16_t gTxTimerCountdown_500ms;
 volatile bool     gTxTimeoutReached;
 
-#ifdef ENABLE_FEAT_F4HWN
-    volatile uint16_t gTxTimerCountdownAlert_500ms;
-    volatile bool     gTxTimeoutReachedAlert;
-    volatile uint16_t gTxTimeoutToneAlert = 800;
-    volatile uint16_t gRxTimerCountdown_500ms;
-#endif
+volatile uint16_t gTxTimerCountdownAlert_500ms;
+volatile bool     gTxTimeoutReachedAlert;
+volatile uint16_t gTxTimeoutToneAlert = 800;
+volatile uint16_t gRxTimerCountdown_500ms;
 
 volatile uint16_t gTailNoteEliminationCountdown_10ms;
 
@@ -279,14 +262,12 @@ volatile uint8_t  boot_counter_10ms;
 uint8_t           gIsLocked = 0xFF;
 
 
-#ifdef ENABLE_FEAT_F4HWN
-    bool          gK5startup = true;
-    bool          gBackLight = false;
-    uint8_t       gBacklightTimeOriginal;
-    uint8_t       gBacklightBrightnessOld;
-    uint8_t       gPttOnePushCounter = 0;
-    uint32_t      gBlinkCounter = 0;
-#endif
+bool          gK5startup = true;
+bool          gBackLight = false;
+uint8_t       gBacklightTimeOriginal;
+uint8_t       gBacklightBrightnessOld;
+uint8_t       gPttOnePushCounter = 0;
+uint32_t      gBlinkCounter = 0;
 
 inline void FUNCTION_NOP() { ; }
 

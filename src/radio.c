@@ -257,13 +257,7 @@ void RADIO_ConfigureChannel(const unsigned int VFO, const unsigned int configure
         pVfo->StepFrequency = gStepFrequencyTable[tmp];
 
         tmp = data[7];
-#ifndef ENABLE_FEAT_F4HWN
-        if (tmp > (ARRAY_SIZE(gSubMenu_SCRAMBLER) - 1))
-            tmp = 0;
-        pVfo->SCRAMBLING_TYPE = tmp;
-#else
         pVfo->SCRAMBLING_TYPE = 0;
-#endif
 
         pVfo->freq_config_RX.CodeType = (data[2] >> 0) & 0x0F;
         pVfo->freq_config_TX.CodeType = (data[2] >> 4) & 0x0F;
@@ -500,7 +494,6 @@ void RADIO_ConfigureSquelchAndOutputPower(VFO_Info_t *pInfo)
     uint8_t Op = 0; // Low eeprom calibration data 
     uint8_t currentPower = pInfo->OUTPUT_POWER;
 
-#ifdef ENABLE_FEAT_F4HWN
     if(currentPower == OUTPUT_POWER_USER)
     {
         if(gSetting_set_pwr == 5)
@@ -514,7 +507,6 @@ void RADIO_ConfigureSquelchAndOutputPower(VFO_Info_t *pInfo)
         currentPower = gSetting_set_pwr;
     }
     else
-#endif
     {
         if (currentPower == OUTPUT_POWER_MID)
         {
@@ -529,24 +521,9 @@ void RADIO_ConfigureSquelchAndOutputPower(VFO_Info_t *pInfo)
 
     EEPROM_ReadBuffer(0x1ED0 + (Band * 16) + (Op * 3), Txp, 3);
 
-#ifdef ENABLE_FEAT_F4HWN
     // make low and mid even lower
     // and use calibration values 
     // be aware with toxic fucking closed firmwares
-
-    /*
-    uint8_t shift[] = {0, 0, 0, 0, 0};
-
-    if(Band == 5) // UHF
-    {
-        shift[0] = 0;
-        shift[1] = 0;
-        shift[2] = 0;
-        shift[3] = 0;
-        shift[4] = 0;
-    }
-    */
-
     for(uint8_t p = 0; p < 3; p++)
     {
         switch (currentPower)
@@ -574,21 +551,6 @@ void RADIO_ConfigureSquelchAndOutputPower(VFO_Info_t *pInfo)
                 break;              
         }
     }
-#else
-    #ifdef ENABLE_REDUCE_LOW_MID_TX_POWER
-        // make low and mid even lower
-        if (pInfo->OUTPUT_POWER == OUTPUT_POWER_LOW) {
-            Txp[0] /= 5;
-            Txp[1] /= 5;
-            Txp[2] /= 5;
-        }
-        else if (pInfo->OUTPUT_POWER == OUTPUT_POWER_MID){
-            Txp[0] /= 3;
-            Txp[1] /= 3;
-            Txp[2] /= 3;
-        }
-    #endif
-#endif
 
     pInfo->TXP_CalculatedSetting = FREQUENCY_CalculateOutputPower(
         Txp[0],
@@ -756,14 +718,7 @@ void RADIO_SetupRegisters(bool switchToForeground)
                 break;
         }
 
-#ifndef ENABLE_FEAT_F4HWN
-        if (gRxVfo->SCRAMBLING_TYPE > 0 && gSetting_ScrambleEnable)
-            BK4819_EnableScramble(gRxVfo->SCRAMBLING_TYPE - 1);
-        else
-            BK4819_DisableScramble();
-#else
-            BK4819_DisableScramble();
-#endif
+        BK4819_DisableScramble();
     }
 
 #ifdef ENABLE_VOX
@@ -960,17 +915,10 @@ void RADIO_PrepareTX(void)
 
     RADIO_SelectCurrentVfo();
 
-#ifdef ENABLE_FEAT_F4HWN
         if(TX_freq_check(gCurrentVfo->pTX->Frequency) != 0 && gCurrentVfo->TX_LOCK == true
     #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
             && gAlarmState != ALARM_STATE_SITE_ALARM
     #endif
-#else
-        if(TX_freq_check(gCurrentVfo->pTX->Frequency) != 0
-    #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
-            && gAlarmState != ALARM_STATE_SITE_ALARM
-    #endif
-#endif
     ){
         // TX frequency not allowed
         State = VFO_STATE_TX_DISABLE;
@@ -1045,16 +993,12 @@ void RADIO_PrepareTX(void)
             gTxTimerCountdown_500ms = 120 * 15;  // 15 minutes
         */
 
-#ifdef ENABLE_FEAT_F4HWN 
         gTxTimerCountdownAlert_500ms = gTxTimerCountdown_500ms;
-#endif
     }
 
     gTxTimeoutReached    = false;
 
-#ifdef ENABLE_FEAT_F4HWN 
     gTxTimeoutReachedAlert = false;
-#endif
     
     gFlagEndTransmission = false;
     gRTTECountdown_10ms  = 0;

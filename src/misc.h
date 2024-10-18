@@ -140,17 +140,8 @@ extern const uint16_t        scan_pause_delay_in_7_10ms;
 
 extern const uint8_t         gMicGain_dB2[5];
 
-#ifndef ENABLE_FEAT_F4HWN
-extern bool                  gSetting_350TX;
-#endif
-
 #ifdef ENABLE_DTMF_CALLING
 extern bool                  gSetting_KILLED;
-#endif
-
-#ifndef ENABLE_FEAT_F4HWN
-extern bool                  gSetting_200TX;
-extern bool                  gSetting_500TX;
 #endif
 
 extern bool                  gSetting_350EN;
@@ -164,25 +155,26 @@ extern bool              gSetting_AM_fix;
 extern uint8_t           gSetting_set_off;
 extern bool              gWakeUp;
 
-#ifdef ENABLE_FEAT_F4HWN
-    extern uint8_t            gSetting_set_pwr;
-    extern bool               gSetting_set_ptt;
-    extern uint8_t            gSetting_set_tot;
-    extern uint8_t            gSetting_set_ctr;
-    extern bool               gSetting_set_inv;
-    extern uint8_t            gSetting_set_eot;
-    extern bool               gSetting_set_lck;
-    extern bool               gSetting_set_met;
-    extern bool               gSetting_set_gui;
-    extern bool               gSetting_set_tmr;
-    extern bool               gSetting_set_ptt_session;
-    extern uint8_t            gDebug;
-    extern uint8_t            gDW;
-    extern uint8_t            gCB;
-    extern bool               gSaveRxMode;
+extern uint8_t            gSetting_set_pwr;
+extern bool               gSetting_set_ptt;
+extern uint8_t            gSetting_set_tot;
+extern uint8_t            gSetting_set_ctr;
+extern bool               gSetting_set_inv;
+extern uint8_t            gSetting_set_eot;
+extern bool               gSetting_set_lck;
+extern bool               gSetting_set_met;
+extern bool               gSetting_set_gui;
+extern bool               gSetting_set_tmr;
+extern bool               gSetting_set_ptt_session;
+extern uint8_t            gDebug;
+extern uint8_t            gDW;
+extern uint8_t            gCB;
+extern bool               gSaveRxMode;
+
+#ifdef ENABLE_AIRCOPY
     extern uint8_t            crc[15];
-    extern uint8_t            lErrorsDuringAirCopy;
     extern uint8_t            gAircopyStep;
+    extern uint8_t            lErrorsDuringAirCopy;
 #endif
 
 #ifdef ENABLE_AUDIO_BAR
@@ -236,12 +228,10 @@ extern volatile bool         gNextTimeslice_500ms;
 extern volatile uint16_t     gTxTimerCountdown_500ms;
 extern volatile bool         gTxTimeoutReached;
 
-#ifdef ENABLE_FEAT_F4HWN
-    extern volatile uint16_t gTxTimerCountdownAlert_500ms;
-    extern volatile bool     gTxTimeoutReachedAlert;
-    extern volatile uint16_t gTxTimeoutToneAlert;
-    extern volatile uint16_t gRxTimerCountdown_500ms;
-#endif
+extern volatile uint16_t gTxTimerCountdownAlert_500ms;
+extern volatile bool     gTxTimeoutReachedAlert;
+extern volatile uint16_t gTxTimeoutToneAlert;
+extern volatile uint16_t gRxTimerCountdown_500ms;
 
 extern volatile uint16_t     gTailNoteEliminationCountdown_10ms;
 
@@ -350,14 +340,12 @@ extern volatile uint8_t      gVFOStateResumeCountdown_500ms;
 extern uint8_t               gIsLocked;
 extern volatile uint8_t      boot_counter_10ms;
 
-#ifdef ENABLE_FEAT_F4HWN
-    extern bool                  gK5startup;
-    extern bool                  gBackLight;
-    extern uint8_t               gBacklightTimeOriginal;
-    extern uint8_t               gBacklightBrightnessOld;
-    extern uint8_t               gPttOnePushCounter;
-    extern uint32_t              gBlinkCounter;
-#endif
+extern bool                  gK5startup;
+extern bool                  gBackLight;
+extern uint8_t               gBacklightTimeOriginal;
+extern uint8_t               gBacklightBrightnessOld;
+extern uint8_t               gPttOnePushCounter;
+extern uint32_t              gBlinkCounter;
 
 int32_t NUMBER_AddWithWraparound(int32_t Base, int32_t Add, int32_t LowerLimit, int32_t UpperLimit);
 unsigned long StrToUL(const char * str);

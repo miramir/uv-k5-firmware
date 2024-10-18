@@ -49,15 +49,11 @@ const t_menu_item MenuList[] =
     {"TxODir",      MENU_SFT_D         }, // was "SFT_D"
     {"TxOffs",      MENU_OFFSET        }, // was "OFFSET"
     {"W/N",         MENU_W_N           },
-#ifndef ENABLE_FEAT_F4HWN
     {"Scramb",      MENU_SCR           }, // was "SCR"
-#endif
     {"BusyCL",      MENU_BCL           }, // was "BCL"
     {"Compnd",      MENU_COMPAND       },
     {"Mode",        MENU_AM            }, // was "AM"
-#ifdef ENABLE_FEAT_F4HWN
     {"TXLock",      MENU_TX_LOCK       }, 
-#endif
     {"ScAdd1",      MENU_S_ADD1        },
     {"ScAdd2",      MENU_S_ADD2        },
     {"ScAdd3",      MENU_S_ADD3        },
@@ -114,20 +110,13 @@ const t_menu_item MenuList[] =
     {"D List",      MENU_D_LIST        },
 #endif
     {"D Live",      MENU_D_LIVE_DEC    }, // live DTMF decoder
-#ifndef ENABLE_FEAT_F4HWN
     {"AM Fix",      MENU_AM_FIX        },
-#endif
 #ifdef ENABLE_VOX
     {"VOX",         MENU_VOX           },
 #endif
-#ifdef ENABLE_FEAT_F4HWN
     {"SysInf",      MENU_VOL           }, // was "VOL"
-#else
-    {"BatVol",      MENU_VOL           }, // was "VOL"
-#endif
     {"RxMode",      MENU_TDR           },
     {"Sql",         MENU_SQL           },
-#ifdef ENABLE_FEAT_F4HWN
     {"SetPwr",      MENU_SET_PWR       },
     {"SetPtt",      MENU_SET_PTT       },
     {"SetTot",      MENU_SET_TOT       },
@@ -139,19 +128,14 @@ const t_menu_item MenuList[] =
     {"SetGui",      MENU_SET_GUI       },
     {"SetTmr",      MENU_SET_TMR       },
     {"SetOff",       MENU_SET_OFF      },
-#endif
     // hidden menu items from here on
     // enabled if pressing both the PTT and upper side button at power-on
     {"F Lock",      MENU_F_LOCK        },
-#ifndef ENABLE_FEAT_F4HWN
     {"Tx 200",      MENU_200TX         }, // was "200TX"
     {"Tx 350",      MENU_350TX         }, // was "350TX"
     {"Tx 500",      MENU_500TX         }, // was "500TX"
-#endif
     {"350 En",      MENU_350EN         }, // was "350EN"
-#ifndef ENABLE_FEAT_F4HWN
     {"ScraEn",      MENU_SCREN         }, // was "SCREN"
-#endif
 #ifdef ENABLE_F_CAL_MENU
     {"FrCali",      MENU_F_CALI        }, // reference xtal calibration
 #endif
@@ -228,7 +212,6 @@ const char* const gSubMenu_MDF[] =
     };
 #endif
 
-#ifdef ENABLE_DTMF_CALLING
 const char gSubMenu_D_RSP[][11] =
 {
     "DO\nNOTHING",
@@ -236,7 +219,6 @@ const char gSubMenu_D_RSP[][11] =
     "REPLY",
     "BOTH"
 };
-#endif
 
 const char* const gSubMenu_PTT_ID[] =
 {
@@ -249,12 +231,8 @@ const char* const gSubMenu_PTT_ID[] =
 
 const char gSubMenu_PONMSG[][8] =
 {
-#ifdef ENABLE_FEAT_F4HWN
     "ALL",
     "SOUND",
-#else
-    "FULL",
-#endif
     "MESSAGE",
     "VOLTAGE",
     "NONE"
@@ -307,7 +285,6 @@ const char gSubMenu_BATTYP[][9] =
     "3500mAh"
 };
 
-#ifndef ENABLE_FEAT_F4HWN
 const char gSubMenu_SCRAMBLER[][7] =
 {
     "OFF",
@@ -322,46 +299,43 @@ const char gSubMenu_SCRAMBLER[][7] =
     "3400Hz",
     "3500Hz"
 };
-#endif
 
-#ifdef ENABLE_FEAT_F4HWN
-    const char gSubMenu_SET_PWR[][6] =
-    {
-        "< 20m",
-        "125m",
-        "250m",
-        "500m",
-        "1",
-        "2",
-        "5"
-    };
+const char gSubMenu_SET_PWR[][6] =
+{
+    "< 20m",
+    "125m",
+    "250m",
+    "500m",
+    "1",
+    "2",
+    "5"
+};
 
-    const char gSubMenu_SET_PTT[][8] =
-    {
-        "CLASSIC",
-        "ONEPUSH"
-    };
+const char gSubMenu_SET_PTT[][8] =
+{
+    "CLASSIC",
+    "ONEPUSH"
+};
 
-    const char gSubMenu_SET_TOT[][7] =  // Use by SET_EOT too
-    {
-        "OFF",
-        "SOUND",
-        "VISUAL",
-        "ALL"
-    };
+const char gSubMenu_SET_TOT[][7] =  // Use by SET_EOT too
+{
+    "OFF",
+    "SOUND",
+    "VISUAL",
+    "ALL"
+};
 
-    const char gSubMenu_SET_LCK[][9] =
-    {
-        "KEYS",
-        "KEYS+PTT"
-    };
+const char gSubMenu_SET_LCK[][9] =
+{
+    "KEYS",
+    "KEYS+PTT"
+};
 
-    const char gSubMenu_SET_MET[][8] =
-    {
-        "TINY",
-        "CLASSIC"
-    };
-#endif
+const char gSubMenu_SET_MET[][8] =
+{
+    "TINY",
+    "CLASSIC"
+};
 
 const t_sidefunction gSubMenu_SIDEFUNCTIONS[] =
 {
@@ -391,12 +365,10 @@ const t_sidefunction gSubMenu_SIDEFUNCTIONS[] =
 #ifdef ENABLE_BLMIN_TMP_OFF
     {"BLMIN\nTMP OFF",  ACTION_OPT_BLMIN_TMP_OFF},      //BackLight Minimum Temporay OFF
 #endif
-#ifdef ENABLE_FEAT_F4HWN
     {"RX MODE",         ACTION_OPT_RXMODE},
     {"MAIN ONLY",       ACTION_OPT_MAINONLY},
     {"PTT",             ACTION_OPT_PTT},
     {"WIDE\nNARROW",    ACTION_OPT_WN},
-#endif
 };
 
 const uint8_t gSubMenu_SIDEFUNCTIONS_size = ARRAY_SIZE(gSubMenu_SIDEFUNCTIONS);
@@ -439,7 +411,6 @@ void UI_DisplayMenu(void)
 
     UI_DisplayClear();
 
-#ifdef ENABLE_FEAT_F4HWN
     UI_DrawLineBuffer(gFrameBuffer, 48, 0, 48, 55, 1); // Be ware, status zone = 8 lines, the rest = 56 ->total 64
     //UI_DrawLineDottedBuffer(gFrameBuffer, 0, 46, 50, 46, 1);
 
@@ -447,7 +418,6 @@ void UI_DisplayMenu(void)
     {
         gFrameBuffer[5][i] = 0x40;
     }
-#endif
 
 #ifndef ENABLE_CUSTOM_MENU_LAYOUT
         // original menu layout
@@ -508,10 +478,8 @@ void UI_DisplayMenu(void)
             }
 
             // draw the menu index number/count
-#ifndef ENABLE_FEAT_F4HWN
             sprintf(String, "%2u.%u", 1 + gMenuCursor, gMenuListCount);
             UI_PrintStringSmallNormal(String, 2, 0, 6);
-#endif
         }
         else if (menu_index >= 0 && menu_index < (int)gMenuListCount)
         {   // current menu item
@@ -520,10 +488,8 @@ void UI_DisplayMenu(void)
 //          UI_PrintStringSmallNormal(String, 0, 0, 0);
         }
 
-#ifdef ENABLE_FEAT_F4HWN
         sprintf(String, "%02u/%u", 1 + gMenuCursor, gMenuListCount);
         UI_PrintStringSmallNormal(String, 6, 0, 6);
-#endif
     }
 #endif
 
@@ -569,12 +535,10 @@ void UI_DisplayMenu(void)
             {
                 strcpy(String, gSubMenu_TXP[gSubMenuSelection]);
             }
-            #ifdef ENABLE_FEAT_F4HWN
             else
             {
                 sprintf(String, "%s\n%sW", gSubMenu_TXP[gSubMenuSelection], gSubMenu_SET_PWR[gSubMenuSelection - 1]);
             }
-            #endif
             break;
 
         case MENU_R_DCS:
@@ -623,7 +587,6 @@ void UI_DisplayMenu(void)
             strcpy(String, gSubMenu_W_N[gSubMenuSelection]);
             break;
 
-#ifndef ENABLE_FEAT_F4HWN
         case MENU_SCR:
             strcpy(String, gSubMenu_SCRAMBLER[gSubMenuSelection]);
             #if 1
@@ -633,7 +596,6 @@ void UI_DisplayMenu(void)
                     BK4819_DisableScramble();
             #endif
             break;
-#endif
 
         #ifdef ENABLE_VOX
             case MENU_VOX:
@@ -689,9 +651,7 @@ void UI_DisplayMenu(void)
             strcpy(String, gSubMenu_RX_TX[gSubMenuSelection]);
             break;
 
-        #ifndef ENABLE_FEAT_F4HWN
         case MENU_AM_FIX:
-        #endif
         case MENU_BCL:
         case MENU_S_ADD1:
         case MENU_S_ADD2:
@@ -702,18 +662,12 @@ void UI_DisplayMenu(void)
         case MENU_D_DCD:
 #endif
         case MENU_D_LIVE_DEC:
-#ifndef ENABLE_FEAT_F4HWN
         case MENU_350TX:
         case MENU_200TX:
         case MENU_500TX:
-#endif
         case MENU_350EN:
-#ifndef ENABLE_FEAT_F4HWN
         case MENU_SCREN:
-#endif
-#ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_TMR:
-#endif
             strcpy(String, gSubMenu_OFF_ON[gSubMenuSelection]);
             break;
 
@@ -897,11 +851,7 @@ void UI_DisplayMenu(void)
             break;
 
         case MENU_F_LOCK:
-#ifdef ENABLE_FEAT_F4HWN
             if(!gIsInSubMenu && gUnlockAllTxConfCnt>0 && gUnlockAllTxConfCnt<3)
-#else
-            if(!gIsInSubMenu && gUnlockAllTxConfCnt>0 && gUnlockAllTxConfCnt<10)
-#endif
                 strcpy(String, "READ\nMANUAL");
             else
                 strcpy(String, gSubMenu_F_LOCK[gSubMenuSelection]);
@@ -952,7 +902,6 @@ void UI_DisplayMenu(void)
             }
             break;
 
-#ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:
             sprintf(String, "%s\n%sW", gSubMenu_TXP[gSubMenuSelection + 1], gSubMenu_SET_PWR[gSubMenuSelection]);
             break;
@@ -996,9 +945,6 @@ void UI_DisplayMenu(void)
         case MENU_SET_GUI:
             strcpy(String, gSubMenu_SET_MET[gSubMenuSelection]); // Same as SET_MET
             break;
-
-#endif
-
     }
 
     if (!already_printed)

@@ -207,9 +207,6 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             *pMax = ARRAY_SIZE(gSubMenu_RX_TX) - 1;
             break;
 
-        #ifndef ENABLE_FEAT_F4HWN
-        case MENU_AM_FIX:
-        #endif
         #ifdef ENABLE_AUDIO_BAR
             case MENU_MIC_BAR:
         #endif
@@ -223,18 +220,8 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
         case MENU_D_DCD:
 #endif
         case MENU_D_LIVE_DEC:
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_350TX:
-        case MENU_200TX:
-        case MENU_500TX:
-#endif
         case MENU_350EN:
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_SCREN:
-#endif
-#ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_TMR:
-#endif
             //*pMin = 0;
             *pMax = ARRAY_SIZE(gSubMenu_OFF_ON) - 1;
             break;
@@ -242,13 +229,6 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             //*pMin = 0;
             *pMax = ARRAY_SIZE(gModulationStr) - 1;
             break;
-
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_SCR:
-            //*pMin = 0;
-            *pMax = ARRAY_SIZE(gSubMenu_SCRAMBLER) - 1;
-            break;
-#endif
 
         case MENU_AUTOLK:
             *pMax = 40;
@@ -361,7 +341,6 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             *pMax = 120;
             break;
 
-#ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:
             *pMax = ARRAY_SIZE(gSubMenu_SET_PWR) - 1;
             break;
@@ -392,8 +371,6 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             //*pMin = 0;
             *pMax = ARRAY_SIZE(gSubMenu_SET_MET) - 1;
             break;
-#endif
-
         default:
             return -1;
     }
@@ -496,19 +473,6 @@ void MENU_AcceptSetting(void)
             gRequestSaveChannel       = 1;
             return;
 
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_SCR:
-            gTxVfo->SCRAMBLING_TYPE = gSubMenuSelection;
-            #if 0
-                if (gSubMenuSelection > 0 && gSetting_ScrambleEnable)
-                    BK4819_EnableScramble(gSubMenuSelection - 1);
-                else
-                    BK4819_DisableScramble();
-            #endif
-            gRequestSaveChannel     = 1;
-            return;
-#endif
-
         case MENU_BCL:
             gTxVfo->BUSY_CHANNEL_LOCK = gSubMenuSelection;
             gRequestSaveChannel       = 1;
@@ -553,9 +517,7 @@ void MENU_AcceptSetting(void)
 
         case MENU_ABR:
             gEeprom.BACKLIGHT_TIME = gSubMenuSelection;
-            #ifdef ENABLE_FEAT_F4HWN
-                gBackLight = false;
-            #endif
+            gBackLight = false;
             break;
 
         case MENU_ABR_MIN:
@@ -576,11 +538,9 @@ void MENU_AcceptSetting(void)
             gEeprom.DUAL_WATCH = (gEeprom.TX_VFO + 1) * (gSubMenuSelection & 1);
             gEeprom.CROSS_BAND_RX_TX = (gEeprom.TX_VFO + 1) * ((gSubMenuSelection & 2) > 0);
 
-            #ifdef ENABLE_FEAT_F4HWN
-                gDW = gEeprom.DUAL_WATCH;
-                gCB = gEeprom.CROSS_BAND_RX_TX;
-                gSaveRxMode = true;
-            #endif
+            gDW = gEeprom.DUAL_WATCH;
+            gCB = gEeprom.CROSS_BAND_RX_TX;
+            gSaveRxMode = true;
 
             gFlagReconfigureVfos = true;
             gUpdateStatus        = true;
@@ -736,14 +696,6 @@ void MENU_AcceptSetting(void)
             gRequestSaveChannel = 1;
             return;
 
-        #ifndef ENABLE_FEAT_F4HWN
-        case MENU_AM_FIX:
-            gSetting_AM_fix = gSubMenuSelection;
-            gVfoConfigureMode = VFO_CONFIGURE_RELOAD;
-            gFlagResetVfos    = true;
-            break;
-        #endif
-
         case MENU_DEL_CH:
             SETTINGS_UpdateChannel(gSubMenuSelection, NULL, false, false, true);
             gVfoConfigureMode = VFO_CONFIGURE_RELOAD;
@@ -754,20 +706,10 @@ void MENU_AcceptSetting(void)
             SETTINGS_FactoryReset(gSubMenuSelection);
             return;
 
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_350TX:
-            gSetting_350TX = gSubMenuSelection;
-            break;
-#endif
-
         case MENU_F_LOCK: {
             if(gSubMenuSelection == F_LOCK_NONE) { // select 10 times to enable
                 gUnlockAllTxConfCnt++;
-#ifdef ENABLE_FEAT_F4HWN
                 if(gUnlockAllTxConfCnt < 3)
-#else
-                if(gUnlockAllTxConfCnt < 10)
-#endif
                     return;
             }
             else
@@ -776,26 +718,11 @@ void MENU_AcceptSetting(void)
             gSetting_F_LOCK = gSubMenuSelection;
             break;
         }
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_200TX:
-            gSetting_200TX = gSubMenuSelection;
-            break;
-
-        case MENU_500TX:
-            gSetting_500TX = gSubMenuSelection;
-            break;
-#endif
         case MENU_350EN:
             gSetting_350EN       = gSubMenuSelection;
             gVfoConfigureMode    = VFO_CONFIGURE_RELOAD;
             gFlagResetVfos       = true;
             break;
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_SCREN:
-            gSetting_ScrambleEnable = gSubMenuSelection;
-            gFlagReconfigureVfos    = true;
-            break;
-#endif
 
         #ifdef ENABLE_F_CAL_MENU
             case MENU_F_CALI:
@@ -839,7 +766,6 @@ void MENU_AcceptSetting(void)
             gSetting_set_off = gSubMenuSelection;
             break;
 
-#ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:
             gSetting_set_pwr = gSubMenuSelection;
             gRequestSaveChannel = 1;
@@ -876,7 +802,6 @@ void MENU_AcceptSetting(void)
             gTxVfo->TX_LOCK = gSubMenuSelection;
             gRequestSaveChannel       = 1;
             return;
-#endif
     }
 
     gRequestSaveSettings = true;
@@ -980,12 +905,6 @@ void MENU_ShowCurrentSetting(void)
             gSubMenuSelection = gTxVfo->CHANNEL_BANDWIDTH;
             break;
 
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_SCR:
-            gSubMenuSelection = gTxVfo->SCRAMBLING_TYPE;
-            break;
-#endif
-
         case MENU_BCL:
             gSubMenuSelection = gTxVfo->BUSY_CHANNEL_LOCK;
             break;
@@ -1013,7 +932,6 @@ void MENU_ShowCurrentSetting(void)
 #endif
 
         case MENU_ABR:
-            #ifdef ENABLE_FEAT_F4HWN
                 if(gBackLight)
                 {
                     gSubMenuSelection = gBacklightTimeOriginal;
@@ -1022,9 +940,6 @@ void MENU_ShowCurrentSetting(void)
                 {
                     gSubMenuSelection = gEeprom.BACKLIGHT_TIME;
                 }
-            #else
-                gSubMenuSelection = gEeprom.BACKLIGHT_TIME;
-            #endif
             break;
 
         case MENU_ABR_MIN:
@@ -1168,12 +1083,6 @@ void MENU_ShowCurrentSetting(void)
         case MENU_AM:
             gSubMenuSelection = gTxVfo->Modulation;
             break;
-
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_AM_FIX:
-            gSubMenuSelection = gSetting_AM_fix;
-            break;
-#endif
         case MENU_DEL_CH:
             #if 0
                 gSubMenuSelection = RADIO_FindNextChannel(gEeprom.MrChannel[0], 1, false, 1);
@@ -1182,35 +1091,12 @@ void MENU_ShowCurrentSetting(void)
             #endif
             break;
 
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_350TX:
-            gSubMenuSelection = gSetting_350TX;
-            break;
-#endif
-
         case MENU_F_LOCK:
             gSubMenuSelection = gSetting_F_LOCK;
             break;
-
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_200TX:
-            gSubMenuSelection = gSetting_200TX;
-            break;
-
-        case MENU_500TX:
-            gSubMenuSelection = gSetting_500TX;
-            break;
-
-#endif
         case MENU_350EN:
             gSubMenuSelection = gSetting_350EN;
             break;
-
-#ifndef ENABLE_FEAT_F4HWN
-        case MENU_SCREN:
-            gSubMenuSelection = gSetting_ScrambleEnable;
-            break;
-#endif
 
         #ifdef ENABLE_F_CAL_MENU
             case MENU_F_CALI:
@@ -1253,8 +1139,6 @@ void MENU_ShowCurrentSetting(void)
         case MENU_SET_OFF:
             gSubMenuSelection = gSetting_set_off;
             break;
-
-#ifdef ENABLE_FEAT_F4HWN
         case MENU_SET_PWR:
             gSubMenuSelection = gSetting_set_pwr;
             break;
@@ -1288,8 +1172,6 @@ void MENU_ShowCurrentSetting(void)
         case MENU_TX_LOCK:
             gSubMenuSelection = gTxVfo->TX_LOCK;
             break;
-#endif
-
         default:
             return;
     }

@@ -82,10 +82,8 @@ void Main(void)
 
     SETTINGS_InitEEPROM();
 
-    #ifdef ENABLE_FEAT_F4HWN
-        gDW = gEeprom.DUAL_WATCH;
-        gCB = gEeprom.CROSS_BAND_RX_TX;
-    #endif
+    gDW = gEeprom.DUAL_WATCH;
+    gCB = gEeprom.CROSS_BAND_RX_TX;
 
     SETTINGS_WriteBuildOptions();
     SETTINGS_LoadCalibration();
@@ -110,7 +108,6 @@ void Main(void)
     {
 
         gF_LOCK = true;            // flag to say include the hidden menu items
-        #ifdef ENABLE_FEAT_F4HWN
             gEeprom.KEY_LOCK = 0;
             SETTINGS_SaveSettings();
             #ifndef ENABLE_VOX
@@ -119,7 +116,6 @@ void Main(void)
                 gMenuCursor = 67; // move to hidden section, fix me if change... !!!
             #endif
             gSubMenuSelection = gSetting_F_LOCK;
-        #endif
     }
 
     // count the number of menu items

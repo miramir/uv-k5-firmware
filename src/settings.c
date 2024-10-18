@@ -114,11 +114,7 @@ void SETTINGS_InitEEPROM(void)
     gEeprom.KEY_2_LONG_PRESS_ACTION      = (Data[4] < ACTION_OPT_LEN) ? Data[4] : ACTION_OPT_NONE;
     gEeprom.SCAN_RESUME_MODE             = (Data[5] < 105)            ? Data[5] : 14;
     gEeprom.AUTO_KEYPAD_LOCK             = (Data[6] < 41)             ? Data[6] : 0;
-#ifdef ENABLE_FEAT_F4HWN
     gEeprom.POWER_ON_DISPLAY_MODE        = (Data[7] < 6)              ? Data[7] : POWER_ON_DISPLAY_MODE_VOLTAGE;
-#else
-    gEeprom.POWER_ON_DISPLAY_MODE        = (Data[7] < 4)              ? Data[7] : POWER_ON_DISPLAY_MODE_VOLTAGE;
-#endif
     // 0EA0..0EA7
     EEPROM_ReadBuffer(0x0EA0, Data, 8);
     #ifdef ENABLE_RSSI_BAR
@@ -210,22 +206,6 @@ void SETTINGS_InitEEPROM(void)
     EEPROM_ReadBuffer(0x0F18, Data, 8);
     gEeprom.SCAN_LIST_DEFAULT = (Data[0] < 6) ? Data[0] : 0;  // we now have 'all' channel scan option
 
-    // Fake data
-    /*
-    gEeprom.SCAN_LIST_ENABLED[0] = 0;
-    gEeprom.SCAN_LIST_ENABLED[1] = 0;
-    gEeprom.SCAN_LIST_ENABLED[2] = 0;
-
-    gEeprom.SCANLIST_PRIORITY_CH1[0] =  0;
-    gEeprom.SCANLIST_PRIORITY_CH2[0] =  2;
-
-    gEeprom.SCANLIST_PRIORITY_CH1[1] =  14;
-    gEeprom.SCANLIST_PRIORITY_CH2[1] =  15;
-
-    gEeprom.SCANLIST_PRIORITY_CH1[2] =  40;
-    gEeprom.SCANLIST_PRIORITY_CH2[2] =  41;
-    */
-
     // Fix me probably after Chirp update...
     for (unsigned int i = 0; i < 3; i++)
     {
@@ -242,31 +222,17 @@ void SETTINGS_InitEEPROM(void)
     // 0F40..0F47
     EEPROM_ReadBuffer(0x0F40, Data, 8);
     gSetting_F_LOCK            = (Data[0] < F_LOCK_LEN) ? Data[0] : F_LOCK_DEF;
-#ifndef ENABLE_FEAT_F4HWN
-    gSetting_350TX             = (Data[1] < 2) ? Data[1] : false;  // was true
-#endif
 #ifdef ENABLE_DTMF_CALLING
     gSetting_KILLED            = (Data[2] < 2) ? Data[2] : false;
 #endif
-#ifndef ENABLE_FEAT_F4HWN
-    gSetting_200TX             = (Data[3] < 2) ? Data[3] : false;
-    gSetting_500TX             = (Data[4] < 2) ? Data[4] : false;
-#endif
     gSetting_350EN             = (Data[5] < 2) ? Data[5] : true;
-#ifdef ENABLE_FEAT_F4HWN
     gSetting_ScrambleEnable    = false;
-#else
-    gSetting_ScrambleEnable    = (Data[6] < 2) ? Data[6] : true;
-#endif
 
     //gSetting_TX_EN             = (Data[7] & (1u << 0)) ? true : false;
     gSetting_live_DTMF_decoder = !!(Data[7] & (1u << 1));
     gSetting_battery_text      = (((Data[7] >> 2) & 3u) <= 2) ? (Data[7] >> 2) & 3 : 2;
     #ifdef ENABLE_AUDIO_BAR
         gSetting_mic_bar       = !!(Data[7] & (1u << 4));
-    #endif
-    #ifndef ENABLE_FEAT_F4HWN
-    gSetting_AM_fix        = !!(Data[7] & (1u << 5));
     #endif
     gSetting_backlight_on_tx_rx = (Data[7] >> 6) & 3u;
 
@@ -299,48 +265,34 @@ void SETTINGS_InitEEPROM(void)
         }
     }
 
-    #ifdef ENABLE_FEAT_F4HWN
-        // 1FF0..0x1FF7
-        EEPROM_ReadBuffer(0x1FF0, Data, 8);
-        gSetting_set_pwr = (((Data[7] & 0xF0) >> 4) < 7) ? ((Data[7] & 0xF0) >> 4) : 0;
-        gSetting_set_ptt = (((Data[7] & 0x0F)) < 2) ? ((Data[7] & 0x0F)) : 0;
+    // 1FF0..0x1FF7
+    EEPROM_ReadBuffer(0x1FF0, Data, 8);
+    gSetting_set_pwr = (((Data[7] & 0xF0) >> 4) < 7) ? ((Data[7] & 0xF0) >> 4) : 0;
+    gSetting_set_ptt = (((Data[7] & 0x0F)) < 2) ? ((Data[7] & 0x0F)) : 0;
 
-        gSetting_set_tot = (((Data[6] & 0xF0) >> 4) < 4) ? ((Data[6] & 0xF0) >> 4) : 0;
-        gSetting_set_eot = (((Data[6] & 0x0F)) < 4) ? ((Data[6] & 0x0F)) : 0;
+    gSetting_set_tot = (((Data[6] & 0xF0) >> 4) < 4) ? ((Data[6] & 0xF0) >> 4) : 0;
+    gSetting_set_eot = (((Data[6] & 0x0F)) < 4) ? ((Data[6] & 0x0F)) : 0;
 
-        /*
-        int tmp = ((Data[5] & 0xF0) >> 4);
+    int tmp = (Data[5] & 0xF0) >> 4;
 
-        gSetting_set_inv = (((tmp >> 0) & 0x01) < 2) ? ((tmp >> 0) & 0x01): 0;
-        gSetting_set_lck = (((tmp >> 1) & 0x01) < 2) ? ((tmp >> 1) & 0x01): 0;
-        gSetting_set_met = (((tmp >> 2) & 0x01) < 2) ? ((tmp >> 2) & 0x01): 0;
-        gSetting_set_gui = (((tmp >> 3) & 0x01) < 2) ? ((tmp >> 3) & 0x01): 0;
-        gSetting_set_ctr = (((Data[5] & 0x0F)) > 00 && ((Data[5] & 0x0F)) < 16) ? ((Data[5] & 0x0F)) : 10;
+    gSetting_set_inv = (tmp >> 0) & 0x01;
+    gSetting_set_lck = (tmp >> 1) & 0x01;
+    gSetting_set_met = (tmp >> 2) & 0x01;
+    gSetting_set_gui = (tmp >> 3) & 0x01;
 
-        gSetting_set_tmr = ((Data[4] & 1) < 2) ? (Data[4] & 1): 0;
-        */
+    int ctr_value = Data[5] & 0x0F;
+    gSetting_set_ctr = (ctr_value > 0 && ctr_value < 16) ? ctr_value : 10;
 
-        int tmp = (Data[5] & 0xF0) >> 4;
+    gSetting_set_tmr = Data[4] & 0x01;
+    gSetting_set_off = (Data[4] >> 1) > 120 ? 60 : (Data[4] >> 1); 
 
-        gSetting_set_inv = (tmp >> 0) & 0x01;
-        gSetting_set_lck = (tmp >> 1) & 0x01;
-        gSetting_set_met = (tmp >> 2) & 0x01;
-        gSetting_set_gui = (tmp >> 3) & 0x01;
+    // Warning
+    // Be aware, Data[3] is use by Spectrum
+    // Warning
 
-        int ctr_value = Data[5] & 0x0F;
-        gSetting_set_ctr = (ctr_value > 0 && ctr_value < 16) ? ctr_value : 10;
-
-        gSetting_set_tmr = Data[4] & 0x01;
-        gSetting_set_off = (Data[4] >> 1) > 120 ? 60 : (Data[4] >> 1); 
-
-        // Warning
-        // Be aware, Data[3] is use by Spectrum
-        // Warning
-
-        // And set special session settings for actions
-        gSetting_set_ptt_session = gSetting_set_ptt;
-        gEeprom.KEY_LOCK_PTT = gSetting_set_lck;
-    #endif
+    // And set special session settings for actions
+    gSetting_set_ptt_session = gSetting_set_ptt;
+    gEeprom.KEY_LOCK_PTT = gSetting_set_lck;
 }
 
 void SETTINGS_LoadCalibration(void)
@@ -481,9 +433,7 @@ void SETTINGS_FactoryReset(bool bIsAll)
             SETTINGS_SaveChannel(MR_CHANNEL_FIRST + i, 0, gRxVfo, 2);
         }
 
-        #ifdef ENABLE_FEAT_F4HWN
-            EEPROM_WriteBuffer(0x1FF0, Template);
-        #endif
+        EEPROM_WriteBuffer(0x1FF0, Template);
     }
 }
 
@@ -553,23 +503,19 @@ void SETTINGS_SaveSettings(void)
     State[3] = gEeprom.BATTERY_SAVE;
     State[4] = gEeprom.DUAL_WATCH;
 
-    #ifdef ENABLE_FEAT_F4HWN
-        if(!gSaveRxMode)
-        {
-            State[2] = gCB;
-            State[4] = gDW;
-        }
-        if(gBackLight)
-        {
-            State[5] = gBacklightTimeOriginal;
-        }
-        else
-        {
-            State[5] = gEeprom.BACKLIGHT_TIME;
-        }
-    #else
+    if(!gSaveRxMode)
+    {
+        State[2] = gCB;
+        State[4] = gDW;
+    }
+    if(gBackLight)
+    {
+        State[5] = gBacklightTimeOriginal;
+    }
+    else
+    {
         State[5] = gEeprom.BACKLIGHT_TIME;
-    #endif
+    }
 
     State[6] = gEeprom.TAIL_TONE_ELIMINATION;
     State[7] = gEeprom.VFO_OPEN;
@@ -647,22 +593,11 @@ void SETTINGS_SaveSettings(void)
 
     memset(State, 0xFF, sizeof(State));
     State[0]  = gSetting_F_LOCK;
-#ifndef ENABLE_FEAT_F4HWN
-    State[1]  = gSetting_350TX;
-#endif
 #ifdef ENABLE_DTMF_CALLING
     State[2]  = gSetting_KILLED;
 #endif
-#ifndef ENABLE_FEAT_F4HWN
-    State[3]  = gSetting_200TX;
-    State[4]  = gSetting_500TX;
-#endif
     State[5]  = gSetting_350EN;
-#ifdef ENABLE_FEAT_F4HWN
     State[6]  = false;
-#else
-    State[6]  = gSetting_ScrambleEnable;
-#endif
 
     //if (!gSetting_TX_EN)             State[7] &= ~(1u << 0);
     if (!gSetting_live_DTMF_decoder) State[7] &= ~(1u << 1);
@@ -670,37 +605,11 @@ void SETTINGS_SaveSettings(void)
     #ifdef ENABLE_AUDIO_BAR
         if (!gSetting_mic_bar)           State[7] &= ~(1u << 4);
     #endif
-    #ifndef ENABLE_FEAT_F4HWN
-    if (!gSetting_AM_fix)            State[7] &= ~(1u << 5);
-    #endif
     State[7] = (State[7] & ~(3u << 6)) | ((gSetting_backlight_on_tx_rx & 3u) << 6);
 
     EEPROM_WriteBuffer(0x0F40, State);
 
-#ifdef ENABLE_FEAT_F4HWN
     EEPROM_ReadBuffer(0x1FF0, State, sizeof(State));
-
-    //memset(State, 0xFF, sizeof(State));
-
-    /*
-    tmp = 0;
-
-    if(gSetting_set_tmr == 1)
-        tmp = tmp | (1 << 0);
-
-    State[4] = tmp;
-
-    tmp = 0;
-
-    if(gSetting_set_inv == 1)
-        tmp = tmp | (1 << 0);
-    if (gSetting_set_lck == 1)
-        tmp = tmp | (1 << 1);
-    if (gSetting_set_met == 1)
-        tmp = tmp | (1 << 2);
-    if (gSetting_set_gui == 1)
-        tmp = tmp | (1 << 3);
-    */
 
     State[4] = (gSetting_set_off << 1) | (gSetting_set_tmr & 0x01);
 
@@ -716,7 +625,6 @@ void SETTINGS_SaveSettings(void)
     gEeprom.KEY_LOCK_PTT = gSetting_set_lck;
 
     EEPROM_WriteBuffer(0x1FF0, State);
-#endif
 }
 
 void SETTINGS_SaveChannel(uint8_t Channel, uint8_t VFO, const VFO_Info_t *pVFO, uint8_t Mode)
@@ -754,11 +662,7 @@ void SETTINGS_SaveChannel(uint8_t Channel, uint8_t VFO, const VFO_Info_t *pVFO, 
 #endif
         ;
         State._8[6] =  pVFO->STEP_SETTING;
-#ifdef ENABLE_FEAT_F4HWN
         State._8[7] =  0;
-#else
-        State._8[7] =  pVFO->SCRAMBLING_TYPE;
-#endif
         EEPROM_WriteBuffer(OffsetVFO + 8, State._8);
 
         SETTINGS_UpdateChannel(Channel, pVFO, true, true, true);
@@ -817,14 +721,10 @@ void SETTINGS_UpdateChannel(uint8_t channel, const VFO_Info_t *pVFO, bool keep, 
 
     state[channel & 7u] = att.__val;
 
-#ifdef ENABLE_FEAT_F4HWN
     if(save)
     {
         EEPROM_WriteBuffer(offset, state);
     }
-#else
-    EEPROM_WriteBuffer(offset, state);
-#endif
 
     gMR_ChannelAttributes[channel] = att;
 
@@ -840,9 +740,7 @@ void SETTINGS_WriteBuildOptions(void)
 {
     uint8_t State[8];
 
-#ifdef ENABLE_FEAT_F4HWN
     EEPROM_ReadBuffer(0x1FF0, State, sizeof(State));
-#endif
     
 State[0] = 0
 #ifdef ENABLE_FMRADIO

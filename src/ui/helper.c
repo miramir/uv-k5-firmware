@@ -198,61 +198,37 @@ static void sort(int16_t *a, int16_t *b)
     }
 }
 
-#ifdef ENABLE_FEAT_F4HWN
-    /*
-    void UI_DrawLineDottedBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black)
-    {
-        if(x2==x1) {
-            sort(&y1, &y2);
-            for(int16_t i = y1; i <= y2; i+=2) {
-                UI_DrawPixelBuffer(buffer, x1, i, black);
-            }
-        } else {
-            const int multipl = 1000;
-            int a = (y2-y1)*multipl / (x2-x1);
-            int b = y1 - a * x1 / multipl;
+void PutPixel(uint8_t x, uint8_t y, bool fill) {
+    UI_DrawPixelBuffer(gFrameBuffer, x, y, fill);
+}
 
-            sort(&x1, &x2);
-            for(int i = x1; i<= x2; i+=2)
-            {
-                UI_DrawPixelBuffer(buffer, i, i*a/multipl +b, black);
-            }
+void PutPixelStatus(uint8_t x, uint8_t y, bool fill) {
+    UI_DrawPixelBuffer(&gStatusLine, x, y, fill);
+}
+
+void GUI_DisplaySmallest(const char *pString, uint8_t x, uint8_t y,
+                                bool statusbar, bool fill) {
+    uint8_t c;
+    uint8_t pixels;
+    const uint8_t *p = (const uint8_t *)pString;
+
+    while ((c = *p++) && c != '\0') {
+    c -= 0x20;
+    for (int i = 0; i < 3; ++i) {
+        pixels = gFont3x5[c][i];
+        for (int j = 0; j < 6; ++j) {
+        if (pixels & 1) {
+            if (statusbar)
+            PutPixelStatus(x + i, y + j, fill);
+            else
+            PutPixel(x + i, y + j, fill);
+        }
+        pixels >>= 1;
         }
     }
-    */
-
-    void PutPixel(uint8_t x, uint8_t y, bool fill) {
-      UI_DrawPixelBuffer(gFrameBuffer, x, y, fill);
+    x += 4;
     }
-
-    void PutPixelStatus(uint8_t x, uint8_t y, bool fill) {
-      UI_DrawPixelBuffer(&gStatusLine, x, y, fill);
-    }
-
-    void GUI_DisplaySmallest(const char *pString, uint8_t x, uint8_t y,
-                                    bool statusbar, bool fill) {
-      uint8_t c;
-      uint8_t pixels;
-      const uint8_t *p = (const uint8_t *)pString;
-
-      while ((c = *p++) && c != '\0') {
-        c -= 0x20;
-        for (int i = 0; i < 3; ++i) {
-          pixels = gFont3x5[c][i];
-          for (int j = 0; j < 6; ++j) {
-            if (pixels & 1) {
-              if (statusbar)
-                PutPixelStatus(x + i, y + j, fill);
-              else
-                PutPixel(x + i, y + j, fill);
-            }
-            pixels >>= 1;
-          }
-        }
-        x += 4;
-      }
-    }
-#endif
+}
     
 void UI_DrawLineBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black)
 {

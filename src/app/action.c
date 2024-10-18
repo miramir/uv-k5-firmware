@@ -100,15 +100,11 @@ void (*action_opt_table[])(void) = {
     [ACTION_OPT_BLMIN_TMP_OFF] = &FUNCTION_NOP,
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN
     [ACTION_OPT_RXMODE] = &ACTION_RxMode,
     [ACTION_OPT_MAINONLY] = &ACTION_MainOnly,
     [ACTION_OPT_PTT] = &ACTION_Ptt,
     [ACTION_OPT_WN] = &ACTION_Wn,
     [ACTION_OPT_BACKLIGHT] = &ACTION_BackLight,
-#else
-//    [ACTION_OPT_RXMODE] = &FUNCTION_NOP,
-#endif
 };
 
 static_assert(ARRAY_SIZE(action_opt_table) == ACTION_OPT_LEN);
@@ -402,7 +398,6 @@ void ACTION_BlminTmpOff(void)
 }
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN
 void ACTION_Update(void)
 {
     gSaveRxMode          = false;
@@ -504,4 +499,3 @@ void ACTION_BackLightOnDemand(void)
     
     BACKLIGHT_TurnOn();
 }
-#endif

@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef UI_UI_H
-#define UI_UI_H
+#ifndef HELPER_H
+#define HELPER_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -32,12 +32,10 @@ void UI_DisplayFrequency(const char *string, uint8_t X, uint8_t Y, bool center);
 void UI_DisplayPopup(const char *string);
 
 void UI_DrawPixelBuffer(uint8_t (*buffer)[128], uint8_t x, uint8_t y, bool black);
-#ifdef ENABLE_FEAT_F4HWN
-    //void UI_DrawLineDottedBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black);
-    void PutPixel(uint8_t x, uint8_t y, bool fill);
-    void PutPixelStatus(uint8_t x, uint8_t y, bool fill);
-    void GUI_DisplaySmallest(const char *pString, uint8_t x, uint8_t y, bool statusbar, bool fill);
-#endif
+//void UI_DrawLineDottedBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black);
+void PutPixel(uint8_t x, uint8_t y, bool fill);
+void PutPixelStatus(uint8_t x, uint8_t y, bool fill);
+void GUI_DisplaySmallest(const char *pString, uint8_t x, uint8_t y, bool statusbar, bool fill);
 void UI_DrawLineBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black);
 void UI_DrawRectangleBuffer(uint8_t (*buffer)[128], int16_t x1, int16_t y1, int16_t x2, int16_t y2, bool black);
 

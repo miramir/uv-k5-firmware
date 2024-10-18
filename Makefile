@@ -34,8 +34,6 @@ ENABLE_REDUCE_LOW_MID_TX_POWER	?= 0
 ENABLE_BYP_RAW_DEMODULATORS   	?= 0
 ENABLE_BLMIN_TMP_OFF          	?= 0
 ENABLE_SCAN_RANGES            	?= 1
-ENABLE_FEAT_F4HWN             	?= 1
-ENABLE_FEAT_F4HWN_SPECTRUM    	?= 1
 
 # ---- DEBUGGING ----
 ENABLE_AM_FIX_SHOW_DATA       	?= 0
@@ -195,13 +193,8 @@ endif
 ifeq ($(ENABLE_CUSTOM_MENU_LAYOUT),1)
 	CFLAGS  += -DENABLE_CUSTOM_MENU_LAYOUT
 endif
-ifeq ($(ENABLE_FEAT_F4HWN),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN
-	CFLAGS  += -DALERT_TOT=10
-endif
-ifeq ($(ENABLE_FEAT_F4HWN_SPECTRUM),1)
-	CFLAGS  += -DENABLE_FEAT_F4HWN_SPECTRUM
-endif
+
+CFLAGS  += -DALERT_TOT=10
 
 LDFLAGS = -z noexecstack -mcpu=cortex-m0 -nostartfiles -Wl,-T,firmware.ld -Wl,--gc-sections --specs=nano.specs
 

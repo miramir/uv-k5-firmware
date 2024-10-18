@@ -26,12 +26,8 @@
 #include <driver/backlight.h>
 
 enum POWER_OnDisplayMode_t {
-#ifdef ENABLE_FEAT_F4HWN
     POWER_ON_DISPLAY_MODE_ALL,
     POWER_ON_DISPLAY_MODE_SOUND,
-#else
-    POWER_ON_DISPLAY_MODE_FULL_SCREEN = 0,
-#endif
     POWER_ON_DISPLAY_MODE_MESSAGE,
     POWER_ON_DISPLAY_MODE_VOLTAGE,
     POWER_ON_DISPLAY_MODE_NONE
@@ -102,13 +98,11 @@ enum ACTION_OPT_t {
     ACTION_OPT_VFO_MR,
     ACTION_OPT_SWITCH_DEMODUL,
     ACTION_OPT_BLMIN_TMP_OFF, //BackLight Minimum Temporay OFF
-#ifdef ENABLE_FEAT_F4HWN
     ACTION_OPT_RXMODE,
     ACTION_OPT_MAINONLY,
     ACTION_OPT_PTT,
     ACTION_OPT_WN,
     ACTION_OPT_BACKLIGHT,
-#endif
     ACTION_OPT_LEN
 };
 
@@ -161,9 +155,7 @@ typedef struct {
     uint8_t               SQUELCH_LEVEL;
     uint8_t               TX_TIMEOUT_TIMER;
     bool                  KEY_LOCK;
-#ifdef ENABLE_FEAT_F4HWN
     bool                  KEY_LOCK_PTT;
-#endif
     bool                  VOX_SWITCH;
     uint8_t               VOX_LEVEL;
     bool                  BEEP_CONTROL;

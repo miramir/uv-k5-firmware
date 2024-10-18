@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef APP_ACTION_H
-#define APP_ACTION_H
+#ifndef ACTION_H
+#define ACTION_H
 
 #include "driver/keyboard.h"
 
@@ -35,14 +35,12 @@ void ACTION_SwitchDemodul(void);
     void ACTION_BlminTmpOff(void);
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN
-    void ACTION_RxMode(void);
-    void ACTION_MainOnly(void);
-    void ACTION_Ptt(void);
-    void ACTION_Wn(void);
-    void ACTION_BackLightOnDemand(void);
-    void ACTION_BackLight(void);
-#endif
+void ACTION_RxMode(void);
+void ACTION_MainOnly(void);
+void ACTION_Ptt(void);
+void ACTION_Wn(void);
+void ACTION_BackLightOnDemand(void);
+void ACTION_BackLight(void);
 
 void ACTION_Handle(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld);
 

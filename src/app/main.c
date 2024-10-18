@@ -163,16 +163,12 @@ static void processFKeyFunction(const KEY_Code_t Key)
             break;
 
         case KEY_2:
-            #ifdef ENABLE_FEAT_F4HWN
-                gVfoConfigureMode     = VFO_CONFIGURE;
-            #endif
+            gVfoConfigureMode     = VFO_CONFIGURE;
             COMMON_SwitchVFOs();
             break;
 
         case KEY_3:
-            #ifdef ENABLE_FEAT_F4HWN
-                gVfoConfigureMode     = VFO_CONFIGURE;
-            #endif
+            gVfoConfigureMode     = VFO_CONFIGURE;
             COMMON_SwitchVFOMode();
             break;
 
@@ -217,7 +213,7 @@ static void processFKeyFunction(const KEY_Code_t Key)
             }
             break;
 
-#ifdef ENABLE_FEAT_F4HWN // Set Squelch F + UP or Down and Step F + SIDE1 or F + SIDE2
+        // Set Squelch F + UP or Down and Step F + SIDE1 or F + SIDE2
         case KEY_UP:
             gEeprom.SQUELCH_LEVEL = (gEeprom.SQUELCH_LEVEL < 9) ? gEeprom.SQUELCH_LEVEL + 1: 9;
             gVfoConfigureMode     = VFO_CONFIGURE;
@@ -255,7 +251,6 @@ static void processFKeyFunction(const KEY_Code_t Key)
             gVfoConfigureMode     = VFO_CONFIGURE;
             gWasFKeyPressed = false;
             break;
-#endif
 
         default:
             gUpdateStatus   = true;
@@ -492,7 +487,6 @@ static void MAIN_Key_MENU(bool bKeyPressed, bool bKeyHeld)
     if (bKeyHeld) { // menu key held down (long press)
         if (bKeyPressed) { // long press MENU key
 
-            #ifdef ENABLE_FEAT_F4HWN
             // Exclude work with list 1, 2, 3 or all list
             if(gScanStateDir != SCAN_OFF)
             {
@@ -510,7 +504,6 @@ static void MAIN_Key_MENU(bool bKeyPressed, bool bKeyHeld)
 
                 return;
             }
-            #endif
             
             gWasFKeyPressed = false;
 
@@ -605,8 +598,6 @@ static void MAIN_Key_STAR(bool bKeyPressed, bool bKeyHeld)
 
 static void MAIN_Key_UP_DOWN(bool bKeyPressed, bool bKeyHeld, int8_t Direction)
 {
-
-#ifdef ENABLE_FEAT_F4HWN // Set Squelch F + UP or Down
     if(gWasFKeyPressed) {
         switch(Direction)
         {
@@ -619,7 +610,6 @@ static void MAIN_Key_UP_DOWN(bool bKeyPressed, bool bKeyHeld, int8_t Direction)
         }
         return;
     }
-#endif
 
     uint8_t Channel = gEeprom.ScreenChannel[gEeprom.TX_VFO];
 
@@ -703,10 +693,8 @@ void MAIN_ProcessKeys(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 //  }
 
     switch (Key) {
-#ifdef ENABLE_FEAT_F4HWN
         case KEY_SIDE1:
         case KEY_SIDE2:
-#endif
         case KEY_0...KEY_9:
             MAIN_Key_DIGITS(Key, bKeyPressed, bKeyHeld);
             break;

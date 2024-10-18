@@ -23,9 +23,7 @@
 extern uint16_t gBacklightCountdown_500ms;
 extern uint8_t gBacklightBrightness;
 
-#ifdef ENABLE_FEAT_F4HWN
-    extern const uint8_t value[11];
-#endif
+extern const uint8_t value[11];
 
 extern uint16_t gSleepModeCountdown_500ms;
 

@@ -146,7 +146,6 @@ void UI_DisplayStatus()
     x += sizeof(gFontVox) + 3;
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN
     // PTT indicator
     if (gSetting_set_ptt_session) {
         memcpy(line + x, gFontPttOnePush, sizeof(gFontPttOnePush));
@@ -158,7 +157,6 @@ void UI_DisplayStatus()
         x1 = x + sizeof(gFontPttClassic) + 1;       
     }
     x += sizeof(gFontPttClassic) + 3;
-#endif
 
     x = MAX(x1, 70u);
 
@@ -177,12 +175,10 @@ void UI_DisplayStatus()
         }
         */
     }
-    #ifdef ENABLE_FEAT_F4HWN
     else if (gBackLight)
     {
         memcpy(line + x + 1, gFontLight, sizeof(gFontLight));
     }
-    #endif
     else if (gChargingWithTypeC)
     {
         memcpy(line + x + 1, BITMAP_USB_C, sizeof(BITMAP_USB_C));
@@ -200,11 +196,7 @@ void UI_DisplayStatus()
 
         case 1: {   // voltage
             const uint16_t voltage = (gBatteryVoltageAverage <= 999) ? gBatteryVoltageAverage : 999; // limit to 9.99V
-#ifdef ENABLE_FEAT_F4HWN
             sprintf(str, "%u.%02u", voltage / 100, voltage % 100);
-#else
-            sprintf(str, "%u.%02uV", voltage / 100, voltage % 100);
-#endif
             break;
         }
 

@@ -27,12 +27,8 @@ scan_next_chan_t    currentScanList;
 uint32_t            initialFrqOrChan;
 uint8_t             initialCROSS_BAND_RX_TX;
 
-#ifndef ENABLE_FEAT_F4HWN
-    uint32_t lastFoundFrqOrChan;
-#else
-    uint32_t lastFoundFrqOrChan;
-    uint32_t lastFoundFrqOrChanOld;
-#endif
+uint32_t lastFoundFrqOrChan;
+uint32_t lastFoundFrqOrChanOld;
 
 static void NextFreqChannel(void);
 static void NextMemChannel(void);
@@ -68,9 +64,7 @@ void CHFRSCANNER_Start(const bool storeBackupSettings, const int8_t scan_directi
         NextFreqChannel();
     }
 
-#ifdef ENABLE_FEAT_F4HWN
     lastFoundFrqOrChanOld = lastFoundFrqOrChan;
-#endif
 
     gScanPauseDelayIn_10ms = scan_pause_delay_in_2_10ms;
     gScheduleScanListen    = false;
@@ -151,9 +145,7 @@ void CHFRSCANNER_Found(void)
     }
     */
 
-#ifdef ENABLE_FEAT_F4HWN
     lastFoundFrqOrChanOld = lastFoundFrqOrChan;
-#endif
 
     if (IS_MR_CHANNEL(gRxVfo->CHANNEL_SAVE)) { //memory scan
         lastFoundFrqOrChan = gRxVfo->CHANNEL_SAVE;

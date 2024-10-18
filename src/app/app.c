@@ -533,11 +533,7 @@ uint32_t APP_SetFreqByStepAndLimits(VFO_Info_t *pInfo, int8_t direction, uint32_
 {
     uint32_t Frequency = FREQUENCY_RoundToStep(pInfo->freq_config_RX.Frequency + (direction * pInfo->StepFrequency), pInfo->StepFrequency);
 
-#ifdef ENABLE_FEAT_F4HWN
     if (Frequency > upper)
-#else
-    if (Frequency >= upper)
-#endif
         Frequency =  lower;
 
     else if (Frequency < lower)
@@ -805,7 +801,6 @@ static void HandleVox(void)
 
 void APP_Update(void)
 {
-#ifdef ENABLE_FEAT_F4HWN
     if (gCurrentFunction == FUNCTION_TRANSMIT && (gTxTimeoutReachedAlert || SerialConfigInProgress()))
     {
         if(gSetting_set_tot >= 2)
@@ -849,13 +844,11 @@ void APP_Update(void)
             }
         }
     }
-#endif
 
     if (gCurrentFunction == FUNCTION_TRANSMIT && (gTxTimeoutReached || SerialConfigInProgress()))
     {   // transmitter timed out or must de-key
         gTxTimeoutReached = false;
 
-#ifdef ENABLE_FEAT_F4HWN
         if(gBacklightCountdown_500ms > 0 || gEeprom.BACKLIGHT_TIME == 61)
         {
             //BACKLIGHT_TurnOn();
@@ -882,18 +875,6 @@ void APP_Update(void)
             }
             ST7565_ContrastAndInv();
         }
-        /*
-        if (gSetting_set_ptt_session) // Improve OnePush if TOT
-        {
-            ProcessKey(KEY_PTT, false, false);
-            gPttIsPressed = false;
-            gPttOnePushCounter = 0;
-            if (gKeyReading1 != KEY_INVALID)
-                gPttWasReleased = true;
-            ST7565_ContrastAndInv();
-        }
-        */
-#endif
 
         APP_EndTransmission();
 
@@ -1055,84 +1036,53 @@ static void CheckKeys(void)
 #endif
 
 // -------------------- PTT ------------------------
-#ifdef ENABLE_FEAT_F4HWN
-    if (gSetting_set_ptt_session)
-    {
-        if (!GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && !SerialConfigInProgress() && gPttOnePushCounter == 0)
-        {   // PTT pressed
-            if (++gPttDebounceCounter >= 3)     // 30ms
-            {   // start transmitting
-                boot_counter_10ms   = 0;
-                gPttDebounceCounter = 0;
-                gPttIsPressed       = true;
-                gPttOnePushCounter = 1;
-                ProcessKey(KEY_PTT, true, false);
-            }
-        }
-        else if ((GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) || SerialConfigInProgress()) && gPttOnePushCounter == 1)
-        {   
-            // PTT released or serial comms config in progress
-            if (++gPttDebounceCounter >= 3 || SerialConfigInProgress())     // 30ms
-            {   // stop transmitting
-                gPttOnePushCounter = 2;
-            }
-        }
-        else if (!GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && !SerialConfigInProgress() && gPttOnePushCounter == 2)
-        {   // PTT pressed again            
-            if (++gPttDebounceCounter >= 3 || SerialConfigInProgress())     // 30ms
-            {   // stop transmitting
-                gPttOnePushCounter = 3;
-            }
-        }
-        else if ((GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) || SerialConfigInProgress()) && gPttOnePushCounter == 3)
-        {   // PTT released or serial comms config in progress
-            if (++gPttDebounceCounter >= 3 || SerialConfigInProgress())     // 30ms
-            {   // stop transmitting
-                ProcessKey(KEY_PTT, false, false);
-                gPttIsPressed = false;
-                if (gKeyReading1 != KEY_INVALID)
-                    gPttWasReleased = true;
-                gPttOnePushCounter = 0;
-                ST7565_ContrastAndInv();            
-            }
-        }
-        else
+if (gSetting_set_ptt_session)
+{
+    if (!GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && !SerialConfigInProgress() && gPttOnePushCounter == 0)
+    {   // PTT pressed
+        if (++gPttDebounceCounter >= 3)     // 30ms
+        {   // start transmitting
+            boot_counter_10ms   = 0;
             gPttDebounceCounter = 0;
-
-        //gDebug = gPttOnePushCounter;
+            gPttIsPressed       = true;
+            gPttOnePushCounter = 1;
+            ProcessKey(KEY_PTT, true, false);
+        }
+    }
+    else if ((GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) || SerialConfigInProgress()) && gPttOnePushCounter == 1)
+    {   
+        // PTT released or serial comms config in progress
+        if (++gPttDebounceCounter >= 3 || SerialConfigInProgress())     // 30ms
+        {   // stop transmitting
+            gPttOnePushCounter = 2;
+        }
+    }
+    else if (!GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && !SerialConfigInProgress() && gPttOnePushCounter == 2)
+    {   // PTT pressed again            
+        if (++gPttDebounceCounter >= 3 || SerialConfigInProgress())     // 30ms
+        {   // stop transmitting
+            gPttOnePushCounter = 3;
+        }
+    }
+    else if ((GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) || SerialConfigInProgress()) && gPttOnePushCounter == 3)
+    {   // PTT released or serial comms config in progress
+        if (++gPttDebounceCounter >= 3 || SerialConfigInProgress())     // 30ms
+        {   // stop transmitting
+            ProcessKey(KEY_PTT, false, false);
+            gPttIsPressed = false;
+            if (gKeyReading1 != KEY_INVALID)
+                gPttWasReleased = true;
+            gPttOnePushCounter = 0;
+            ST7565_ContrastAndInv();            
+        }
     }
     else
-    {
-        if (gPttIsPressed)
-        {
-            if (GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) || SerialConfigInProgress())
-            {   // PTT released or serial comms config in progress
-                if (++gPttDebounceCounter >= 3 || SerialConfigInProgress())     // 30ms
-                {   // stop transmitting
-                    ProcessKey(KEY_PTT, false, false);
-                    gPttIsPressed = false;
-                    if (gKeyReading1 != KEY_INVALID)
-                        gPttWasReleased = true;
-                    ST7565_ContrastAndInv();
-                }
-            }
-            else
-                gPttDebounceCounter = 0;
-        }
-        else if (!GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && !SerialConfigInProgress())
-        {   // PTT pressed
-            if (++gPttDebounceCounter >= 3)     // 30ms
-            {   // start transmitting
-                boot_counter_10ms   = 0;
-                gPttDebounceCounter = 0;
-                gPttIsPressed       = true;
-                ProcessKey(KEY_PTT, true, false);
-            }
-        }
-        else
-            gPttDebounceCounter = 0;        
-    }
-#else
+        gPttDebounceCounter = 0;
+
+    //gDebug = gPttOnePushCounter;
+}
+else
+{
     if (gPttIsPressed)
     {
         if (GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) || SerialConfigInProgress())
@@ -1143,6 +1093,7 @@ static void CheckKeys(void)
                 gPttIsPressed = false;
                 if (gKeyReading1 != KEY_INVALID)
                     gPttWasReleased = true;
+                ST7565_ContrastAndInv();
             }
         }
         else
@@ -1159,8 +1110,8 @@ static void CheckKeys(void)
         }
     }
     else
-        gPttDebounceCounter = 0;
-#endif
+        gPttDebounceCounter = 0;        
+}
 
 // --------------------- OTHER KEYS ----------------------------
 
@@ -1274,12 +1225,6 @@ void APP_TimeSlice10ms(void)
 #ifdef ENABLE_FMRADIO
     if (gFmRadioMode && gFmRadioCountdown_500ms > 0)   // 1of11
         return;
-#endif
-
-#ifndef ENABLE_FEAT_F4HWN
-    #ifdef ENABLE_FLASHLIGHT
-        FlashlightTimeSlice();
-    #endif
 #endif
 
 #ifdef ENABLE_VOX
@@ -1763,7 +1708,7 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 
     bool lowBatPopup = gLowBattery && !gLowBatteryConfirmed &&  gScreenToDisplay == DISPLAY_MAIN;
 
-#ifdef ENABLE_FEAT_F4HWN // Disable PTT if KEY_LOCK
+    // Disable PTT if KEY_LOCK
     bool lck_condition = false;
 
     if(gSetting_set_lck)
@@ -1772,9 +1717,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         lck_condition = (gEeprom.KEY_LOCK || lowBatPopup) && gCurrentFunction != FUNCTION_TRANSMIT && Key != KEY_PTT;
 
     if (lck_condition)
-#else
-    if ((gEeprom.KEY_LOCK || lowBatPopup) && gCurrentFunction != FUNCTION_TRANSMIT && Key != KEY_PTT)
-#endif
     {   // keyboard is locked or low battery popup
 
         // close low battery popup
@@ -1838,11 +1780,8 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         }
     }
 
-#ifdef ENABLE_FEAT_F4HWN // For F + SIDE1 or F + SIDE2
+    // For F + SIDE1 or F + SIDE2
     if (gWasFKeyPressed && (Key == KEY_PTT || Key == KEY_EXIT)) { 
-#else
-    if (gWasFKeyPressed && (Key == KEY_PTT || Key == KEY_EXIT || Key == KEY_SIDE1 || Key == KEY_SIDE2)) { 
-#endif
         // cancel the F-key
         gWasFKeyPressed = false;
         gUpdateStatus   = true;
@@ -1881,15 +1820,7 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
                     gEnableSpeaker = false;
 
                     BK4819_ExitDTMF_TX(false);
-
-#ifndef ENABLE_FEAT_F4HWN
-                    if (gCurrentVfo->SCRAMBLING_TYPE == 0 || !gSetting_ScrambleEnable)
-                        BK4819_DisableScramble();
-                    else
-                        BK4819_EnableScramble(gCurrentVfo->SCRAMBLING_TYPE - 1);
-#else
-                        BK4819_DisableScramble();
-#endif
+                    BK4819_DisableScramble();
                 }
             }
             else {
@@ -1922,18 +1853,13 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
         }
 #endif
     }
-#ifdef ENABLE_FEAT_F4HWN // For F + SIDE1 or F + SIDE2
+    // For F + SIDE1 or F + SIDE2
     else if (gWasFKeyPressed && (Key == KEY_SIDE1 || Key == KEY_SIDE2)) {
         ProcessKeysFunctions[gScreenToDisplay](Key, bKeyPressed, bKeyHeld);
     }
     else if (Key != KEY_SIDE1 && Key != KEY_SIDE2 && gScreenToDisplay != DISPLAY_INVALID) {
         ProcessKeysFunctions[gScreenToDisplay](Key, bKeyPressed, bKeyHeld);
     }
-#else
-    else if (Key != KEY_SIDE1 && Key != KEY_SIDE2 && gScreenToDisplay != DISPLAY_INVALID) {
-        ProcessKeysFunctions[gScreenToDisplay](Key, bKeyPressed, bKeyHeld);
-    }
-#endif
     else if (!SCANNER_IsScanning()
 #ifdef ENABLE_AIRCOPY
             && gScreenToDisplay != DISPLAY_AIRCOPY

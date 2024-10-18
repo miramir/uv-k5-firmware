@@ -33,44 +33,39 @@
 #include "ui/inputbox.h"
 #include "ui/main.h"
 #include "ui/ui.h"
-
-#ifdef ENABLE_FEAT_F4HWN
-    #include "driver/system.h"
-#endif
+#include "driver/system.h"
 
 center_line_t center_line = CENTER_LINE_NONE;
 
-#ifdef ENABLE_FEAT_F4HWN
-    static int8_t RxBlink;
-    static int8_t RxBlinkLed = 0;
-    static int8_t RxBlinkLedCounter;
-    static int8_t RxLine;
-    static uint32_t RxOnVfofrequency;
+static int8_t RxBlink;
+static int8_t RxBlinkLed = 0;
+static int8_t RxBlinkLedCounter;
+static int8_t RxLine;
+static uint32_t RxOnVfofrequency;
 
-    bool isMainOnlyInputDTMF = false;
+bool isMainOnlyInputDTMF = false;
 
-    static int16_t map(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, int16_t out_max) {
-        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
+static int16_t map(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, int16_t out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
-    static bool isMainOnly(bool checkGui)
+static bool isMainOnly(bool checkGui)
+{
+    if(checkGui)
     {
-        if(checkGui)
-        {
-            if(((gEeprom.DUAL_WATCH != DUAL_WATCH_OFF) + (gEeprom.CROSS_BAND_RX_TX != CROSS_BAND_OFF) * 2 == 0) || gSetting_set_gui)
-                return true;
-            else
-                return false;
-        }
+        if(((gEeprom.DUAL_WATCH != DUAL_WATCH_OFF) + (gEeprom.CROSS_BAND_RX_TX != CROSS_BAND_OFF) * 2 == 0) || gSetting_set_gui)
+            return true;
         else
-        {
-            if((gEeprom.DUAL_WATCH != DUAL_WATCH_OFF) + (gEeprom.CROSS_BAND_RX_TX != CROSS_BAND_OFF) * 2 == 0)
-                return true;
-            else
-                return false;           
-        }
+            return false;
     }
-#endif
+    else
+    {
+        if((gEeprom.DUAL_WATCH != DUAL_WATCH_OFF) + (gEeprom.CROSS_BAND_RX_TX != CROSS_BAND_OFF) * 2 == 0)
+            return true;
+        else
+            return false;           
+    }
+}
 
 const int8_t dBmCorrTable[7] = {
             -15, // band 1
@@ -110,20 +105,10 @@ static void DrawSmallAntennaAndBars(uint8_t *p, unsigned int level)
 
 static void DrawLevelBar(uint8_t xpos, uint8_t line, uint8_t level, uint8_t bars)
 {
-#ifndef ENABLE_FEAT_F4HWN
-    const char hollowBar[] = {
-        0b01111111,
-        0b01000001,
-        0b01000001,
-        0b01111111
-    };
-#endif
-    
     uint8_t *p_line = gFrameBuffer[line];
     level = MIN(level, bars);
 
     for(uint8_t i = 0; i < level; i++) {
-#ifdef ENABLE_FEAT_F4HWN
         if(gSetting_set_met)
         {
             const char hollowBar[] = {
@@ -164,15 +149,6 @@ static void DrawLevelBar(uint8_t xpos, uint8_t line, uint8_t level, uint8_t bars
                 memcpy(p_line + (xpos + i * 5), &hollowBar, ARRAY_SIZE(hollowBar));
             }
         }
-#else
-        if(i < bars - 4) {
-            for(uint8_t j = 0; j < 4; j++)
-                p_line[xpos + i * 5 + j] = (~(0x7F >> (i+1))) & 0x7F;
-        }
-        else {
-            memcpy(p_line + (xpos + i * 5), &hollowBar, ARRAY_SIZE(hollowBar));
-        }
-#endif
     }
 }
 #endif
@@ -195,7 +171,6 @@ void UI_DisplayAudioBar(void)
         if(gLowBattery && !gLowBatteryConfirmed)
             return;
 
-#ifdef ENABLE_FEAT_F4HWN
         RxBlinkLed = 0;
         RxBlinkLedCounter = 0;
         BK4819_ToggleGpioOut(BK4819_GPIO6_PIN2_GREEN, false);
@@ -208,9 +183,6 @@ void UI_DisplayAudioBar(void)
         {
             line = 3;
         }
-#else
-        const unsigned int line = 3;
-#endif
 
         if (gCurrentFunction != FUNCTION_TRANSMIT ||
             gScreenToDisplay != DISPLAY_MAIN
@@ -258,19 +230,6 @@ void DisplayRSSIBar(const bool now)
     const unsigned int txt_width    = 7 * 8;                 // 8 text chars
     const unsigned int bar_x        = 2 + txt_width + 4;     // X coord of bar graph
 
-#ifdef ENABLE_FEAT_F4HWN
-    /*
-    const char empty[] = {
-        0b00000000,
-        0b00000000,
-        0b00000000,
-        0b00000000,
-        0b00000000,
-        0b00000000,
-        0b00000000,
-    };
-    */
-
     unsigned int line;
     if (isMainOnly(false))
     {
@@ -280,10 +239,6 @@ void DisplayRSSIBar(const bool now)
     {
         line = 3;
     }
-
-    //char rx[4];
-    //sprintf(String, "%d", RxBlink);
-    //UI_PrintStringSmallBold(String, 80, 0, RxLine);
 
     if(RxLine >= 0 && center_line != CENTER_LINE_IN_USE)
     {
@@ -306,23 +261,9 @@ void DisplayRSSIBar(const bool now)
         }
         ST7565_BlitLine(RxLine);
     }
-#else
-    const unsigned int line = 3;
-#endif
+
     uint8_t           *p_line        = gFrameBuffer[line];
     char               str[16];
-
-#ifndef ENABLE_FEAT_F4HWN
-    const char plus[] = {
-        0b00011000,
-        0b00011000,
-        0b01111110,
-        0b01111110,
-        0b01111110,
-        0b00011000,
-        0b00011000,
-    };
-#endif
 
     if ((gEeprom.KEY_LOCK && gKeypadLocked > 0) || center_line != CENTER_LINE_RSSI)
         return;     // display is in use
@@ -338,7 +279,6 @@ void DisplayRSSIBar(const bool now)
     if (now)
         memset(p_line, 0, LCD_WIDTH);
 
-#ifdef ENABLE_FEAT_F4HWN
     int16_t rssi_dBm =
         BK4819_GetRSSI_dBm()
         + ((gSetting_AM_fix && gRxVfo->Modulation == MODULATION_AM) ? AM_fix_get_gain_diff() : 0)
@@ -361,20 +301,7 @@ void DisplayRSSIBar(const bool now)
         overS9dBm = map(rssi_dBm, 93, 53, 0, 40);
         overS9Bars = map(overS9dBm, 0, 40, 0, 4);
     }
-#else
-    const int16_t s0_dBm   = -gEeprom.S0_LEVEL;                  // S0 .. base level
-    const int16_t rssi_dBm =
-        BK4819_GetRSSI_dBm()
-        + ((gSetting_AM_fix && gRxVfo->Modulation == MODULATION_AM) ? AM_fix_get_gain_diff() : 0)
-        + dBmCorrTable[gRxVfo->Band];
 
-    int s0_9 = gEeprom.S0_LEVEL - gEeprom.S9_LEVEL;
-    const uint8_t s_level = MIN(MAX((int32_t)(rssi_dBm - s0_dBm)*100 / (s0_9*100/9), 0), 9); // S0 - S9
-    uint8_t overS9dBm = MIN(MAX(rssi_dBm + gEeprom.S9_LEVEL, 0), 99);
-    uint8_t overS9Bars = MIN(overS9dBm/10, 4);
-#endif
-
-#ifdef ENABLE_FEAT_F4HWN
     if (isMainOnly(true))
     {
         sprintf(str, "%3d", -rssi_dBm);
@@ -394,17 +321,7 @@ void DisplayRSSIBar(const bool now)
     }
 
     UI_PrintStringSmallNormal(str, LCD_WIDTH + 38, 0, line - 1);
-#else
-    if(overS9Bars == 0) {
-        sprintf(str, "% 4d S%d", -rssi_dBm, s_level);
-    }
-    else {
-        sprintf(str, "% 4d  %2d", -rssi_dBm, overS9dBm);
-        memcpy(p_line + 2 + 7*5, &plus, ARRAY_SIZE(plus));
-    }
 
-    UI_PrintStringSmallNormal(str, 2, 0, line);
-#endif
     DrawLevelBar(bar_x, line, s_level + overS9Bars, 13);
     if (now)
         ST7565_BlitLine(line);
@@ -484,7 +401,6 @@ void UI_MAIN_TimeSlice500ms(void)
         if(FUNCTION_IsRx()) {
             DisplayRSSIBar(true);
         }
-#ifdef ENABLE_FEAT_F4HWN // Blink Green Led for white...
         else if(gSetting_set_eot > 0 && RxBlinkLed == 2)
         {
             if(RxBlinkLedCounter <= 8)
@@ -510,7 +426,6 @@ void UI_MAIN_TimeSlice500ms(void)
                 RxBlinkLed = 0;
             }
         }
-#endif
     }
 }
 
@@ -531,48 +446,21 @@ void UI_DisplayMain(void)
         return;
     }
 
-#ifndef ENABLE_FEAT_F4HWN
-    if (gEeprom.KEY_LOCK && gKeypadLocked > 0)
-    {   // tell user how to unlock the keyboard
-        UI_PrintString("Long press #", 0, LCD_WIDTH, 1, 8);
-        UI_PrintString("to unlock",    0, LCD_WIDTH, 3, 8);
-        ST7565_BlitFullScreen();
-        return;
-    }
-#else
     if (gEeprom.KEY_LOCK && gKeypadLocked > 0)
     {   // tell user how to unlock the keyboard
         uint8_t shift = 3;
-
-        /*
-        BK4819_ToggleGpioOut(BK4819_GPIO5_PIN1_RED, true);
-        SYSTEM_DelayMs(50);
-        BK4819_ToggleGpioOut(BK4819_GPIO5_PIN1_RED, false);
-        SYSTEM_DelayMs(50);
-        */
 
         if(isMainOnly(false))
         {
             shift = 5;
         }
-        //memcpy(gFrameBuffer[shift] + 2, gFontKeyLock, sizeof(gFontKeyLock));
         UI_PrintStringSmallBold("UNLOCK KEYBOARD", 12, 0, shift);
-        //memcpy(gFrameBuffer[shift] + 120, gFontKeyLock, sizeof(gFontKeyLock));
-
-        /*
-        for (uint8_t i = 12; i < 116; i++)
-        {
-            gFrameBuffer[shift][i] ^= 0xFF;
-        }
-        */
     }
-#endif
 
     unsigned int activeTxVFO = gRxVfoIsActive ? gEeprom.RX_VFO : gEeprom.TX_VFO;
 
     for (unsigned int vfo_num = 0; vfo_num < 2; vfo_num++)
     {
-#ifdef ENABLE_FEAT_F4HWN
         const unsigned int line0 = 0;  // text screen line
         const unsigned int line1 = 4;
         unsigned int line;
@@ -588,36 +476,20 @@ void UI_DisplayMain(void)
         uint8_t           *p_line0    = gFrameBuffer[line + 0];
         uint8_t           *p_line1    = gFrameBuffer[line + 1];
         enum Vfo_txtr_mode mode       = VFO_MODE_NONE;      
-#else
-        const unsigned int line0 = 0;  // text screen line
-        const unsigned int line1 = 4;
-        const unsigned int line       = (vfo_num == 0) ? line0 : line1;
-        const bool         isMainVFO  = (vfo_num == gEeprom.TX_VFO);
-        uint8_t           *p_line0    = gFrameBuffer[line + 0];
-        uint8_t           *p_line1    = gFrameBuffer[line + 1];
-        enum Vfo_txtr_mode mode       = VFO_MODE_NONE;
-#endif
 
-#ifdef ENABLE_FEAT_F4HWN
-    if (isMainOnly(false))
-    {
-        if (activeTxVFO != vfo_num)
+        if (isMainOnly(false))
         {
-            continue;
+            if (activeTxVFO != vfo_num)
+            {
+                continue;
+            }
         }
-    }
-#endif
 
-#ifdef ENABLE_FEAT_F4HWN
         if (activeTxVFO != vfo_num || isMainOnly(false))
-#else
-        if (activeTxVFO != vfo_num) // this is not active TX VFO
-#endif
         {
 #ifdef ENABLE_SCAN_RANGES
             if(gScanRangeStart) {
 
-#ifdef ENABLE_FEAT_F4HWN
                 //if(IS_FREQ_CHANNEL(gEeprom.ScreenChannel[0]) && IS_FREQ_CHANNEL(gEeprom.ScreenChannel[1])) {
                 if(IS_FREQ_CHANNEL(gEeprom.ScreenChannel[activeTxVFO])) {
 
@@ -641,14 +513,6 @@ void UI_DisplayMain(void)
                 {
                     gScanRangeStart = 0;
                 }
-#else
-                UI_PrintString("ScnRng", 5, 0, line, 8);
-                sprintf(String, "%3u.%05u", gScanRangeStart / 100000, gScanRangeStart % 100000);
-                UI_PrintStringSmallNormal(String, 56, 0, line);
-                sprintf(String, "%3u.%05u", gScanRangeStop / 100000, gScanRangeStop % 100000);
-                UI_PrintStringSmallNormal(String, 56, 0, line + 1);
-                continue;
-#endif
             }
 #endif
 
@@ -692,7 +556,6 @@ void UI_DisplayMain(void)
                     pPrintStr = String;
                 }
 
-#ifdef ENABLE_FEAT_F4HWN
                 if (isMainOnly(false))
                 {
                     UI_PrintString(pPrintStr, 2, 0, 5, 8);
@@ -706,11 +569,6 @@ void UI_DisplayMain(void)
                     center_line = CENTER_LINE_IN_USE;
                     continue;
                 }
-#else
-                UI_PrintString(pPrintStr, 2, 0, 0 + (vfo_num * 3), 8);
-                center_line = CENTER_LINE_IN_USE;
-                continue;
-#endif
             }
 
             // highlight the selected/used VFO with a marker
@@ -756,7 +614,6 @@ void UI_DisplayMain(void)
             mode = VFO_MODE_RX;
             //if (FUNCTION_IsRx() && gEeprom.RX_VFO == vfo_num) {
             if (FUNCTION_IsRx() && gEeprom.RX_VFO == vfo_num && VfoState[vfo_num] == VFO_STATE_NORMAL) {
-#ifdef ENABLE_FEAT_F4HWN
                 RxBlinkLed = 1;
                 RxBlinkLedCounter = 0;
                 RxLine = line;
@@ -769,11 +626,7 @@ void UI_DisplayMain(void)
                 {
                     RxBlink = 0;
                 }
-#else
-                UI_PrintStringSmallBold("RX", 8, 0, line);
-#endif
             }
-#ifdef ENABLE_FEAT_F4HWN
             else
             {
                 if(RxOnVfofrequency == frequency && !isMainOnly(false))
@@ -785,7 +638,6 @@ void UI_DisplayMain(void)
                 if(RxBlinkLed == 1)
                     RxBlinkLed = 2;
             }
-#endif
         }
 
         if (IS_MR_CHANNEL(gEeprom.ScreenChannel[vfo_num]))
@@ -892,15 +744,6 @@ void UI_DisplayMain(void)
                     memcpy(p_line0 + 127 - (1 * 6), BITMAP_ScanListE, sizeof(BITMAP_ScanListE));
                 }
 
-                /*
-                if (att.scanlist1)
-                    memcpy(p_line0 + 107, BITMAP_ScanList1, sizeof(BITMAP_ScanList1));
-                if (att.scanlist2)
-                    memcpy(p_line0 + 114, BITMAP_ScanList2, sizeof(BITMAP_ScanList2));
-                if (att.scanlist3)
-                    memcpy(p_line0 + 121, BITMAP_ScanList3, sizeof(BITMAP_ScanList3));
-                */
-
                 // compander symbol
 #ifndef ENABLE_BIG_FREQ
                 if (att.compander)
@@ -948,7 +791,6 @@ void UI_DisplayMain(void)
                             UI_PrintString(String, 32, 0, line, 8);
                         }
                         else {
-#ifdef ENABLE_FEAT_F4HWN
                             if (isMainOnly(false))
                             {
                                 UI_PrintString(String, 32, 0, line, 8);
@@ -963,11 +805,7 @@ void UI_DisplayMain(void)
                                     UI_PrintStringSmallNormal(String, 32 + 4, 0, line);     
                                 }
                             }
-#else
-                            UI_PrintStringSmallBold(String, 32 + 4, 0, line);
-#endif
 
-#ifdef ENABLE_FEAT_F4HWN
                             if (isMainOnly(false))
                             {
                                 sprintf(String, "%3u.%05u", frequency / 100000, frequency % 100000);
@@ -989,10 +827,6 @@ void UI_DisplayMain(void)
                                 sprintf(String, "%03u.%05u", frequency / 100000, frequency % 100000);
                                 UI_PrintStringSmallNormal(String, 32 + 4, 0, line + 1);
                             }
-#else                           // show the channel frequency below the channel number/name
-                            sprintf(String, "%03u.%05u", frequency / 100000, frequency % 100000);
-                            UI_PrintStringSmallNormal(String, 32 + 4, 0, line + 1);
-#endif
                         }
 
                         break;
@@ -1066,35 +900,25 @@ void UI_DisplayMain(void)
 
         // show the modulation symbol
         const char * s = "";
-#ifdef ENABLE_FEAT_F4HWN
         const char * t = "";
-#endif
         const ModulationMode_t mod = vfoInfo->Modulation;
         switch (mod){
             case MODULATION_FM: {
                 const FREQ_Config_t *pConfig = (mode == VFO_MODE_TX) ? vfoInfo->pTX : vfoInfo->pRX;
                 const unsigned int code_type = pConfig->CodeType;
-#ifdef ENABLE_FEAT_F4HWN
                 const char *code_list[] = {"", "CT", "DC", "DC"};
-#else
-                const char *code_list[] = {"", "CT", "DCS", "DCR"};
-#endif
+
                 if (code_type < ARRAY_SIZE(code_list))
                     s = code_list[code_type];
-#ifdef ENABLE_FEAT_F4HWN
                 if(gCurrentFunction != FUNCTION_TRANSMIT || activeTxVFO != vfo_num)
                     t = gModulationStr[mod];
-#endif
                 break;
             }
             default:
-#ifdef ENABLE_FEAT_F4HWN
                 t = gModulationStr[mod];
-#endif
             break;
         }
 
-#if ENABLE_FEAT_F4HWN
         const FREQ_Config_t *pConfig = (mode == VFO_MODE_TX) ? vfoInfo->pTX : vfoInfo->pRX;
         int8_t shift = 0;
 
@@ -1155,9 +979,6 @@ void UI_DisplayMain(void)
             //sprintf(String, "%d.%02u", vfoInfo->StepFrequency / 100, vfoInfo->StepFrequency % 100);
             //GUI_DisplaySmallest(String, 91, line == 0 ? 2 : 34, false, true);
         }
-#else
-        UI_PrintStringSmallNormal(s, LCD_WIDTH + 24, 0, line + 1);
-#endif
 
         if (state == VFO_STATE_NORMAL || state == VFO_STATE_ALARM)
         {   // show the TX power
@@ -1165,14 +986,12 @@ void UI_DisplayMain(void)
             uint8_t arrowPos = 19;
             bool userPower = false;
             
-            #ifdef ENABLE_FEAT_F4HWN
             if(currentPower == OUTPUT_POWER_USER)
             {
                 currentPower = gSetting_set_pwr;
                 userPower = true;
             }
             else
-            #endif
             {
                 currentPower--;
                 userPower = false;
@@ -1202,23 +1021,15 @@ void UI_DisplayMain(void)
         {   // show the TX offset symbol
             const char dir_list[][2] = {"", "+", "-"};
             int i = vfoInfo->TX_OFFSET_FREQUENCY_DIRECTION % 3;
-#if ENABLE_FEAT_F4HWN
-        if (isMainOnly(true))
-        {
-            UI_PrintStringSmallNormal(dir_list[i], LCD_WIDTH + 60, 0, line + 1);
-        }
-        else
-        {
-            UI_PrintStringSmallNormal(dir_list[i], LCD_WIDTH + 41, 0, line + 1);    
-        }
-#else
-            UI_PrintStringSmallNormal(dir_list[i], LCD_WIDTH + 54, 0, line + 1);
-#endif
+            if (isMainOnly(true)) {
+                UI_PrintStringSmallNormal(dir_list[i], LCD_WIDTH + 60, 0, line + 1);
+            } else {
+                UI_PrintStringSmallNormal(dir_list[i], LCD_WIDTH + 41, 0, line + 1);    
+            }
         }
 
         // show the TX/RX reverse symbol
         if (vfoInfo->FrequencyReverse)
-#if ENABLE_FEAT_F4HWN
         {
             if (isMainOnly(true))
             {
@@ -1229,11 +1040,7 @@ void UI_DisplayMain(void)
                 GUI_DisplaySmallest("R", 51, line == 0 ? 17 : 49, false, true);
             }
         }
-#else
-            UI_PrintStringSmallNormal("R", LCD_WIDTH + 62, 0, line + 1);
-#endif
 
-#if ENABLE_FEAT_F4HWN
         if (isMainOnly(true))
         {
             const char *bandWidthNames[] = {"W", "N"};
@@ -1244,10 +1051,6 @@ void UI_DisplayMain(void)
             const char *bandWidthNames[] = {"WIDE", "NAR"};
             GUI_DisplaySmallest(bandWidthNames[vfoInfo->CHANNEL_BANDWIDTH], 91, line == 0 ? 17 : 49, false, true);
         }
-#else
-        if (vfoInfo->CHANNEL_BANDWIDTH == BANDWIDTH_NARROW)
-            UI_PrintStringSmallNormal("N", LCD_WIDTH + 70, 0, line + 1);
-#endif
 
 #ifdef ENABLE_DTMF_CALLING
         // show the DTMF decoding symbol
@@ -1255,13 +1058,10 @@ void UI_DisplayMain(void)
             UI_PrintStringSmallNormal("DTMF", LCD_WIDTH + 78, 0, line + 1);
 #endif
 
-#ifndef ENABLE_FEAT_F4HWN
         // show the audio scramble symbol
         if (vfoInfo->SCRAMBLING_TYPE > 0 && gSetting_ScrambleEnable)
             UI_PrintStringSmallNormal("SCR", LCD_WIDTH + 106, 0, line + 1);
-#endif
 
-#ifdef ENABLE_FEAT_F4HWN
         if(isMainVFO)   
         {
             if(gMonitor)
@@ -1286,7 +1086,6 @@ void UI_DisplayMain(void)
                 GUI_DisplaySmallest(String, 110, line == 0 ? 17 : 49, false, true);
             }
         }
-#endif
     }
 
 #ifdef ENABLE_AGC_SHOW_DATA
@@ -1349,7 +1148,6 @@ void UI_DisplayMain(void)
                     center_line = CENTER_LINE_DTMF_DEC;
 
                     sprintf(String, "DTMF %s", gDTMF_RX_live + idx);
-#ifdef ENABLE_FEAT_F4HWN
                     if (isMainOnly(false))
                     {
                         UI_PrintStringSmallNormal(String, 2, 0, 5);
@@ -1358,10 +1156,6 @@ void UI_DisplayMain(void)
                     {
                         UI_PrintStringSmallNormal(String, 2, 0, 3);
                     }
-#else
-                    UI_PrintStringSmallNormal(String, 2, 0, 3);
-
-#endif
                 }
             #else
                 if (gSetting_live_DTMF_decoder && gDTMF_RX_index > 0)
@@ -1401,7 +1195,6 @@ void UI_DisplayMain(void)
         }
     }
 
-#ifdef ENABLE_FEAT_F4HWN
     if (isMainOnly(false) && !gDTMF_InputMode)
     {
         sprintf(String, "VFO %s", activeTxVFO ? "B" : "A");
@@ -1411,7 +1204,6 @@ void UI_DisplayMain(void)
             gFrameBuffer[6][i] ^= 0x7F;
         }
     }
-#endif
 
     ST7565_BlitFullScreen();
 }

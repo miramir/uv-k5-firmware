@@ -20,19 +20,14 @@
 #include "bsp/dp32g030/portcon.h"
 #include "driver/gpio.h"
 #include "settings.h"
-
-#ifdef ENABLE_FEAT_F4HWN
-    #include "driver/system.h"
-    #include "misc.h"
-#endif
+#include "misc.h"
+#include "driver/system.h"
 
 // this is decremented once every 500ms
 uint16_t gBacklightCountdown_500ms = 0;
 bool backlightOn;
 
-#ifdef ENABLE_FEAT_F4HWN
-    const uint8_t value[] = {0, 3, 6, 9, 15, 24, 38, 62, 100, 159, 255};
-#endif
+const uint8_t value[] = {0, 3, 6, 9, 15, 24, 38, 62, 100, 159, 255};
 
 uint16_t gSleepModeCountdown_500ms = 0;
 
@@ -63,35 +58,28 @@ void BACKLIGHT_InitHardware()
         0;
 }
 
-#ifdef ENABLE_FEAT_F4HWN
 static void BACKLIGHT_Sound(void)
 {
     gK5startup = false;
 }
-#endif
 
 void BACKLIGHT_TurnOn(void)
 {
     gSleepModeCountdown_500ms = gSetting_set_off * 120;
 
-    #ifdef ENABLE_FEAT_F4HWN
-        gBacklightBrightnessOld = BACKLIGHT_GetBrightness();
-    #endif
+    gBacklightBrightnessOld = BACKLIGHT_GetBrightness();
 
     if (gEeprom.BACKLIGHT_TIME == 0) {
         BACKLIGHT_TurnOff();
-        #ifdef ENABLE_FEAT_F4HWN
             if(gK5startup == true) 
             {
                 BACKLIGHT_Sound();
             }
-        #endif
         return;
     }
 
     backlightOn = true;
 
-#ifdef ENABLE_FEAT_F4HWN
     if(gK5startup == true) {
         for(uint8_t i = 0; i <= gEeprom.BACKLIGHT_MAX; i++)
         {
@@ -105,9 +93,6 @@ void BACKLIGHT_TurnOn(void)
     {
         BACKLIGHT_SetBrightness(gEeprom.BACKLIGHT_MAX);
     }
-#else
-    BACKLIGHT_SetBrightness(gEeprom.BACKLIGHT_MAX);
-#endif
 
     switch (gEeprom.BACKLIGHT_TIME) {
         default:
@@ -148,12 +133,7 @@ static uint8_t currentBrightness;
 void BACKLIGHT_SetBrightness(uint8_t brigtness)
 {
     currentBrightness = brigtness;
-    #ifdef ENABLE_FEAT_F4HWN
     PWM_PLUS0_CH0_COMP = value[brigtness] * 4;
-    #else
-    PWM_PLUS0_CH0_COMP = (1 << brigtness) - 1;
-    PWM_PLUS0_SWLOAD = 1;
-    #endif
 }
 
 uint8_t BACKLIGHT_GetBrightness(void)
