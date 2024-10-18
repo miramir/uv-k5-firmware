@@ -413,10 +413,9 @@ uint16_t GetRssi()
         SYSTICK_DelayUs(100);
     }
     uint16_t rssi = BK4819_GetRSSI();
-#ifdef ENABLE_AM_FIX
     if (settings.modulationType == MODULATION_AM && gSetting_AM_fix)
         rssi += AM_fix_get_gain_diff() * 2;
-#endif
+
     return rssi;
 }
 
@@ -1497,7 +1496,6 @@ static void UpdateListening()
 
 static void Tick()
 {
-#ifdef ENABLE_AM_FIX
     if (gNextTimeslice)
     {
         gNextTimeslice = false;
@@ -1506,7 +1504,6 @@ static void Tick()
             AM_fix_10ms(vfo); // allow AM_Fix to apply its AGC action
         }
     }
-#endif
 
 #ifdef ENABLE_SCAN_RANGES
     if (gNextTimeslice_500ms)

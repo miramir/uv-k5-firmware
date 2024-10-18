@@ -102,9 +102,7 @@ enum
     MENU_VOL,
     MENU_BAT_TXT,
     MENU_AM,
-#ifdef ENABLE_AM_FIX
     MENU_AM_FIX,
-#endif
     MENU_RESET,
     MENU_F_LOCK,
 #ifndef ENABLE_FEAT_F4HWN

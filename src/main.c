@@ -18,10 +18,7 @@
 #include <string.h>
 #include <stdio.h>     // NULL
 
-#ifdef ENABLE_AM_FIX
-    #include "am_fix.h"
-#endif
-
+#include "am_fix.h"
 #include "board.h"
 #include "misc.h"
 #include "radio.h"
@@ -105,9 +102,7 @@ void Main(void)
 
     BATTERY_GetReadings(false);
 
-#ifdef ENABLE_AM_FIX
     AM_fix_init();
-#endif
 
     const BOOT_Mode_t  BootMode = BOOT_GetMode();
 

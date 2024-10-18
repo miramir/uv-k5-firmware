@@ -16,8 +16,7 @@
  */
 
 #ifndef AM_FIXH
-
-#ifdef ENABLE_AM_FIX
+#define AM_FIXH
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -29,7 +28,5 @@
     #endif
     int8_t AM_fix_get_gain_diff();
     void AM_fix_enable(bool on);
-
-#endif
 
 #endif

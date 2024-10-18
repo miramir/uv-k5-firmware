@@ -1235,11 +1235,9 @@ void APP_TimeSlice10ms(void)
     gNextTimeslice = false;
     gFlashLightBlinkCounter++;
 
-#ifdef ENABLE_AM_FIX
     if (gRxVfo->Modulation == MODULATION_AM) {
         AM_fix_10ms(gEeprom.RX_VFO);
     }
-#endif
 
 #ifdef ENABLE_UART
     if (UART_IsCommandAvailable()) {

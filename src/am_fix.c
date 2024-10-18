@@ -19,8 +19,6 @@
 //
 // that is until someone works out how to properly configure the BK chip !
 
-#ifdef ENABLE_AM_FIX
-
 #include <string.h>
 
 #include "am_fix.h"
@@ -35,8 +33,6 @@
 #ifdef ENABLE_AGC_SHOW_DATA
 #include "ui/main.h"
 #endif
-
-#ifdef ENABLE_AM_FIX
 
 typedef struct
 {
@@ -396,6 +392,3 @@ void AM_fix_enable(bool on)
 {
     enabled = on;
 }
-#endif
-
-#endif

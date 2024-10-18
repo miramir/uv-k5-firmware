@@ -106,9 +106,7 @@ bool              gSetting_ScrambleEnable;
 
 enum BacklightOnRxTx_t gSetting_backlight_on_tx_rx;
 
-#ifdef ENABLE_AM_FIX
-    bool          gSetting_AM_fix = true;
-#endif
+bool          gSetting_AM_fix = true;
 
 uint8_t       gSetting_set_off = 1;
 bool          gWakeUp = false;
