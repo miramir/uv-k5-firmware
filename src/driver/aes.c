@@ -14,6 +14,8 @@
  *     limitations under the License.
  */
 
+#ifdef ENABLE_UART
+
 #include <stdbool.h>
 
 #include "bsp/dp32g030/aes.h"
@@ -72,3 +74,4 @@ void AES_Encrypt(const void *pKey, const void *pIv, const void *pIn, void *pOut,
     }
 }
 
+#endif

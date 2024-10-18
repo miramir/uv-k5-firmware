@@ -902,16 +902,9 @@ void UI_DisplayMenu(void)
             break;
 
         case MENU_VOL:
-#ifdef ENABLE_FEAT_F4HWN
-            sprintf(String, "%s\n%s",
-                AUTHOR_STRING_2,
-                VERSION_STRING_2
-            );
-#else
             sprintf(String, "%u.%02uV\n%u%%",
                 gBatteryVoltageAverage / 100, gBatteryVoltageAverage % 100,
                 BATTERY_VoltsToPercent(gBatteryVoltageAverage));
-#endif
             break;
 
         case MENU_RESET:

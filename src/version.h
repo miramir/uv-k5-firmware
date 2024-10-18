@@ -14,13 +14,10 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_CRC_H
-#define DRIVER_CRC_H
+#ifndef VERSION_H
+#define VERSION_H
 
-#include <stdint.h>
-
-void CRC_Init(void);
-uint16_t CRC_Calculate(const void *pBuffer, uint16_t Size);
+extern const char Version[];
+extern const char UART_Version[];
 
 #endif
-

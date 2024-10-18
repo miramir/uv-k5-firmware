@@ -83,6 +83,7 @@ void UI_DisplayWelcome(void)
             strcpy(WelcomeString0, "VOLTAGE");
             strcpy(WelcomeString1, WelcomeString2);
         }
+#ifdef ENABLE_FEAT_F4HWN
         else if(gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_ALL)
         {
             if(strlen(WelcomeString0) == 0 && strlen(WelcomeString1) == 0)
@@ -99,6 +100,7 @@ void UI_DisplayWelcome(void)
                 strcpy(WelcomeString1, WelcomeString2);
             }
         }
+#endif
         else if(gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_MESSAGE)
         {
             if(strlen(WelcomeString0) == 0)
@@ -129,10 +131,7 @@ void UI_DisplayWelcome(void)
         }
 
         #ifdef ENABLE_SPECTRUM
-            #ifdef ENABLE_FMRADIO
-                    UI_PrintStringSmallNormal(Based, 0, 127, 5);
-                    UI_PrintStringSmallNormal(Credits, 0, 127, 6);
-            #else
+            #ifndef ENABLE_FMRADIO
                     UI_PrintStringSmallNormal("Bandscope  ", 0, 127, 5);
                     memcpy(gFrameBuffer[5] + 95, BITMAP_Ready, sizeof(BITMAP_Ready));
                     UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 6);

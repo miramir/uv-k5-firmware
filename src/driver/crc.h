@@ -14,11 +14,16 @@
  *     limitations under the License.
  */
 
-#ifndef UI_AIRCOPY_H
-#define UI_AIRCOPY_H
+#ifndef DRIVER_CRC_H
+#define DRIVER_CRC_H
 
-#ifdef ENABLE_AIRCOPY
-    void UI_DisplayAircopy(void);
+#if defined(ENABLE_AIRCOPY) || defined(ENABLE_UART)
+
+#include <stdint.h>
+
+void CRC_Init(void);
+uint16_t CRC_Calculate(const void *pBuffer, uint16_t Size);
+
 #endif
 
 #endif

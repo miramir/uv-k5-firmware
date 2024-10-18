@@ -17,6 +17,8 @@
 #ifndef SPECTRUM_H
 #define SPECTRUM_H
 
+#ifdef ENABLE_SPECTRUM
+
 #include "../bitmaps.h"
 #include "../board.h"
 #include "../bsp/dp32g030/gpio.h"
@@ -181,6 +183,8 @@ typedef struct PeakInfo
 } PeakInfo;
 
 void APP_RunSpectrum(void);
+
+#endif
 
 #endif /* ifndef SPECTRUM_H */
 

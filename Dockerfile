@@ -1,10 +1,4 @@
-FROM --platform=amd64 archlinux:latest
-RUN pacman -Syyu base-devel --noconfirm
-RUN pacman -Syyu arm-none-eabi-gcc --noconfirm
-RUN pacman -Syyu arm-none-eabi-newlib --noconfirm
-RUN pacman -Syyu git --noconfirm
-RUN pacman -Syyu python-pip --noconfirm
-RUN pacman -Syyu python-crcmod --noconfirm
+FROM alpine:latest
 WORKDIR /app
-COPY . .
-RUN git submodule update --init --recursive
+RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community gcc-arm-none-eabi newlib-arm-none-eabi \
+   && apk add --no-cache git py3-pip py3-crcmod build-base

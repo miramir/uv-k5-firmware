@@ -13,6 +13,7 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
+#ifdef ENABLE_FMRADIO
 
 #include "bsp/dp32g030/gpio.h"
 #include "bk1080.h"
@@ -142,3 +143,4 @@ uint16_t BK1080_GetFreqHiLimit(uint8_t band)
     return lim[band % 4];
 }
 
+#endif

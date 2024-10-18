@@ -1,4 +1,5 @@
-/* Copyright 2023 Dual Tachyon
+
+/* Copyright 2023 OneOfEleven
  * https://github.com/DualTachyon
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +15,21 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_AES_H
-#define DRIVER_AES_H
+#ifndef AM_FIXH
+
+#ifdef ENABLE_AM_FIX
 
 #include <stdint.h>
-
-void AES_Encrypt(const void *pKey, const void *pIv, const void *pIn, void *pOut, uint8_t NumBlocks);
+#include <stdbool.h>
+    void AM_fix_init(void);
+    void AM_fix_reset(const unsigned vfo);
+    void AM_fix_10ms(const unsigned vfo);
+    #ifdef ENABLE_AM_FIX_SHOW_DATA
+        void AM_fix_print_data(const unsigned vfo, char *s);
+    #endif
+    int8_t AM_fix_get_gain_diff();
+    void AM_fix_enable(bool on);
 
 #endif
 
+#endif

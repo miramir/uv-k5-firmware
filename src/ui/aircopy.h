@@ -14,15 +14,12 @@
  *     limitations under the License.
  */
 
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef AIRCOPY_H
+#define AIRCOPY_H
 
-extern const char Version[];
-extern const char UART_Version[];
+#ifdef ENABLE_AIRCOPY
+    void UI_DisplayAircopy(void);
+#endif
 
 #endif
 
-#ifdef ENABLE_FEAT_F4HWN
-    extern const char Credits[];
-    extern const char Based[];
-#endif
