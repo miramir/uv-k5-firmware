@@ -1116,53 +1116,6 @@ void APP_TimeSlice10ms(void)
 #endif
 
     if (gCurrentFunction == FUNCTION_TRANSMIT) {
-#ifdef ENABLE_ALARM
-        if (gAlarmState == ALARM_STATE_TXALARM || gAlarmState == ALARM_STATE_SITE_ALARM) {
-            uint16_t Tone;
-
-            gAlarmRunningCounter++;
-            gAlarmToneCounter++;
-
-            Tone = 500 + (gAlarmToneCounter * 25);
-            if (Tone > 1500) {
-                Tone              = 500;
-                gAlarmToneCounter = 0;
-            }
-
-            BK4819_SetScrambleFrequencyControlWord(Tone);
-
-            if (gEeprom.ALARM_MODE == ALARM_MODE_TONE && gAlarmRunningCounter == 512) {
-                gAlarmRunningCounter = 0;
-
-                if (gAlarmState == ALARM_STATE_TXALARM) {
-                    gAlarmState = ALARM_STATE_SITE_ALARM;
-
-                    if(gEeprom.TAIL_TONE_ELIMINATION)
-                        RADIO_SendCssTail();
-                    BK4819_SetupPowerAmplifier(0, 0);
-                    BK4819_ToggleGpioOut(BK4819_GPIO1_PIN29_PA_ENABLE, false);
-                    BK4819_Enable_AfDac_DiscMode_TxDsp();
-                    BK4819_ToggleGpioOut(BK4819_GPIO5_PIN1_RED, false);
-
-                    GUI_DisplayScreen();
-                }
-                else {
-                    gAlarmState = ALARM_STATE_TXALARM;
-
-                    GUI_DisplayScreen();
-
-                    BK4819_ToggleGpioOut(BK4819_GPIO5_PIN1_RED, true);
-                    RADIO_SetTxParameters();
-                    BK4819_TransmitTone(true, 500);
-                    SYSTEM_DelayMs(2);
-                    AUDIO_AudioPathOn();
-
-                    gEnableSpeaker    = true;
-                    gAlarmToneCounter = 0;
-                }
-            }
-        }
-#endif
         // repeater tail tone elimination
         if (gRTTECountdown_10ms > 0) {
             if (--gRTTECountdown_10ms == 0) {
@@ -1474,27 +1427,6 @@ void APP_TimeSlice500ms(void)
 #endif
 }
 
-#if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
-static void ALARM_Off(void)
-{
-    AUDIO_AudioPathOff();
-    gEnableSpeaker = false;
-
-    if (gAlarmState == ALARM_STATE_TXALARM || gAlarmState == ALARM_STATE_TX1750) {
-        RADIO_SendEndOfTransmission();
-    }
-
-    gAlarmState = ALARM_STATE_OFF;
-
-    SYSTEM_DelayMs(5);
-
-    RADIO_SetupRegisters(true);
-
-    if (gScreenToDisplay != DISPLAY_MENU)     // 1of11 .. don't close the menu
-        gRequestDisplayScreen = DISPLAY_MAIN;
-}
-#endif
-
 static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 {
     if (Key == KEY_EXIT && !BACKLIGHT_IsOn() && gEeprom.BACKLIGHT_TIME > 0)
@@ -1668,66 +1600,46 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
     }
 
     if (gCurrentFunction == FUNCTION_TRANSMIT) {
-#if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
-        if (gAlarmState == ALARM_STATE_OFF)
-#endif
-        {
-            char Code;
+        char Code;
 
-            if (Key == KEY_PTT) {
-                GENERIC_Key_PTT(bKeyPressed);
+        if (Key == KEY_PTT) {
+            GENERIC_Key_PTT(bKeyPressed);
+            goto Skip;
+        }
+
+        if (Key == KEY_SIDE2) { // transmit 1750Hz tone
+            Code = 0xFE;
+        }
+        else {
+            Code = DTMF_GetCharacter(Key - KEY_0);
+            if (Code == 0xFF)
                 goto Skip;
-            }
+            // transmit DTMF keys
+        }
 
-            if (Key == KEY_SIDE2) { // transmit 1750Hz tone
-                Code = 0xFE;
-            }
-            else {
-                Code = DTMF_GetCharacter(Key - KEY_0);
-                if (Code == 0xFF)
-                    goto Skip;
-                // transmit DTMF keys
-            }
+        if (!bKeyPressed || bKeyHeld) {
+            if (!bKeyPressed) {
+                AUDIO_AudioPathOff();
 
-            if (!bKeyPressed || bKeyHeld) {
-                if (!bKeyPressed) {
-                    AUDIO_AudioPathOff();
+                gEnableSpeaker = false;
 
-                    gEnableSpeaker = false;
-
-                    BK4819_ExitDTMF_TX(false);
-                    BK4819_DisableScramble();
-                }
-            }
-            else {
-                if (gEeprom.DTMF_SIDE_TONE) { // user will here the DTMF tones in speaker
-                    AUDIO_AudioPathOn();
-                    gEnableSpeaker = true;
-                }
-
+                BK4819_ExitDTMF_TX(false);
                 BK4819_DisableScramble();
-
-                if (Code == 0xFE)
-                    BK4819_TransmitTone(gEeprom.DTMF_SIDE_TONE, 1750);
-                else
-                    BK4819_PlayDTMFEx(gEeprom.DTMF_SIDE_TONE, Code);
             }
         }
-#if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
-        else if ((!bKeyHeld && bKeyPressed) || (gAlarmState == ALARM_STATE_TX1750 && bKeyHeld && !bKeyPressed)) {
-            ALARM_Off();
+        else {
+            if (gEeprom.DTMF_SIDE_TONE) { // user will here the DTMF tones in speaker
+                AUDIO_AudioPathOn();
+                gEnableSpeaker = true;
+            }
 
-            if (gEeprom.REPEATER_TAIL_TONE_ELIMINATION == 0)
-                FUNCTION_Select(FUNCTION_FOREGROUND);
+            BK4819_DisableScramble();
+
+            if (Code == 0xFE)
+                BK4819_TransmitTone(gEeprom.DTMF_SIDE_TONE, 1750);
             else
-                gRTTECountdown_10ms = gEeprom.REPEATER_TAIL_TONE_ELIMINATION * 10;
-
-            if (Key == KEY_PTT)
-                gPttWasPressed  = true;
-            else if (!bKeyHeld)
-                gPttWasReleased = true;
+                BK4819_PlayDTMFEx(gEeprom.DTMF_SIDE_TONE, Code);
         }
-#endif
     }
     // For F + SIDE1 or F + SIDE2
     else if (gWasFKeyPressed && (Key == KEY_SIDE1 || Key == KEY_SIDE2)) {

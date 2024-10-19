@@ -179,7 +179,7 @@ typedef struct {
     uint8_t               field38_0x33;
 
     uint8_t               AUTO_KEYPAD_LOCK;
-#if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
+#ifdef ENABLE_TX1750
     ALARM_Mode_t      ALARM_MODE;
 #endif
     POWER_OnDisplayMode_t POWER_ON_DISPLAY_MODE;

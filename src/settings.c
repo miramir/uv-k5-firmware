@@ -126,9 +126,6 @@ void SETTINGS_InitEEPROM(void)
 
     // 0EA8..0EAF
     EEPROM_ReadBuffer(0x0EA8, Data, 8);
-    #ifdef ENABLE_ALARM
-        gEeprom.ALARM_MODE                 = (Data[0] <  2) ? Data[0] : true;
-    #endif
     gEeprom.ROGER                          = (Data[1] <  3) ? Data[1] : ROGER_MODE_OFF;
     gEeprom.REPEATER_TAIL_TONE_ELIMINATION = (Data[2] < 11) ? Data[2] : 0;
     gEeprom.TX_VFO                         = (Data[3] <  2) ? Data[3] : 0;
@@ -522,9 +519,7 @@ void SETTINGS_SaveSettings(void)
     State[2] = gEeprom.S9_LEVEL;
 #endif
     EEPROM_WriteBuffer(0x0EA0, State);
-
-
-    #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
+    #ifdef ENABLE_TX1750
         State[0] = gEeprom.ALARM_MODE;
     #else
         State[0] = false;
@@ -729,9 +724,6 @@ void SETTINGS_WriteBuildOptions(void)
 State[0] = 0
 #ifdef ENABLE_FMRADIO
     | (1 << 0)
-#endif
-#ifdef ENABLE_ALARM
-    | (1 << 4)
 #endif
 #ifdef ENABLE_TX1750
     | (1 << 5)

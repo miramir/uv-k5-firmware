@@ -194,10 +194,6 @@ void UI_DisplayAudioBar(void)
             return;  // screen is in use
         }
 
-#if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
-        if (gAlarmState != ALARM_STATE_OFF)
-            return;
-#endif
         static uint8_t barsOld = 0;
         const uint8_t thresold = 18; // arbitrary thresold
         //const uint8_t barsList[] = {0, 0, 0, 1, 2, 3, 4, 5, 6, 8, 10, 13, 16, 20, 25, 25};
@@ -595,18 +591,10 @@ void UI_DisplayMain(void)
 
         if (gCurrentFunction == FUNCTION_TRANSMIT)
         {   // transmitting
-
-#ifdef ENABLE_ALARM
-            if (gAlarmState == ALARM_STATE_SITE_ALARM)
-                mode = VFO_MODE_RX;
-            else
-#endif
-            {
-                if (activeTxVFO == vfo_num)
-                {   // show the TX symbol
-                    mode = VFO_MODE_TX;
-                    UI_PrintStringSmallBold("TX", 8, 0, line);
-                }
+            if (activeTxVFO == vfo_num)
+            {   // show the TX symbol
+                mode = VFO_MODE_TX;
+                UI_PrintStringSmallBold("TX", 8, 0, line);
             }
         }
         else
@@ -662,12 +650,6 @@ void UI_DisplayMain(void)
 
         enum VfoState_t state = VfoState[vfo_num];
 
-#ifdef ENABLE_ALARM
-        if (gCurrentFunction == FUNCTION_TRANSMIT && gAlarmState == ALARM_STATE_SITE_ALARM) {
-            if (activeTxVFO == vfo_num)
-                state = VFO_STATE_ALARM;
-        }
-#endif
         if (state != VFO_STATE_NORMAL)
         {
             if (state < ARRAY_SIZE(VfoStateStr))

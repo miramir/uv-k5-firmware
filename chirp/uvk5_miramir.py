@@ -377,16 +377,16 @@ struct {
 #seekto 0x1FF0;
 struct {
 u8 ENABLE_DTMF_CALLING:1,
-   __UNUSED3:1,
-   ENABLE_TX1750:1,
-   ENABLE_ALARM:1,
-   __UNUSED3:1,
-   __UNUSED2:1,
    __UNUSED1:1,
-   ENABLE_FMRADIO:1;
-u8 __UNUSED:2,
-   ENABLE_BANDSCOPE:1,
+   ENABLE_TX1750:1,
+   __UNUSED2:1,
+   __UNUSED3:1,
    __UNUSED4:1,
+   __UNUSED5:1,
+   ENABLE_FMRADIO:1;
+u8 __UNUSED6:2,
+   ENABLE_BANDSCOPE:1,
+   __UNUSED7:1,
    ENABLE_BLMIN_TMP_OFF:1,
    ENABLE_RAW_DEMODULATORS:1,
    ENABLE_WIDE_RX:1,
@@ -1860,7 +1860,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         # Programmable keys
         def get_action(action_num):
             """"get actual key action"""
-            has_alarm = self._memobj.BUILD_OPTIONS.ENABLE_ALARM
             has1750 = self._memobj.BUILD_OPTIONS.ENABLE_TX1750
             has_flashlight = self._memobj.BUILD_OPTIONS.ENABLE_FLASHLIGHT
 
@@ -3295,8 +3294,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         basic.append(roger_setting)
         basic.append(ste_setting)
         basic.append(rp_ste_setting)
-        if _mem.BUILD_OPTIONS.ENABLE_ALARM:
-            basic.append(alarm_setting)
 
         append_label(basic, "=" * 6 + " Radio state " + "=" * 300, "=" * 300)
 

@@ -903,7 +903,7 @@ void RADIO_PrepareTX(void)
     RADIO_SelectCurrentVfo();
 
         if(TX_freq_check(gCurrentVfo->pTX->Frequency) != 0 && gCurrentVfo->TX_LOCK == true
-    #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
+    #ifdef ENABLE_TX1750
             && gAlarmState != ALARM_STATE_SITE_ALARM
     #endif
     ){
@@ -934,7 +934,7 @@ void RADIO_PrepareTX(void)
         // TX not allowed
         RADIO_SetVfoState(State);
 
-#if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
+#ifdef ENABLE_TX1750
         gAlarmState = ALARM_STATE_OFF;
 #endif
 
@@ -964,22 +964,11 @@ void RADIO_PrepareTX(void)
 
     gTxTimerCountdown_500ms = 0;            // no timeout
 
-    #if defined(ENABLE_ALARM) || defined(ENABLE_TX1750)
+    #ifdef ENABLE_TX1750
     if (gAlarmState == ALARM_STATE_OFF)
     #endif
     {
-
         gTxTimerCountdown_500ms = ((gEeprom.TX_TIMEOUT_TIMER + 1) * 5) * 2;
-
-        /*
-        if (gEeprom.TX_TIMEOUT_TIMER == 0)
-            gTxTimerCountdown_500ms = 60;   // 30 sec
-        else if (gEeprom.TX_TIMEOUT_TIMER < (ARRAY_SIZE(gSubMenu_TOT) - 1))
-            gTxTimerCountdown_500ms = 120 * gEeprom.TX_TIMEOUT_TIMER;  // minutes
-        else
-            gTxTimerCountdown_500ms = 120 * 15;  // 15 minutes
-        */
-
         gTxTimerCountdownAlert_500ms = gTxTimerCountdown_500ms;
     }
 
