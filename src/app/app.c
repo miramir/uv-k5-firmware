@@ -1005,10 +1005,8 @@ void APP_TimeSlice10ms(void)
 
     if (gCurrentFunction == FUNCTION_TRANSMIT)
     {   // transmitting
-#ifdef ENABLE_AUDIO_BAR
         if (gSetting_mic_bar && (gFlashLightBlinkCounter % (150 / 10)) == 0) // once every 150ms
             UI_DisplayAudioBar();
-#endif
     }
 
     if (gUpdateDisplay) {
@@ -1102,10 +1100,8 @@ void APP_TimeSlice500ms(void)
 
     if (gDTMF_RX_live_timeout > 0)
     {
-        #ifdef ENABLE_RSSI_BAR
-            if (center_line == CENTER_LINE_DTMF_DEC ||
+        if (center_line == CENTER_LINE_DTMF_DEC ||
                 center_line == CENTER_LINE_NONE)  // wait till the center line is free for us to use before timing out
-        #endif
         {
             if (--gDTMF_RX_live_timeout == 0)
             {

@@ -154,24 +154,22 @@ extern uint8_t            gDW;
 extern uint8_t            gCB;
 extern bool               gSaveRxMode;
 
-#ifdef ENABLE_AUDIO_BAR
-    extern bool              gSetting_mic_bar;
-#endif
-extern bool                  gSetting_live_DTMF_decoder;
-extern uint8_t               gSetting_battery_text;
+extern bool               gSetting_mic_bar;
+extern bool               gSetting_live_DTMF_decoder;
+extern uint8_t            gSetting_battery_text;
 
-extern bool                  gMonitor;
+extern bool               gMonitor;
 
-extern const uint32_t        gDefaultAesKey[4];
-extern uint32_t              gCustomAesKey[4];
-extern bool                  bHasCustomAesKey;
-extern uint32_t              gChallenge[4];
-extern uint8_t               gTryCount;
+extern const uint32_t     gDefaultAesKey[4];
+extern uint32_t           gCustomAesKey[4];
+extern bool               bHasCustomAesKey;
+extern uint32_t           gChallenge[4];
+extern uint8_t            gTryCount;
 
-extern uint16_t              gEEPROM_RSSI_CALIB[7][4];
+extern uint16_t           gEEPROM_RSSI_CALIB[7][4];
 
-extern uint16_t              gEEPROM_1F8A;
-extern uint16_t              gEEPROM_1F8C;
+extern uint16_t           gEEPROM_1F8A;
+extern uint16_t           gEEPROM_1F8C;
 
 typedef union {
     struct {

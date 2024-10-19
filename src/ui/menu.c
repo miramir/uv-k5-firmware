@@ -77,9 +77,7 @@ const t_menu_item MenuList[] =
     {"BatSav",      MENU_SAVE          }, // was "SAVE"
     {"BatTxt",      MENU_BAT_TXT       },
     {"Mic",         MENU_MIC           },
-#ifdef ENABLE_AUDIO_BAR
     {"MicBar",      MENU_MIC_BAR       },
-#endif
     {"ChDisp",      MENU_MDF           }, // was "MDF"
     {"POnMsg",      MENU_PONMSG        },
     {"BLTime",      MENU_ABR           }, // was "ABR"
@@ -483,11 +481,9 @@ void UI_DisplayMenu(void)
             }
             break;
 
-        #ifdef ENABLE_AUDIO_BAR
-            case MENU_MIC_BAR:
-                strcpy(String, gSubMenu_OFF_ON[gSubMenuSelection]);
-                break;
-        #endif
+        case MENU_MIC_BAR:
+            strcpy(String, gSubMenu_OFF_ON[gSubMenuSelection]);
+            break;
 
         case MENU_STEP: {
             uint16_t step = gStepFrequencyTable[FREQUENCY_GetStepIdxFromSortedIdx(gSubMenuSelection)];

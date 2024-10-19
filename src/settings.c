@@ -113,16 +113,14 @@ void SETTINGS_InitEEPROM(void)
     gEeprom.POWER_ON_DISPLAY_MODE        = (Data[7] < 6)              ? Data[7] : POWER_ON_DISPLAY_MODE_VOLTAGE;
     // 0EA0..0EA7
     EEPROM_ReadBuffer(0x0EA0, Data, 8);
-    #ifdef ENABLE_RSSI_BAR
-        if((Data[1] < 200 && Data[1] > 90) && (Data[2] < Data[1]-9 && Data[1] < 160  && Data[2] > 50)) {
-            gEeprom.S0_LEVEL = Data[1];
-            gEeprom.S9_LEVEL = Data[2];
-        }
-        else {
-            gEeprom.S0_LEVEL = 130;
-            gEeprom.S9_LEVEL = 76;
-        }
-    #endif
+    if((Data[1] < 200 && Data[1] > 90) && (Data[2] < Data[1]-9 && Data[1] < 160  && Data[2] > 50)) {
+        gEeprom.S0_LEVEL = Data[1];
+        gEeprom.S9_LEVEL = Data[2];
+    }
+    else {
+        gEeprom.S0_LEVEL = 130;
+        gEeprom.S9_LEVEL = 76;
+    }
 
     // 0EA8..0EAF
     EEPROM_ReadBuffer(0x0EA8, Data, 8);
@@ -185,9 +183,7 @@ void SETTINGS_InitEEPROM(void)
     //gSetting_TX_EN             = (Data[7] & (1u << 0)) ? true : false;
     gSetting_live_DTMF_decoder = !!(Data[7] & (1u << 1));
     gSetting_battery_text      = (((Data[7] >> 2) & 3u) <= 2) ? (Data[7] >> 2) & 3 : 2;
-    #ifdef ENABLE_AUDIO_BAR
-        gSetting_mic_bar       = !!(Data[7] & (1u << 4));
-    #endif
+    gSetting_mic_bar           = !!(Data[7] & (1u << 4));
     gSetting_backlight_on_tx_rx = (Data[7] >> 6) & 3u;
 
     if (!gEeprom.VFO_OPEN)
@@ -475,10 +471,8 @@ void SETTINGS_SaveSettings(void)
     EEPROM_WriteBuffer(0x0E90, State);
 
     memset(State, 0xFF, sizeof(State));
-#ifdef ENABLE_RSSI_BAR
     State[1] = gEeprom.S0_LEVEL;
     State[2] = gEeprom.S9_LEVEL;
-#endif
     EEPROM_WriteBuffer(0x0EA0, State);
     #ifdef ENABLE_TX1750
         State[0] = gEeprom.ALARM_MODE;
@@ -530,9 +524,11 @@ void SETTINGS_SaveSettings(void)
     //if (!gSetting_TX_EN)             State[7] &= ~(1u << 0);
     if (!gSetting_live_DTMF_decoder) State[7] &= ~(1u << 1);
     State[7] = (State[7] & ~(3u << 2)) | ((gSetting_battery_text & 3u) << 2);
-    #ifdef ENABLE_AUDIO_BAR
-        if (!gSetting_mic_bar)           State[7] &= ~(1u << 4);
-    #endif
+    
+    if (!gSetting_mic_bar) {
+        State[7] &= ~(1u << 4);
+    }
+
     State[7] = (State[7] & ~(3u << 6)) | ((gSetting_backlight_on_tx_rx & 3u) << 6);
 
     EEPROM_WriteBuffer(0x0F40, State);

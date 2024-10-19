@@ -94,9 +94,7 @@ uint8_t       gDW = 0;
 uint8_t       gCB = 0;
 bool          gSaveRxMode = false;
 
-#ifdef ENABLE_AUDIO_BAR
-    bool          gSetting_mic_bar;
-#endif
+bool          gSetting_mic_bar;
 bool              gSetting_live_DTMF_decoder;
 uint8_t           gSetting_battery_text;
 

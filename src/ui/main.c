@@ -101,7 +101,6 @@ static void DrawSmallAntennaAndBars(uint8_t *p, unsigned int level)
         memset(p + 2 + i*3, bar, 2);
     }
 }
-#if defined ENABLE_AUDIO_BAR || defined ENABLE_RSSI_BAR
 
 static void DrawLevelBar(uint8_t xpos, uint8_t line, uint8_t level, uint8_t bars)
 {
@@ -151,9 +150,6 @@ static void DrawLevelBar(uint8_t xpos, uint8_t line, uint8_t level, uint8_t bars
         }
     }
 }
-#endif
-
-#ifdef ENABLE_AUDIO_BAR
 
 // Approximation of a logarithmic scale using integer arithmetic
 uint8_t log2_approx(unsigned int value) {
@@ -212,12 +208,9 @@ void UI_DisplayAudioBar(void)
             ST7565_BlitFullScreen();
     }
 }
-#endif
 
 void DisplayRSSIBar(const bool now)
 {
-#if defined(ENABLE_RSSI_BAR)
-
     const unsigned int txt_width    = 7 * 8;                 // 8 text chars
     const unsigned int bar_x        = 2 + txt_width + 4;     // X coord of bar graph
 
@@ -311,30 +304,6 @@ void DisplayRSSIBar(const bool now)
     DrawLevelBar(bar_x, line, s_level + overS9Bars, 13);
     if (now)
         ST7565_BlitLine(line);
-#else
-    int16_t rssi = BK4819_GetRSSI();
-    uint8_t Level;
-
-    if (rssi >= gEEPROM_RSSI_CALIB[gRxVfo->Band][3]) {
-        Level = 6;
-    } else if (rssi >= gEEPROM_RSSI_CALIB[gRxVfo->Band][2]) {
-        Level = 4;
-    } else if (rssi >= gEEPROM_RSSI_CALIB[gRxVfo->Band][1]) {
-        Level = 2;
-    } else if (rssi >= gEEPROM_RSSI_CALIB[gRxVfo->Band][0]) {
-        Level = 1;
-    } else {
-        Level = 0;
-    }
-
-    uint8_t *pLine = (gEeprom.RX_VFO == 0)? gFrameBuffer[2] : gFrameBuffer[6];
-    if (now)
-        memset(pLine, 0, 23);
-    DrawSmallAntennaAndBars(pLine, Level);
-    if (now)
-        ST7565_BlitFullScreen();
-#endif
-
 }
 
 #ifdef ENABLE_AGC_SHOW_DATA
@@ -824,11 +793,7 @@ void UI_DisplayMain(void)
             else
             if (mode == VFO_MODE_RX)
             {   // RX signal level
-                #ifndef ENABLE_RSSI_BAR
-                    // bar graph
-                    if (gVFO_RSSI_bar_level[vfo_num] > 0)
-                        Level = gVFO_RSSI_bar_level[vfo_num];
-                #endif
+
             }
             if(Level)
                 DrawSmallAntennaAndBars(p_line1 + LCD_WIDTH, Level);
@@ -1033,13 +998,12 @@ void UI_DisplayMain(void)
 
         const bool rx = FUNCTION_IsRx();
 
-#ifdef ENABLE_AUDIO_BAR
+
         if (gSetting_mic_bar && gCurrentFunction == FUNCTION_TRANSMIT) {
             center_line = CENTER_LINE_AUDIO_BAR;
             UI_DisplayAudioBar();
         }
         else
-#endif
 
 #if defined(ENABLE_AM_FIX_SHOW_DATA)
         if (rx && gEeprom.VfoInfo[gEeprom.RX_VFO].Modulation == MODULATION_AM && gSetting_AM_fix)
@@ -1054,14 +1018,11 @@ void UI_DisplayMain(void)
         else
 #endif
 
-#ifdef ENABLE_RSSI_BAR
         if (rx) {
             center_line = CENTER_LINE_RSSI;
             DisplayRSSIBar(false);
         }
-        else
-#endif
-        if (rx || gCurrentFunction == FUNCTION_FOREGROUND || gCurrentFunction == FUNCTION_POWER_SAVE)
+        else if (rx || gCurrentFunction == FUNCTION_FOREGROUND || gCurrentFunction == FUNCTION_POWER_SAVE)
         {
             #if 1
                 if (gSetting_live_DTMF_decoder && gDTMF_RX_live[0] != 0)
