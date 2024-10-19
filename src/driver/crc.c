@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-#if defined(ENABLE_AIRCOPY) || defined(ENABLE_UART)
+#ifdef ENABLE_UART
 
 #include "../bsp/dp32g030/crc.h"
 #include "crc.h"

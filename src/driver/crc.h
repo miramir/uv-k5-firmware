@@ -17,7 +17,7 @@
 #ifndef DRIVER_CRC_H
 #define DRIVER_CRC_H
 
-#if defined(ENABLE_AIRCOPY) || defined(ENABLE_UART)
+#ifdef ENABLE_UART
 
 #include <stdint.h>
 

@@ -94,12 +94,6 @@ uint8_t       gDW = 0;
 uint8_t       gCB = 0;
 bool          gSaveRxMode = false;
 
-#ifdef ENABLE_AIRCOPY
-    uint8_t       crc[15] = { 0 };
-    uint8_t       gAircopyStep = 0;
-    uint8_t       lErrorsDuringAirCopy = 0;
-#endif
-
 #ifdef ENABLE_AUDIO_BAR
     bool          gSetting_mic_bar;
 #endif

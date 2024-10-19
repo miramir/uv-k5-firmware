@@ -154,12 +154,6 @@ extern uint8_t            gDW;
 extern uint8_t            gCB;
 extern bool               gSaveRxMode;
 
-#ifdef ENABLE_AIRCOPY
-    extern uint8_t            crc[15];
-    extern uint8_t            gAircopyStep;
-    extern uint8_t            lErrorsDuringAirCopy;
-#endif
-
 #ifdef ENABLE_AUDIO_BAR
     extern bool              gSetting_mic_bar;
 #endif

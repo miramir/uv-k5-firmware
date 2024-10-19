@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef GUI_H
-#define GUI_H
+#ifndef UI_H
+#define UI_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -25,15 +25,9 @@ enum GUI_DisplayType_t
     DISPLAY_MAIN = 0,
     DISPLAY_MENU,
     DISPLAY_SCANNER,
-
 #ifdef ENABLE_FMRADIO
     DISPLAY_FM,
 #endif
-
-#ifdef ENABLE_AIRCOPY
-    DISPLAY_AIRCOPY,
-#endif
-
     DISPLAY_N_ELEM,
     DISPLAY_INVALID = 0xFFu
 };
