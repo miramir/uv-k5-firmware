@@ -846,18 +846,18 @@ static void DrawStatus()
     // sprintf(String, "%d %d", voltage, perc);
     // GUI_DisplaySmallest(String, 48, 1, true, true);
 
-    gStatusLine[116] = 0b00011100;
-    gStatusLine[117] = 0b00111110;
+    gFrameBuffer[0][116] = 0b00011100;
+    gFrameBuffer[0][117] = 0b00111110;
     for (int i = 118; i <= 126; i++)
     {
-        gStatusLine[i] = 0b00100010;
+        gFrameBuffer[0][i] = 0b00100010;
     }
 
     for (unsigned i = 127; i >= 118; i--)
     {
         if (127 - i <= (perc + 5) * 9 / 100)
         {
-            gStatusLine[i] = 0b00111110;
+            gFrameBuffer[0][i] = 0b00111110;
         }
     }
 }
@@ -1198,7 +1198,7 @@ static void RenderFreqInput() { UI_PrintString(freqInputString, 2, 127, 0, 8); }
 
 static void RenderStatus()
 {
-    memset(gStatusLine, 0, sizeof(gStatusLine));
+    memset(gFrameBuffer[0], 0, sizeof(gFrameBuffer[0]));
     DrawStatus();
     ST7565_BlitStatusLine();
 }

@@ -41,7 +41,7 @@ static void convertTime(uint8_t *line, uint8_t type)
     uint8_t m = t / 60;
     uint8_t s = t % 60; // Utilisation de l'opérateur modulo pour simplifier le calcul des secondes
 
-    gStatusLine[0] = gStatusLine[7] = gStatusLine[14] = 0x00; // Quick fix on display (on scanning I, II, etc.)
+    gFrameBuffer[0][0] = gFrameBuffer[0][7] = gFrameBuffer[0][14] = 0x00; // Quick fix on display (on scanning I, II, etc.)
 
     char str[8];
     sprintf(str, "%02d:%02d", m, s);
@@ -55,9 +55,9 @@ void UI_DisplayStatus()
     char str[8] = "";
 
     gUpdateStatus = false;
-    memset(gStatusLine, 0, sizeof(gStatusLine));
+    memset(gFrameBuffer[0], 0, sizeof(gFrameBuffer[0]));
 
-    uint8_t     *line = gStatusLine;
+    uint8_t     *line = gFrameBuffer[0];
     unsigned int x    = 0;
     // **************
 
@@ -153,7 +153,7 @@ void UI_DisplayStatus()
         
         for (uint8_t i = 71; i < 79; i++)
         {
-            gStatusLine[i] ^= 0x7F;
+            gFrameBuffer[0][i] ^= 0x7F;
         }
         */
     }

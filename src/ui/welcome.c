@@ -30,7 +30,7 @@
 
 void UI_DisplayReleaseKeys(void)
 {
-    memset(gStatusLine,  0, sizeof(gStatusLine));
+    memset(gFrameBuffer[0],  0, sizeof(gFrameBuffer[0]));
     ST7565_ContrastAndInv();
     UI_DisplayClear();
 
@@ -47,7 +47,7 @@ void UI_DisplayWelcome(void)
     char WelcomeString1[16];
     char WelcomeString2[16];
 
-    memset(gStatusLine,  0, sizeof(gStatusLine));
+    memset(gFrameBuffer[0],  0, sizeof(gFrameBuffer[0]));
 
     ST7565_ContrastAndInv();
     UI_DisplayClear();

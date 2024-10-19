@@ -203,7 +203,7 @@ void PutPixel(uint8_t x, uint8_t y, bool fill) {
 }
 
 void PutPixelStatus(uint8_t x, uint8_t y, bool fill) {
-    UI_DrawPixelBuffer(&gStatusLine, x, y, fill);
+    UI_DrawPixelBuffer(&gFrameBuffer[0], x, y, fill);
 }
 
 void GUI_DisplaySmallest(const char *pString, uint8_t x, uint8_t y,
