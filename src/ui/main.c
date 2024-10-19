@@ -29,7 +29,7 @@
 #include "misc.h"
 #include "radio.h"
 #include "settings.h"
-#include "ui/helper.h"
+#include "ui/graphics.h"
 #include "ui/inputbox.h"
 #include "ui/main.h"
 #include "ui/ui.h"

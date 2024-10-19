@@ -15,8 +15,8 @@
  *     limitations under the License.
  */
 
-#ifndef DRIVER_KEYBOARD_H
-#define DRIVER_KEYBOARD_H
+#ifndef KEYBOARD_H
+#define KEYBOARD_H
 
 #include <stdbool.h>
 #include <stdint.h>

@@ -31,7 +31,7 @@
 #include "../helper/battery.h"
 #include "../misc.h"
 #include "../settings.h"
-#include "helper.h"
+#include "graphics.h"
 #include "inputbox.h"
 #include "menu.h"
 #include "ui.h"

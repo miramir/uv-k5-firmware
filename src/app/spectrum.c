@@ -26,7 +26,7 @@
 
 #include "driver/backlight.h"
 #include "frequencies.h"
-#include "ui/helper.h"
+#include "ui/graphics.h"
 #include "ui/main.h"
 #include "audio.h"
 #include "driver/eeprom.h"

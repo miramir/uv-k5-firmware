@@ -14,8 +14,8 @@
  *     limitations under the License.
  */
 
-#ifndef HELPER_H
-#define HELPER_H
+#ifndef GRAPHICS_H
+#define GRAPHICS_H
 
 #include <stdbool.h>
 #include <stdint.h>

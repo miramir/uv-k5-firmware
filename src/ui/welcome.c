@@ -22,7 +22,7 @@
 #include "helper/battery.h"
 #include "settings.h"
 #include "misc.h"
-#include "ui/helper.h"
+#include "ui/graphics.h"
 #include "ui/welcome.h"
 #include "ui/status.h"
 #include "version.h"

@@ -35,7 +35,7 @@
 #include "../misc.h"
 #include "../radio.h"
 #include "../settings.h"
-#include "../ui/helper.h"
+#include "../ui/graphics.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>

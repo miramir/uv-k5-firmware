@@ -25,7 +25,7 @@
 #include "misc.h"
 #include "settings.h"
 #include "ui/fmradio.h"
-#include "ui/helper.h"
+#include "ui/graphics.h"
 #include "ui/inputbox.h"
 #include "ui/ui.h"
 

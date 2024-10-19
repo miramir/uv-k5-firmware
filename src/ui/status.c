@@ -30,7 +30,7 @@
 #include "misc.h"
 #include "settings.h"
 #include "ui/battery.h"
-#include "ui/helper.h"
+#include "ui/graphics.h"
 #include "ui/ui.h"
 #include "ui/status.h"
 
