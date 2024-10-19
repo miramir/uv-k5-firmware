@@ -209,9 +209,6 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
         case MENU_S_ADD3:
         case MENU_STE:
         case MENU_D_ST:
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_DCD:
-#endif
         case MENU_D_LIVE_DEC:
         case MENU_350EN:
         case MENU_SET_TMR:
@@ -268,12 +265,6 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             *pMax = 5;
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_RSP:
-            //*pMin = 0;
-            *pMax = ARRAY_SIZE(gSubMenu_D_RSP) - 1;
-            break;
-#endif
         case MENU_PTT_ID:
             //*pMin = 0;
             *pMax = ARRAY_SIZE(gSubMenu_PTT_ID) - 1;
@@ -284,29 +275,17 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
             *pMax = ARRAY_SIZE(gSubMenu_BAT_TXT) - 1;
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_HOLD:
-            *pMin = 5;
-            *pMax = 60;
-            break;
-#endif
         case MENU_D_PRE:
             *pMin = 3;
             *pMax = 99;
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_LIST:
-            *pMin = 1;
-            *pMax = 16;
+#ifdef ENABLE_F_CAL_MENU
+        case MENU_F_CALI:
+            *pMin = -50;
+            *pMax = +50;
             break;
 #endif
-        #ifdef ENABLE_F_CAL_MENU
-            case MENU_F_CALI:
-                *pMin = -50;
-                *pMax = +50;
-                break;
-        #endif
 
         case MENU_BATCAL:
             *pMin = 1600;
@@ -603,15 +582,6 @@ void MENU_AcceptSetting(void)
             gEeprom.DTMF_SIDE_TONE = gSubMenuSelection;
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_RSP:
-            gEeprom.DTMF_DECODE_RESPONSE = gSubMenuSelection;
-            break;
-
-        case MENU_D_HOLD:
-            gEeprom.DTMF_auto_reset_time = gSubMenuSelection;
-            break;
-#endif
         case MENU_D_PRE:
             gEeprom.DTMF_PRELOAD_TIME = gSubMenuSelection * 10;
             break;
@@ -625,14 +595,6 @@ void MENU_AcceptSetting(void)
             gSetting_battery_text = gSubMenuSelection;
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_DCD:
-            gTxVfo->DTMF_DECODING_ENABLE = gSubMenuSelection;
-            DTMF_clear_RX();
-            gRequestSaveChannel = 1;
-            return;
-#endif
-
         case MENU_D_LIVE_DEC:
             gSetting_live_DTMF_decoder = gSubMenuSelection;
             gDTMF_RX_live_timeout = 0;
@@ -643,19 +605,6 @@ void MENU_AcceptSetting(void)
             gUpdateStatus            = true;
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_LIST:
-            gDTMF_chosen_contact = gSubMenuSelection - 1;
-            if (gIsDtmfContactValid)
-            {
-                GUI_SelectNextDisplay(DISPLAY_MAIN);
-                gDTMF_InputMode       = true;
-                gDTMF_InputBox_Index  = 3;
-                memcpy(gDTMF_InputBox, gDTMF_ID, 4);
-                gRequestDisplayScreen = DISPLAY_INVALID;
-            }
-            return;
-#endif
         case MENU_PONMSG:
             gEeprom.POWER_ON_DISPLAY_MODE = gSubMenuSelection;
             break;
@@ -999,15 +948,6 @@ void MENU_ShowCurrentSetting(void)
             gSubMenuSelection = gEeprom.DTMF_SIDE_TONE;
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_RSP:
-            gSubMenuSelection = gEeprom.DTMF_DECODE_RESPONSE;
-            break;
-
-        case MENU_D_HOLD:
-            gSubMenuSelection = gEeprom.DTMF_auto_reset_time;
-            break;
-#endif
         case MENU_D_PRE:
             gSubMenuSelection = gEeprom.DTMF_PRELOAD_TIME / 10;
             break;
@@ -1020,15 +960,6 @@ void MENU_ShowCurrentSetting(void)
             gSubMenuSelection = gSetting_battery_text;
             return;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_DCD:
-            gSubMenuSelection = gTxVfo->DTMF_DECODING_ENABLE;
-            break;
-
-        case MENU_D_LIST:
-            gSubMenuSelection = gDTMF_chosen_contact + 1;
-            break;
-#endif
         case MENU_D_LIVE_DEC:
             gSubMenuSelection = gSetting_live_DTMF_decoder;
             break;
@@ -1339,18 +1270,12 @@ static void MENU_Key_MENU(const bool bKeyPressed, const bool bKeyHeld)
 
     if (!gIsInSubMenu)
     {
-        if (UI_MENU_GetCurrentMenuId() == MENU_UPCODE 
-            || UI_MENU_GetCurrentMenuId() == MENU_DWCODE 
-#ifdef ENABLE_DTMF_CALLING 
-            || UI_MENU_GetCurrentMenuId() == MENU_ANI_ID
-#endif
-            )
+        if (UI_MENU_GetCurrentMenuId() == MENU_UPCODE || UI_MENU_GetCurrentMenuId() == MENU_DWCODE)
             return;
-        #if 1
-            if (UI_MENU_GetCurrentMenuId() == MENU_DEL_CH || UI_MENU_GetCurrentMenuId() == MENU_MEM_NAME)
-                if (!RADIO_CheckValidChannel(gSubMenuSelection, false, 0))
-                    return;  // invalid channel
-        #endif
+
+        if (UI_MENU_GetCurrentMenuId() == MENU_DEL_CH || UI_MENU_GetCurrentMenuId() == MENU_MEM_NAME)
+            if (!RADIO_CheckValidChannel(gSubMenuSelection, false, 0))
+                return;  // invalid channel
 
         gAskForConfirmation = 0;
         gIsInSubMenu        = true;

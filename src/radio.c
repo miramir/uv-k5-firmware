@@ -326,16 +326,10 @@ void RADIO_ConfigureChannel(const unsigned int VFO, const unsigned int configure
 
         if (data[5] == 0xFF)
         {
-#ifdef ENABLE_DTMF_CALLING
-            pVfo->DTMF_DECODING_ENABLE = false;
-#endif
             pVfo->DTMF_PTT_ID_TX_MODE  = PTT_ID_OFF;
         }
         else
         {
-#ifdef ENABLE_DTMF_CALLING
-            pVfo->DTMF_DECODING_ENABLE = ((data[5] >> 0) & 1u) ? true : false;
-#endif
             uint8_t pttId = ((data[5] >> 1) & 7u);
             pVfo->DTMF_PTT_ID_TX_MODE  = pttId < ARRAY_SIZE(gSubMenu_PTT_ID) ? pttId : PTT_ID_OFF;
         }
@@ -937,29 +931,10 @@ void RADIO_PrepareTX(void)
 #ifdef ENABLE_TX1750
         gAlarmState = ALARM_STATE_OFF;
 #endif
-
-#ifdef ENABLE_DTMF_CALLING
-        gDTMF_ReplyState = DTMF_REPLY_NONE;
-#endif
         return;
     }
 
     // TX is allowed
-
-#ifdef ENABLE_DTMF_CALLING
-    if (gDTMF_ReplyState == DTMF_REPLY_ANI)
-    {
-        gDTMF_IsTx = gDTMF_CallMode == DTMF_CALL_MODE_DTMF;
-
-        if (gDTMF_IsTx) {
-            gDTMF_CallState = DTMF_CALL_STATE_NONE;
-            gDTMF_TxStopCountdown_500ms = DTMF_txstop_countdown_500ms;
-        } else {
-            gDTMF_CallState = DTMF_CALL_STATE_CALL_OUT;
-        }
-    }
-#endif
-
     FUNCTION_Select(FUNCTION_TRANSMIT);
 
     gTxTimerCountdown_500ms = 0;            // no timeout
@@ -978,10 +953,6 @@ void RADIO_PrepareTX(void)
     
     gFlagEndTransmission = false;
     gRTTECountdown_10ms  = 0;
-
-#ifdef ENABLE_DTMF_CALLING
-    gDTMF_ReplyState     = DTMF_REPLY_NONE;
-#endif
 }
 
 void RADIO_SendCssTail(void)

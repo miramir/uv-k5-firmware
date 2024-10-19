@@ -90,11 +90,6 @@ extern const uint8_t         menu_timeout_500ms;
 extern const uint16_t        menu_timeout_long_500ms;
 
 extern const uint8_t         DTMF_RX_live_timeout_500ms;
-#ifdef ENABLE_DTMF_CALLING
-extern const uint8_t         DTMF_RX_timeout_500ms;
-extern const uint8_t         DTMF_decode_ring_countdown_500ms;
-extern const uint8_t         DTMF_txstop_countdown_500ms;
-#endif
 
 extern const uint8_t         key_input_timeout_500ms;
 
@@ -131,10 +126,6 @@ extern const uint16_t        scan_pause_delay_in_7_10ms;
 //extern const uint16_t        gMin_bat_v;
 
 extern const uint8_t         gMicGain_dB2[5];
-
-#ifdef ENABLE_DTMF_CALLING
-extern bool                  gSetting_KILLED;
-#endif
 
 extern bool                  gSetting_350EN;
 extern uint8_t               gSetting_F_LOCK;

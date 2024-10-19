@@ -376,7 +376,7 @@ struct {
 
 #seekto 0x1FF0;
 struct {
-u8 ENABLE_DTMF_CALLING:1,
+u8 __UNUSED0:1,
    __UNUSED1:1,
    ENABLE_TX1750:1,
    __UNUSED2:1,
@@ -1240,8 +1240,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
             val = RadioSettingValueBoolean(False)
             rs = RadioSetting("dtmfdecode", "DTMF decode", val)
-            if self._memobj.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
-                mem.extra.append(rs)
 
             val = RadioSettingValueList(SCRAMBLER_LIST)
             rs = RadioSetting("scrambler", "Scrambler", val)
@@ -1373,8 +1371,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         # DTMF DECODE
         val = RadioSettingValueBoolean(_mem.dtmf_decode)
         rs = RadioSetting("dtmfdecode", "DTMF decode (D Decd)", val)
-        if self._memobj.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
-            mem.extra.append(rs)
 
         # Scrambler
         enc = list_def(_mem.scrambler, SCRAMBLER_LIST, 0)
@@ -1836,8 +1832,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         top.append(advanced)
         top.append(keya)
         top.append(dtmf)
-        if _mem.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
-            top.append(dtmfc)
         top.append(scanl)
         top.append(unlock)
         if _mem.BUILD_OPTIONS.ENABLE_FMRADIO:
@@ -3306,29 +3300,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         advanced.append(bat_type_setting)
         advanced.append(s0_level_setting)
         advanced.append(s9_level_setting)
-
-        if _mem.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
-            dtmf.append(sep_code_setting)
-            dtmf.append(group_code_setting)
-        dtmf.append(first_code_per_setting)
-        dtmf.append(spec_per_setting)
-        dtmf.append(code_per_setting)
-        dtmf.append(code_int_setting)
-        if _mem.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
-            dtmf.append(ani_id_setting)
-        dtmf.append(up_code_setting)
-        dtmf.append(dw_code_setting)
-        dtmf.append(d_prel_setting)
-        dtmf.append(dtmf_side_tone_setting)
-        dtmf.append(d_live_setting)
-        if _mem.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
-            dtmf.append(dtmf_resp_setting)
-            dtmf.append(d_hold_setting)
-            dtmf.append(perm_kill_setting)
-            dtmf.append(kill_code_setting)
-            dtmf.append(rev_code_setting)
-            dtmf.append(killed_setting)
-
         unlock.append(f_lock_setting)
 #        unlock.append(tx200_setting)
 #        unlock.append(tx350_setting)

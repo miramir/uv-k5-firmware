@@ -289,10 +289,6 @@ void SCANNER_Start(bool singleFreq)
         gUpdateStatus = true;
     }
 
-#ifdef ENABLE_DTMF_CALLING
-    DTMF_clear_RX();
-#endif
-
     gScanDelay_10ms        = scan_delay_10ms;
     gScanCssResultCode     = 0xFF;
     gScanCssResultType     = 0xFF;

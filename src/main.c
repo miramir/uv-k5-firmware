@@ -46,21 +46,8 @@
 #include "ui/welcome.h"
 #include "ui/menu.h"
 
-void Main(void)
-{
-    // Enable clock gating of blocks we need
-    SYSCON_DEV_CLK_GATE = 0
-        | SYSCON_DEV_CLK_GATE_GPIOA_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_GPIOB_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_GPIOC_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_UART1_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_SPI0_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_SARADC_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_CRC_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_AES_BITS_ENABLE
-        | SYSCON_DEV_CLK_GATE_PWM_PLUS0_BITS_ENABLE;
-
-
+void Main(void) {
+    SYSTEM_ConfigureSysCon();
     SYSTICK_Init();
     BOARD_Init();
 
@@ -72,7 +59,6 @@ void Main(void)
 #endif
 
     // Not implementing authentic device checks
-
     memset(gDTMF_String, '-', sizeof(gDTMF_String));
     gDTMF_String[sizeof(gDTMF_String) - 1] = 0;
 

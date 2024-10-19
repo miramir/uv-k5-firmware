@@ -90,22 +90,11 @@ const t_menu_item MenuList[] =
     {"STE",         MENU_STE           },
     {"RP STE",      MENU_RP_STE        },
     {"1 Call",      MENU_1_CALL        },
-#ifdef ENABLE_DTMF_CALLING
-    {"ANI ID",      MENU_ANI_ID        },
-#endif
     {"UPCode",      MENU_UPCODE        },
     {"DWCode",      MENU_DWCODE        },
     {"PTT ID",      MENU_PTT_ID        },
     {"D ST",        MENU_D_ST          },
-#ifdef ENABLE_DTMF_CALLING
-    {"D Resp",      MENU_D_RSP         },
-    {"D Hold",      MENU_D_HOLD        },
-#endif
     {"D Prel",      MENU_D_PRE         },
-#ifdef ENABLE_DTMF_CALLING
-    {"D Decd",      MENU_D_DCD         },
-    {"D List",      MENU_D_LIST        },
-#endif
     {"D Live",      MENU_D_LIVE_DEC    }, // live DTMF decoder
     {"AM Fix",      MENU_AM_FIX        },
     {"SysInf",      MENU_VOL           }, // was "VOL"
@@ -385,10 +374,6 @@ void UI_DisplayMenu(void)
     unsigned int       i;
     char               String[64];  // bigger cuz we can now do multi-line in one string (use '\n' char)
 
-#ifdef ENABLE_DTMF_CALLING
-    char               Contact[16];
-#endif
-
     UI_DisplayClear();
 
     UI_DrawLineBuffer(gFrameBuffer, 48, 0, 48, 55, 1); // Be ware, status zone = 8 lines, the rest = 56 ->total 64
@@ -629,9 +614,6 @@ void UI_DisplayMenu(void)
         case MENU_S_ADD3:
         case MENU_STE:
         case MENU_D_ST:
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_DCD:
-#endif
         case MENU_D_LIVE_DEC:
         case MENU_350TX:
         case MENU_200TX:
@@ -753,11 +735,6 @@ void UI_DisplayMenu(void)
                 strcpy(String, "ALL");
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_ANI_ID:
-            strcpy(String, gEeprom.ANI_DTMF_ID);
-            break;
-#endif
         case MENU_UPCODE:
             sprintf(String, "%.8s\n%.8s", gEeprom.DTMF_UP_CODE, gEeprom.DTMF_UP_CODE + 8);
             break;
@@ -766,15 +743,6 @@ void UI_DisplayMenu(void)
             sprintf(String, "%.8s\n%.8s", gEeprom.DTMF_DOWN_CODE, gEeprom.DTMF_DOWN_CODE + 8);
             break;
 
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_RSP:
-            strcpy(String, gSubMenu_D_RSP[gSubMenuSelection]);
-            break;
-
-        case MENU_D_HOLD:
-            sprintf(String, "%ds", gSubMenuSelection);
-            break;
-#endif
         case MENU_D_PRE:
             sprintf(String, "%d*10ms", gSubMenuSelection);
             break;
@@ -786,16 +754,6 @@ void UI_DisplayMenu(void)
         case MENU_BAT_TXT:
             strcpy(String, gSubMenu_BAT_TXT[gSubMenuSelection]);
             break;
-
-#ifdef ENABLE_DTMF_CALLING
-        case MENU_D_LIST:
-            gIsDtmfContactValid = DTMF_GetContact((int)gSubMenuSelection - 1, Contact);
-            if (!gIsDtmfContactValid)
-                strcpy(String, "NULL");
-            else
-                memcpy(String, Contact, 8);
-            break;
-#endif
 
         case MENU_PONMSG:
             strcpy(String, gSubMenu_PONMSG[gSubMenuSelection]);
@@ -1027,22 +985,10 @@ void UI_DisplayMenu(void)
     if ((UI_MENU_GetCurrentMenuId() == MENU_R_CTCS || UI_MENU_GetCurrentMenuId() == MENU_R_DCS) && gCssBackgroundScan)
         UI_PrintString("SCAN", menu_item_x1, menu_item_x2, 4, 8);
 
-#ifdef ENABLE_DTMF_CALLING
-    if (UI_MENU_GetCurrentMenuId() == MENU_D_LIST && gIsDtmfContactValid) {
-        Contact[11] = 0;
-        memcpy(&gDTMF_ID, Contact + 8, 4);
-        sprintf(String, "ID:%4s", gDTMF_ID);
-        UI_PrintString(String, menu_item_x1, menu_item_x2, 4, 8);
-    }
-#endif
-
     if (UI_MENU_GetCurrentMenuId() == MENU_R_CTCS ||
         UI_MENU_GetCurrentMenuId() == MENU_T_CTCS ||
         UI_MENU_GetCurrentMenuId() == MENU_R_DCS  ||
         UI_MENU_GetCurrentMenuId() == MENU_T_DCS
-#ifdef ENABLE_DTMF_CALLING
-        || UI_MENU_GetCurrentMenuId() == MENU_D_LIST
-#endif
     ) {
         sprintf(String, "%2d", gSubMenuSelection);
         UI_PrintStringSmallNormal(String, 105, 0, 0);

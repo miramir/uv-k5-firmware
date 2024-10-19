@@ -68,43 +68,34 @@ void UI_DisplayStatus()
     x += 8;
     unsigned int x1 = x;
 
-#ifdef ENABLE_DTMF_CALLING
-    if (gSetting_KILLED) {
-        memset(line + x, 0xFF, 10);
-        x1 = x + 10;
-    }
-    else
-#endif
-    { // SCAN indicator
-        if (gScanStateDir != SCAN_OFF || SCANNER_IsScanning()) {
-            if (IS_MR_CHANNEL(gNextMrChannel) && !SCANNER_IsScanning()) { // channel mode
-                switch(gEeprom.SCAN_LIST_DEFAULT) {
-                    case 0:
-                        memcpy(line + 0, BITMAP_ScanList0, sizeof(BITMAP_ScanList0));
-                        break;
-                    case 1: 
-                        memcpy(line + 0, BITMAP_ScanList1, sizeof(BITMAP_ScanList1));
-                        break;
-                    case 2:
-                        memcpy(line + 0, BITMAP_ScanList2, sizeof(BITMAP_ScanList2));
-                        break;
-                    case 3:
-                        memcpy(line + 0, BITMAP_ScanList3, sizeof(BITMAP_ScanList3));
-                        break;
-                    case 4:
-                        memcpy(line + 0, BITMAP_ScanList123, sizeof(BITMAP_ScanList123));
-                        break;
-                    case 5:
-                        memcpy(line + 0, BITMAP_ScanListAll, sizeof(BITMAP_ScanListAll));
-                        break;
-                }
+    if (gScanStateDir != SCAN_OFF || SCANNER_IsScanning()) {
+        if (IS_MR_CHANNEL(gNextMrChannel) && !SCANNER_IsScanning()) { // channel mode
+            switch(gEeprom.SCAN_LIST_DEFAULT) {
+                case 0:
+                    memcpy(line + 0, BITMAP_ScanList0, sizeof(BITMAP_ScanList0));
+                    break;
+                case 1: 
+                    memcpy(line + 0, BITMAP_ScanList1, sizeof(BITMAP_ScanList1));
+                    break;
+                case 2:
+                    memcpy(line + 0, BITMAP_ScanList2, sizeof(BITMAP_ScanList2));
+                    break;
+                case 3:
+                    memcpy(line + 0, BITMAP_ScanList3, sizeof(BITMAP_ScanList3));
+                    break;
+                case 4:
+                    memcpy(line + 0, BITMAP_ScanList123, sizeof(BITMAP_ScanList123));
+                    break;
+                case 5:
+                    memcpy(line + 0, BITMAP_ScanListAll, sizeof(BITMAP_ScanListAll));
+                    break;
             }
-            else {  // frequency mode
-                memcpy(line + x + 1, gFontS, sizeof(gFontS));
-                //UI_PrintStringSmallBufferNormal("S", line + x + 1);
-            }
-            x1 = x + 10;
         }
+        else {  // frequency mode
+            memcpy(line + x + 1, gFontS, sizeof(gFontS));
+            //UI_PrintStringSmallBufferNormal("S", line + x + 1);
+        }
+        x1 = x + 10;
     }
     x += 10;  // font character width
 

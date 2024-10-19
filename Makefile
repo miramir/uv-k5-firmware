@@ -8,7 +8,6 @@ ENABLE_FMRADIO                	?= 0
 ENABLE_UART                   	?= 1
 ENABLE_AIRCOPY                	?= 1
 ENABLE_TX1750                 	?= 1
-ENABLE_DTMF_CALLING           	?= 0
 ENABLE_FLASHLIGHT             	?= 1
 
 # ---- CUSTOM MODS ----
@@ -20,7 +19,7 @@ ENABLE_WIDE_RX                	?= 1
 ENABLE_TX_WHEN_AM             	?= 0
 ENABLE_F_CAL_MENU             	?= 0
 ENABLE_CTCSS_TAIL_PHASE_SHIFT 	?= 0
-ENABLE_SHOW_CHARGE_LEVEL      	?= 0
+ENABLE_SHOW_CHARGE_LEVEL      	?= 1S
 ENABLE_REVERSE_BAT_SYMBOL     	?= 0
 ENABLE_NO_CODE_SCAN_TIMEOUT   	?= 1
 ENABLE_SQUELCH_MORE_SENSITIVE 	?= 1
@@ -169,9 +168,6 @@ ifeq ($(ENABLE_BLMIN_TMP_OFF),1)
 endif
 ifeq ($(ENABLE_SCAN_RANGES),1)
 	CFLAGS  += -DENABLE_SCAN_RANGES
-endif
-ifeq ($(ENABLE_DTMF_CALLING),1)
-	CFLAGS  += -DENABLE_DTMF_CALLING
 endif
 ifeq ($(ENABLE_AGC_SHOW_DATA),1)
 	CFLAGS  += -DENABLE_AGC_SHOW_DATA

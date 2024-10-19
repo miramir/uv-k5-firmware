@@ -161,10 +161,6 @@ static void CheckForIncoming(void)
 static void HandleIncoming(void)
 {
     if (!g_SquelchLost) {   // squelch is closed
-#ifdef ENABLE_DTMF_CALLING
-        if (gDTMF_RX_index > 0)
-            DTMF_clear_RX();
-#endif
         if (gCurrentFunction != FUNCTION_FOREGROUND) {
             FUNCTION_Select(FUNCTION_FOREGROUND);
             gUpdateDisplay = true;
@@ -186,30 +182,6 @@ static void HandleIncoming(void)
     }
     else if (!bFlag)
         return;
-
-#ifdef ENABLE_DTMF_CALLING
-    if (gScanStateDir == SCAN_OFF && (gRxVfo->DTMF_DECODING_ENABLE || gSetting_KILLED)) {
-
-        // DTMF DCD is enabled
-        DTMF_HandleRequest();
-        if (gDTMF_CallState == DTMF_CALL_STATE_NONE) {
-            if (gRxReceptionMode != RX_MODE_DETECTED) {
-                return;
-            }
-            gDualWatchCountdown_10ms = dual_watch_count_after_1_10ms;
-            gScheduleDualWatch       = false;
-
-            gRxReceptionMode = RX_MODE_LISTENING;
-
-            // let the user see DW is not active
-            gDualWatchActive = false;
-            gUpdateStatus    = true;
-
-            gUpdateDisplay = true;
-            return;
-        }
-    }
-#endif
 
     APP_StartListening(gMonitor ? FUNCTION_MONITOR : FUNCTION_RECEIVE);
 }
@@ -465,11 +437,6 @@ void APP_StartListening(FUNCTION_Type_t function)
 
     gRxTimerCountdown_500ms = 7200;
 
-#ifdef ENABLE_DTMF_CALLING
-    if (gSetting_KILLED)
-        return;
-#endif
-
 #ifdef ENABLE_FMRADIO
     if (gFmRadioMode)
         BK1080_Init0();
@@ -620,22 +587,6 @@ static void CheckRadioInterrupts(void)
                         gDTMF_RX_live_timeout = DTMF_RX_live_timeout_500ms;  // time till we delete it
                         gUpdateDisplay        = true;
                     }
-
-#ifdef ENABLE_DTMF_CALLING
-                    if (gRxVfo->DTMF_DECODING_ENABLE || gSetting_KILLED) {
-                        if (gDTMF_RX_index >= sizeof(gDTMF_RX) - 1) { // make room
-                            memmove(&gDTMF_RX[0], &gDTMF_RX[1], sizeof(gDTMF_RX) - 1);
-                            gDTMF_RX_index--;
-                        }
-                        gDTMF_RX[gDTMF_RX_index++] = c;
-                        gDTMF_RX[gDTMF_RX_index]   = 0;
-                        gDTMF_RX_timeout           = DTMF_RX_timeout_500ms;  // time till we delete it
-                        gDTMF_RX_pending           = true;
-                        
-                        SYSTEM_DelayMs(3);//fix DTMF not reply@Yurisu
-                        DTMF_HandleRequest();
-                    }
-#endif
                 }
             }
         }
@@ -808,9 +759,6 @@ void APP_Update(void)
 #ifdef ENABLE_FMRADIO
         && !gFmRadioMode
 #endif
-#ifdef ENABLE_DTMF_CALLING
-        && gDTMF_CallState == DTMF_CALL_STATE_NONE
-#endif
     ) {
         DualwatchAlternate();    // toggle between the two VFO's
 
@@ -841,9 +789,6 @@ void APP_Update(void)
             || gScreenToDisplay != DISPLAY_MAIN
 #ifdef ENABLE_FMRADIO
             || gFmRadioMode
-#endif
-#ifdef ENABLE_DTMF_CALLING
-            || gDTMF_CallState != DTMF_CALL_STATE_NONE
 #endif
         ) {
             gBatterySaveCountdown_10ms = battery_save_count_10ms;
@@ -911,12 +856,6 @@ void APP_Update(void)
 // called every 10ms
 static void CheckKeys(void)
 {
-#ifdef ENABLE_DTMF_CALLING
-    if(gSetting_KILLED){
-        return;
-    }
-#endif
-
 #ifdef ENABLE_AIRCOPY
     if (gScreenToDisplay == DISPLAY_AIRCOPY && gAircopyState != AIRCOPY_READY){
         return;
@@ -1219,12 +1158,6 @@ void APP_TimeSlice500ms(void)
         if (--gMenuCountdown == 0)
             exit_menu = (gScreenToDisplay == DISPLAY_MENU); // exit menu mode
 
-#ifdef ENABLE_DTMF_CALLING
-    if (gDTMF_RX_timeout > 0)
-        if (--gDTMF_RX_timeout == 0)
-            DTMF_clear_RX();
-#endif
-
     // Skipped authentic device check
 
 #ifdef ENABLE_FMRADIO
@@ -1397,34 +1330,6 @@ void APP_TimeSlice500ms(void)
     BATTERY_TimeSlice500ms();
     SCANNER_TimeSlice500ms();
     UI_MAIN_TimeSlice500ms();
-
-#ifdef ENABLE_DTMF_CALLING
-    if (gCurrentFunction != FUNCTION_TRANSMIT) {
-        if (gDTMF_DecodeRingCountdown_500ms > 0) {
-            // make "ring-ring" sound
-            gDTMF_DecodeRingCountdown_500ms--;
-        }
-    } else {
-        gDTMF_DecodeRingCountdown_500ms = 0;
-    }
-
-    if (gDTMF_CallState  != DTMF_CALL_STATE_NONE && gCurrentFunction != FUNCTION_TRANSMIT
-        && gCurrentFunction != FUNCTION_RECEIVE && gDTMF_auto_reset_time_500ms > 0
-        && --gDTMF_auto_reset_time_500ms == 0)
-    {
-        gUpdateDisplay  = true;
-        if (gDTMF_CallState == DTMF_CALL_STATE_RECEIVED && gEeprom.DTMF_auto_reset_time >= DTMF_HOLD_MAX) {
-            gDTMF_CallState = DTMF_CALL_STATE_RECEIVED_STAY;     // keep message on-screen till a key is pressed
-        } else {
-            gDTMF_CallState = DTMF_CALL_STATE_NONE;
-        }
-    }
-
-    if (gDTMF_IsTx && gDTMF_TxStopCountdown_500ms > 0 && --gDTMF_TxStopCountdown_500ms == 0) {
-        gDTMF_IsTx     = false;
-        gUpdateDisplay = true;
-    }
-#endif
 }
 
 static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
@@ -1501,17 +1406,6 @@ static void ProcessKey(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 
         if (gScreenToDisplay == DISPLAY_MENU)       // 1of11
             gMenuCountdown = menu_timeout_500ms;
-
-#ifdef ENABLE_DTMF_CALLING
-        if (gDTMF_DecodeRingCountdown_500ms > 0) { // cancel the ringing
-            gDTMF_DecodeRingCountdown_500ms = 0;
-
-            if (Key != KEY_PTT) {
-                gPttWasReleased = true;
-                return;
-            }
-        }
-#endif
     }
 
     bool lowBatPopup = gLowBattery && !gLowBatteryConfirmed &&  gScreenToDisplay == DISPLAY_MAIN;
@@ -1731,13 +1625,6 @@ Skip:
     if (gFlagReconfigureVfos) {
         RADIO_SelectVfos();
         RADIO_SetupRegisters(true);
-
-#ifdef ENABLE_DTMF_CALLING
-        gDTMF_auto_reset_time_500ms = 0;
-        gDTMF_CallState             = DTMF_CALL_STATE_NONE;
-        gDTMF_TxStopCountdown_500ms = 0;
-        gDTMF_IsTx                  = false;
-#endif
 
         gVFO_RSSI_bar_level[0]      = 0;
         gVFO_RSSI_bar_level[1]      = 0;
