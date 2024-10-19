@@ -67,10 +67,6 @@ void FUNCTION_Init(void)
 
     gCurrentCodeType = (gRxVfo->Modulation != MODULATION_FM) ? CODE_TYPE_OFF : gRxVfo->pRX->CodeType;
 
-#ifdef ENABLE_VOX
-    g_VOX_Lost     = false;
-#endif
-
 #ifdef ENABLE_DTMF_CALLING
     DTMF_clear_RX();
 #endif

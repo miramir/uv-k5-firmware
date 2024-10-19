@@ -302,9 +302,6 @@ void SCANNER_Start(bool singleFreq)
     g_CDCSS_Lost           = false;
     gCDCSSCodeType         = 0;
     g_CTCSS_Lost           = false;
-#ifdef ENABLE_VOX
-    g_VOX_Lost             = false;
-#endif
     g_SquelchLost          = false;
     gScannerSaveState      = SCAN_SAVE_NO_PROMPT;
     gScanProgressIndicator = 0;

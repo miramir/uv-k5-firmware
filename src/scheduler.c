@@ -91,9 +91,5 @@ void SystickHandler(void)
             DECREMENT_AND_TRIGGER(gFmPlayCountdown_10ms, gScheduleFM);
 #endif
 
-#ifdef ENABLE_VOX
-    DECREMENT(gVoxStopCountdown_10ms);
-#endif
-
     DECREMENT(boot_counter_10ms);
 }

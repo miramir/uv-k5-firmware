@@ -107,9 +107,7 @@ void GENERIC_Key_PTT(bool bKeyPressed)
             }
 
             gFlagEndTransmission = false;
-#ifdef ENABLE_VOX
-            gVOX_NoiseDetected = false;
-#endif
+
             RADIO_SetVfoState(VFO_STATE_NORMAL);
 
             if (gScreenToDisplay != DISPLAY_MENU)     // 1of11 .. don't close the menu

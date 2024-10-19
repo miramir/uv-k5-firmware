@@ -50,9 +50,6 @@ const uint16_t    dual_watch_count_after_1_10ms    =  5000 / 10;   // 5 sec
 const uint16_t    dual_watch_count_after_2_10ms    =  420;         // 4.2 sec
 const uint16_t    dual_watch_count_noaa_10ms       =    70 / 10;   // 70ms
 
-#ifdef ENABLE_VOX
-    const uint16_t dual_watch_count_after_vox_10ms  =   200 / 10;   // 200ms
-#endif
 const uint16_t    dual_watch_count_toggle_10ms     =   100 / 10;   // 100ms between VFO toggles
 
 const uint16_t    scan_pause_delay_in_1_10ms       =  5000 / 10;   // 5 seconds
@@ -67,10 +64,6 @@ const uint16_t    battery_save_count_10ms          = 10000 / 10;   // 10 seconds
 
 const uint16_t    power_save1_10ms                 =   100 / 10;   // 100ms
 const uint16_t    power_save2_10ms                 =   200 / 10;   // 200ms
-
-#ifdef ENABLE_VOX
-    const uint16_t    vox_stop_count_down_10ms         =  1000 / 10;   // 1 second
-#endif
 
 const uint16_t    NOAA_countdown_10ms              =  5000 / 10;   // 5 seconds
 const uint16_t    NOAA_countdown_2_10ms            =   500 / 10;   // 500ms
@@ -212,12 +205,6 @@ bool              g_CDCSS_Lost;
 uint8_t           gCDCSSCodeType;
 bool              g_CTCSS_Lost;
 bool              g_CxCSS_TAIL_Found;
-#ifdef ENABLE_VOX
-    bool          g_VOX_Lost;
-    bool          gVOX_NoiseDetected;
-    uint16_t      gVoxResumeCountdown;
-    uint16_t      gVoxPauseCountdown;
-#endif
 bool              g_SquelchLost;
 
 volatile uint16_t gFlashLightBlinkCounter;
@@ -248,9 +235,6 @@ uint8_t           gShowChPrefix;
 volatile bool     gNextTimeslice;
 volatile uint8_t  gFoundCDCSSCountdown_10ms;
 volatile uint8_t  gFoundCTCSSCountdown_10ms;
-#ifdef ENABLE_VOX
-    volatile uint16_t gVoxStopCountdown_10ms;
-#endif
 volatile bool     gNextTimeslice40ms;
 volatile bool     gFlagTailNoteEliminationComplete;
 #ifdef ENABLE_FMRADIO

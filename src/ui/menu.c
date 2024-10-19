@@ -111,9 +111,6 @@ const t_menu_item MenuList[] =
 #endif
     {"D Live",      MENU_D_LIVE_DEC    }, // live DTMF decoder
     {"AM Fix",      MENU_AM_FIX        },
-#ifdef ENABLE_VOX
-    {"VOX",         MENU_VOX           },
-#endif
     {"SysInf",      MENU_VOL           }, // was "VOL"
     {"RxMode",      MENU_TDR           },
     {"Sql",         MENU_SQL           },
@@ -346,9 +343,6 @@ const t_sidefunction gSubMenu_SIDEFUNCTIONS[] =
     {"POWER",           ACTION_OPT_POWER},
     {"MONITOR",         ACTION_OPT_MONITOR},
     {"SCAN",            ACTION_OPT_SCAN},
-#ifdef ENABLE_VOX
-    {"VOX",             ACTION_OPT_VOX},
-#endif
 #ifdef ENABLE_ALARM
     {"ALARM",           ACTION_OPT_ALARM},
 #endif
@@ -596,15 +590,6 @@ void UI_DisplayMenu(void)
                     BK4819_DisableScramble();
             #endif
             break;
-
-        #ifdef ENABLE_VOX
-            case MENU_VOX:
-                if (gSubMenuSelection == 0)
-                    strcpy(String, "OFF");
-                else
-                    sprintf(String, "%d", gSubMenuSelection);
-                break;
-        #endif
 
         case MENU_ABR:
             if(gSubMenuSelection == 0)

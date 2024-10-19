@@ -721,20 +721,7 @@ void RADIO_SetupRegisters(bool switchToForeground)
         BK4819_DisableScramble();
     }
 
-#ifdef ENABLE_VOX
-    if (gEeprom.VOX_SWITCH  && gCurrentVfo->Modulation == MODULATION_FM
-#ifdef ENABLE_FMRADIO
-        && !gFmRadioMode
-#endif
-    ){
-        BK4819_EnableVox(gEeprom.VOX1_THRESHOLD, gEeprom.VOX0_THRESHOLD);
-        InterruptMask |= BK4819_REG_3F_VOX_FOUND | BK4819_REG_3F_VOX_LOST;
-    }
-    else
-#endif
-    {
-        BK4819_DisableVox();
-    }
+    BK4819_DisableVox();
 
     // RX expander
     BK4819_SetCompander((gRxVfo->Modulation == MODULATION_FM && gRxVfo->Compander >= 2) ? gRxVfo->Compander : 0);

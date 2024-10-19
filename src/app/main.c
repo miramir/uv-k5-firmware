@@ -191,11 +191,6 @@ static void processFKeyFunction(const KEY_Code_t Key)
             break;
 
         case KEY_7:
-#ifdef ENABLE_VOX
-            ACTION_Vox();
-//#else
-//          toggle_chan_scanlist();
-#endif
             break;
 
         case KEY_8:

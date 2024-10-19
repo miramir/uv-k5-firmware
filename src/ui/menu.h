@@ -48,9 +48,6 @@ enum
     MENU_MEM_NAME,
     MENU_MDF,
     MENU_SAVE,
-#ifdef ENABLE_VOX
-    MENU_VOX,
-#endif
     MENU_ABR,
     MENU_ABR_ON_TX_RX,
     MENU_ABR_MIN,

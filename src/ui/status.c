@@ -137,15 +137,6 @@ void UI_DisplayStatus()
     }
     x += sizeof(gFontDWR) + 3;
 
-#ifdef ENABLE_VOX
-    // VOX indicator
-    if (gEeprom.VOX_SWITCH) {
-        memcpy(line + x, gFontVox, sizeof(gFontVox));
-        x1 = x + sizeof(gFontVox) + 1;
-    }
-    x += sizeof(gFontVox) + 3;
-#endif
-
     // PTT indicator
     if (gSetting_set_ptt_session) {
         memcpy(line + x, gFontPttOnePush, sizeof(gFontPttOnePush));

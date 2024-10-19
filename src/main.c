@@ -106,16 +106,11 @@ void Main(void)
 
     if (BootMode == BOOT_MODE_F_LOCK)
     {
-
         gF_LOCK = true;            // flag to say include the hidden menu items
-            gEeprom.KEY_LOCK = 0;
-            SETTINGS_SaveSettings();
-            #ifndef ENABLE_VOX
-                gMenuCursor = 64; // move to hidden section, fix me if change... !!! Remove VOX and Mic Bar
-            #else
-                gMenuCursor = 67; // move to hidden section, fix me if change... !!!
-            #endif
-            gSubMenuSelection = gSetting_F_LOCK;
+        gEeprom.KEY_LOCK = 0;
+        SETTINGS_SaveSettings();
+        gMenuCursor = 67; // move to hidden section, fix me if change... !!!
+        gSubMenuSelection = gSetting_F_LOCK;
     }
 
     // count the number of menu items

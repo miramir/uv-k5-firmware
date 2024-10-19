@@ -109,10 +109,6 @@ extern const uint16_t        battery_save_count_10ms;
 extern const uint16_t        power_save1_10ms;
 extern const uint16_t        power_save2_10ms;
 
-#ifdef ENABLE_VOX
-    extern const uint16_t    vox_stop_count_down_10ms;
-#endif
-
 extern const uint16_t        NOAA_countdown_10ms;
 extern const uint16_t        NOAA_countdown_2_10ms;
 extern const uint16_t        NOAA_countdown_3_10ms;
@@ -123,10 +119,6 @@ extern const uint16_t        dual_watch_count_after_1_10ms;
 extern const uint16_t        dual_watch_count_after_2_10ms;
 extern const uint16_t        dual_watch_count_toggle_10ms;
 extern const uint16_t        dual_watch_count_noaa_10ms;
-#ifdef ENABLE_VOX
-    extern const uint16_t    dual_watch_count_after_vox_10ms;
-#endif
-
 extern const uint16_t        scan_pause_delay_in_1_10ms;
 extern const uint16_t        scan_pause_delay_in_2_10ms;
 extern const uint16_t        scan_pause_delay_in_3_10ms;
@@ -292,12 +284,6 @@ extern bool                  g_CDCSS_Lost;
 extern uint8_t               gCDCSSCodeType;
 extern bool                  g_CTCSS_Lost;
 extern bool                  g_CxCSS_TAIL_Found;
-#ifdef ENABLE_VOX
-    extern bool              g_VOX_Lost;
-    extern bool              gVOX_NoiseDetected;
-    extern uint16_t          gVoxResumeCountdown;
-    extern uint16_t          gVoxPauseCountdown;
-#endif
 
 // true means we are receiving signal
 extern bool                  g_SquelchLost;
@@ -328,9 +314,6 @@ extern bool                  gF_LOCK;
 extern uint8_t               gShowChPrefix;
 extern volatile uint8_t      gFoundCDCSSCountdown_10ms;
 extern volatile uint8_t      gFoundCTCSSCountdown_10ms;
-#ifdef ENABLE_VOX
-    extern volatile uint16_t gVoxStopCountdown_10ms;
-#endif
 extern volatile bool         gNextTimeslice40ms;
 extern volatile bool         gFlagTailNoteEliminationComplete;
 extern volatile uint8_t      gVFOStateResumeCountdown_500ms;

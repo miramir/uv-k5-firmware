@@ -657,34 +657,6 @@ static void CheckRadioInterrupts(void)
         if (interrupts.ctcssFound)
             g_CTCSS_Lost = false;
 
-#ifdef ENABLE_VOX
-        if (interrupts.voxLost) {
-            g_VOX_Lost         = true;
-            gVoxPauseCountdown = 10;
-
-            if (gEeprom.VOX_SWITCH) {
-                if (gCurrentFunction == FUNCTION_POWER_SAVE && !gRxIdleMode) {
-                    gPowerSave_10ms            = power_save2_10ms;
-                    gPowerSaveCountdownExpired = 0;
-                }
-
-                if (gEeprom.DUAL_WATCH != DUAL_WATCH_OFF && (gScheduleDualWatch || gDualWatchCountdown_10ms < dual_watch_count_after_vox_10ms)) {
-                    gDualWatchCountdown_10ms = dual_watch_count_after_vox_10ms;
-                    gScheduleDualWatch = false;
-
-                    // let the user see DW is not active
-                    gDualWatchActive = false;
-                    gUpdateStatus    = true;
-                }
-            }
-        }
-
-        if (interrupts.voxFound) {
-            g_VOX_Lost         = false;
-            gVoxPauseCountdown = 0;
-        }
-#endif
-
         if (interrupts.sqlLost) {
             g_SquelchLost = true;
             BK4819_ToggleGpioOut(BK4819_GPIO6_PIN2_GREEN, true);
@@ -724,80 +696,6 @@ void APP_EndTransmission(void)
         gFlagReconfigureVfos = true;
     }
 }
-
-#ifdef ENABLE_VOX
-static void HandleVox(void)
-{
-#ifdef ENABLE_DTMF_CALLING
-    if (gSetting_KILLED)
-        return;
-#endif
-
-    if (gVoxResumeCountdown == 0) {
-        if (gVoxPauseCountdown)
-            return;
-    }
-    else {
-        g_VOX_Lost         = false;
-        gVoxPauseCountdown = 0;
-    }
-
-#ifdef ENABLE_FMRADIO
-    if (gFmRadioMode)
-        return;
-#endif
-
-    if (gCurrentFunction == FUNCTION_RECEIVE || gCurrentFunction == FUNCTION_MONITOR)
-        return;
-
-    if (gScanStateDir != SCAN_OFF)
-        return;
-
-    if (gVOX_NoiseDetected) {
-        if (g_VOX_Lost)
-            gVoxStopCountdown_10ms = vox_stop_count_down_10ms;
-        else if (gVoxStopCountdown_10ms == 0)
-            gVOX_NoiseDetected = false;
-
-        if (gCurrentFunction == FUNCTION_TRANSMIT && !gPttIsPressed && !gVOX_NoiseDetected) {
-            if (gFlagEndTransmission) {
-                //if (gCurrentFunction != FUNCTION_FOREGROUND)
-                    FUNCTION_Select(FUNCTION_FOREGROUND);
-            }
-            else {
-                APP_EndTransmission();
-
-                if (gEeprom.REPEATER_TAIL_TONE_ELIMINATION == 0) {
-                    //if (gCurrentFunction != FUNCTION_FOREGROUND)
-                        FUNCTION_Select(FUNCTION_FOREGROUND);
-                }
-                else
-                    gRTTECountdown_10ms = gEeprom.REPEATER_TAIL_TONE_ELIMINATION * 10;
-            }
-
-            gUpdateStatus        = true;
-            gUpdateDisplay       = true;
-            gFlagEndTransmission = false;
-        }
-        return;
-    }
-
-    if (g_VOX_Lost) {
-        gVOX_NoiseDetected = true;
-
-        if (gCurrentFunction == FUNCTION_POWER_SAVE)
-            FUNCTION_Select(FUNCTION_FOREGROUND);
-
-        if (gCurrentFunction != FUNCTION_TRANSMIT && !SerialConfigInProgress()) {
-#ifdef ENABLE_DTMF_CALLING
-            gDTMF_ReplyState = DTMF_REPLY_NONE;
-#endif
-            RADIO_PrepareTX();
-            gUpdateDisplay = true;
-        }
-    }
-}
-#endif
 
 void APP_Update(void)
 {
@@ -934,11 +832,6 @@ void APP_Update(void)
     }
 #endif
 
-#ifdef ENABLE_VOX
-    if (gEeprom.VOX_SWITCH)
-        HandleVox();
-#endif
-
     if (gSchedulePowerSave) {
         if (gPttIsPressed
             || gKeyBeingHeld
@@ -967,11 +860,6 @@ void APP_Update(void)
         if (gRxIdleMode)
         {
             BK4819_Conditional_RX_TurnOn_and_GPIO6_Enable();
-
-#ifdef ENABLE_VOX
-            if (gEeprom.VOX_SWITCH)
-                BK4819_EnableVox(gEeprom.VOX1_THRESHOLD, gEeprom.VOX0_THRESHOLD);
-#endif
 
             if (gEeprom.DUAL_WATCH != DUAL_WATCH_OFF &&
                 gScanStateDir == SCAN_OFF &&
@@ -1225,14 +1113,6 @@ void APP_TimeSlice10ms(void)
 #ifdef ENABLE_FMRADIO
     if (gFmRadioMode && gFmRadioCountdown_500ms > 0)   // 1of11
         return;
-#endif
-
-#ifdef ENABLE_VOX
-    if (gVoxResumeCountdown > 0)
-        gVoxResumeCountdown--;
-
-    if (gVoxPauseCountdown > 0)
-        gVoxPauseCountdown--;
 #endif
 
     if (gCurrentFunction == FUNCTION_TRANSMIT) {
@@ -1605,10 +1485,6 @@ static void ALARM_Off(void)
     }
 
     gAlarmState = ALARM_STATE_OFF;
-
-#ifdef ENABLE_VOX
-    gVoxResumeCountdown = 80;
-#endif
 
     SYSTEM_DelayMs(5);
 

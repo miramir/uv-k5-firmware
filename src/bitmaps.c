@@ -117,14 +117,6 @@ const uint8_t BITMAP_USB_C[9] =
     0b00011100
 };
 
-#ifdef ENABLE_VOX
-    const uint8_t gFontVox[2][6] =
-    {
-        {0x00, 0x1f, 0x20, 0x40, 0x20, 0x1f},
-        {0x00, 0x63, 0x14, 0x8, 0x14, 0x63},
-    };
-#endif
-
 const uint8_t BITMAP_Antenna[5] =
 {
     0b00000011,

@@ -23,10 +23,6 @@ extern const uint8_t BITMAP_BatteryLevel1[17];
 extern const uint8_t BITMAP_USB_C[9];
 extern const uint8_t BITMAP_Ready[7];
 
-#ifdef ENABLE_VOX
-    extern const uint8_t gFontVox[2][6];
-#endif
-
 extern const uint8_t BITMAP_Antenna[5];
 extern const uint8_t BITMAP_VFO_Default[7];
 extern const uint8_t BITMAP_VFO_NotDefault[7];

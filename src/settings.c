@@ -47,10 +47,6 @@ void SETTINGS_InitEEPROM(void)
     gEeprom.SQUELCH_LEVEL        = (Data[1] < 10) ? Data[1] : 1;
     gEeprom.TX_TIMEOUT_TIMER     = (Data[2] > 4 && Data[2] < 180) ? Data[2] : 11;
     gEeprom.KEY_LOCK             = (Data[4] <  2) ? Data[4] : false;
-    #ifdef ENABLE_VOX
-        gEeprom.VOX_SWITCH       = (Data[5] <  2) ? Data[5] : false;
-        gEeprom.VOX_LEVEL        = (Data[6] < 10) ? Data[6] : 1;
-    #endif
     gEeprom.MIC_SENSITIVITY      = (Data[7] <  5) ? Data[7] : 4;
 
     // 0E78..0E7F
@@ -316,13 +312,6 @@ void SETTINGS_LoadCalibration(void)
     }
     gBatteryCalibration[5] = 2300;
 
-    #ifdef ENABLE_VOX
-        EEPROM_ReadBuffer(0x1F50 + (gEeprom.VOX_LEVEL * 2), &gEeprom.VOX1_THRESHOLD, 2);
-        EEPROM_ReadBuffer(0x1F68 + (gEeprom.VOX_LEVEL * 2), &gEeprom.VOX0_THRESHOLD, 2);
-    #endif
-
-    //EEPROM_ReadBuffer(0x1F80 + gEeprom.MIC_SENSITIVITY, &Mic, 1);
-    //gEeprom.MIC_SENSITIVITY_TUNING = (Mic < 32) ? Mic : 15;
     gEeprom.MIC_SENSITIVITY_TUNING = gMicGain_dB2[gEeprom.MIC_SENSITIVITY];
 
     {
@@ -487,13 +476,8 @@ void SETTINGS_SaveSettings(void)
     State[2] = gEeprom.TX_TIMEOUT_TIMER;
     State[3] = false;
     State[4] = gEeprom.KEY_LOCK;
-    #ifdef ENABLE_VOX
-        State[5] = gEeprom.VOX_SWITCH;
-        State[6] = gEeprom.VOX_LEVEL;
-    #else
-        State[5] = false;
-        State[6] = 0;
-    #endif
+    State[5] = false;
+    State[6] = 0;
     State[7] = gEeprom.MIC_SENSITIVITY;
     EEPROM_WriteBuffer(0x0E70, State);
 
@@ -745,9 +729,6 @@ void SETTINGS_WriteBuildOptions(void)
 State[0] = 0
 #ifdef ENABLE_FMRADIO
     | (1 << 0)
-#endif
-#ifdef ENABLE_VOX
-    | (1 << 3)
 #endif
 #ifdef ENABLE_ALARM
     | (1 << 4)

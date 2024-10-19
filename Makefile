@@ -7,7 +7,6 @@
 ENABLE_FMRADIO                	?= 0
 ENABLE_UART                   	?= 1
 ENABLE_AIRCOPY                	?= 1
-ENABLE_VOX                    	?= 0
 ENABLE_ALARM                  	?= 0
 ENABLE_TX1750                 	?= 1
 ENABLE_DTMF_CALLING           	?= 0
@@ -108,9 +107,6 @@ ifeq ($(ENABLE_BIG_FREQ),1)
 endif
 ifeq ($(ENABLE_SMALL_BOLD),1)
 	CFLAGS  += -DENABLE_SMALL_BOLD
-endif
-ifeq ($(ENABLE_VOX),1)
-	CFLAGS  += -DENABLE_VOX
 endif
 ifeq ($(ENABLE_ALARM),1)
 	CFLAGS  += -DENABLE_ALARM

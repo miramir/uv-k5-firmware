@@ -69,12 +69,7 @@ void (*action_opt_table[])(void) = {
 #else
     [ACTION_OPT_FLASHLIGHT] = &FUNCTION_NOP,
 #endif
-
-#ifdef ENABLE_VOX
-    [ACTION_OPT_VOX] = &ACTION_Vox,
-#else
     [ACTION_OPT_VOX] = &FUNCTION_NOP,
-#endif
 
 #ifdef ENABLE_FMRADIO
     [ACTION_OPT_FM] = &ACTION_FM,
@@ -292,9 +287,6 @@ void ACTION_FM(void)
             gFlagReconfigureVfos  = true;
             gRequestDisplayScreen = DISPLAY_MAIN;
 
-#ifdef ENABLE_VOX
-            gVoxResumeCountdown = 80;
-#endif
             return;
         }
 
@@ -374,16 +366,6 @@ static void ACTION_AlarmOr1750(const bool b1750)
 }
 
 
-#endif
-
-#ifdef ENABLE_VOX
-void ACTION_Vox(void)
-{
-    gEeprom.VOX_SWITCH   = !gEeprom.VOX_SWITCH;
-    gRequestSaveSettings = true;
-    gFlagReconfigureVfos = true;
-    gUpdateStatus        = true;
-}
 #endif
 
 #ifdef ENABLE_BLMIN_TMP_OFF
