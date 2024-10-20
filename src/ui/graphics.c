@@ -263,7 +263,7 @@ void UI_DisplayPopup(const char *string)
 {
     UI_DisplayClear();
     UI_PrintString(string, 9, 118, 2, 8);
-    UI_PrintStringSmallNormal("Press EXIT", 9, 118, 6);
+    UI_PrintStringSmallNormal("Press EXIT", 9, 118, FRAME_LINES-1);
 }
 
 void UI_DisplayClear()

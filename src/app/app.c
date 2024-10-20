@@ -1211,10 +1211,6 @@ void APP_TimeSlice500ms(void)
     {
         if (gChargingWithTypeC || gSetting_battery_text > 0)
             gUpdateStatus = true;
-        #ifdef ENABLE_SHOW_CHARGE_LEVEL
-            if (gChargingWithTypeC)
-                gUpdateDisplay = true;
-        #endif
     }
 
     if (!gCssBackgroundScan && gScanStateDir == SCAN_OFF && !SCANNER_IsScanning()

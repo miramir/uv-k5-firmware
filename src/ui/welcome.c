@@ -34,10 +34,9 @@ void UI_DisplayReleaseKeys(void)
     ST7565_ContrastAndInv();
     UI_DisplayClear();
 
-    UI_PrintString("RELEASE", 0, 127, 1, 10);
-    UI_PrintString("ALL KEYS", 0, 127, 3, 10);
+    UI_PrintString("RELEASE", 0, 127, 2, 10);
+    UI_PrintString("ALL KEYS", 0, 127, 4, 10);
 
-    ST7565_BlitStatusLine();  // blank status line
     ST7565_BlitFullScreen();
 }
 
@@ -52,7 +51,6 @@ void UI_DisplayWelcome(void)
     ST7565_ContrastAndInv();
     UI_DisplayClear();
 
-    ST7565_BlitStatusLine();
     ST7565_BlitFullScreen();
     
     if (gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_NONE || gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_SOUND) {
@@ -103,31 +101,31 @@ void UI_DisplayWelcome(void)
             }
         }
 
-        UI_PrintString(WelcomeString0, 0, 127, 0, 10);
-        UI_PrintString(WelcomeString1, 0, 127, 2, 10);
+        UI_PrintString(WelcomeString0, 0, 127, 1, 10);
+        UI_PrintString(WelcomeString1, 0, 127, 3, 10);
 
-        UI_PrintStringSmallNormal(Version, 0, 128, 4);
+        UI_PrintStringSmallNormal(Version, 0, 128, 5);
 
-        for (uint8_t i = 0; i < 128; i++)
+        for (uint8_t i = 0; i < LCD_WIDTH; i++)
         {
-            gFrameBuffer[3][i] ^= 0x80;
+            gFrameBuffer[4][i] ^= 0x80;
         }
 
         for (uint8_t i = 18; i < 110; i++)
         {
-            gFrameBuffer[4][i] ^= 0xFF;
+            gFrameBuffer[5][i] ^= 0xFF;
         }
 
         #ifdef ENABLE_SPECTRUM
             #ifndef ENABLE_FMRADIO
-                    UI_PrintStringSmallNormal("Bandscope  ", 0, 127, 5);
+                    UI_PrintStringSmallNormal("Bandscope  ", 0, 127, 6);
                     memcpy(gFrameBuffer[5] + 95, BITMAP_Ready, sizeof(BITMAP_Ready));
-                    UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 6);
+                    UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 7);
             #endif
         #else
-            UI_PrintStringSmallNormal("Bandscope  ", 0, 127, 5);
-            UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 6);
-            memcpy(gFrameBuffer[6] + 95, BITMAP_Ready, sizeof(BITMAP_Ready));
+            UI_PrintStringSmallNormal("Bandscope  ", 0, 127, 6);
+            UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 7);
+            memcpy(gFrameBuffer[7] + 95, BITMAP_Ready, sizeof(BITMAP_Ready));
         #endif
 
         ST7565_BlitFullScreen();
