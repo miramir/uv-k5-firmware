@@ -80,19 +80,6 @@ const char *VfoStateStr[] = {
 
 // ***************************************************************************
 
-static void DrawSmallAntennaAndBars(uint8_t *p, unsigned int level)
-{
-    if(level>6)
-        level = 6;
-
-    memcpy(p, BITMAP_Antenna, ARRAY_SIZE(BITMAP_Antenna));
-
-    for(uint8_t i = 1; i <= level; i++) {
-        char bar = (0xff << (6-i)) & 0x7F;
-        memset(p + 2 + i*3, bar, 2);
-    }
-}
-
 static void DrawLevelBar(uint8_t xpos, uint8_t line, uint8_t level, uint8_t bars)
 {
     uint8_t *p_line = gFrameBuffer[line];
@@ -393,7 +380,7 @@ static void ShowScanRanges(uint8_t startLine, unsigned int activeTxVFO){
 #endif
 
 // Display only one vfo main screen
-static void DisplayOneVfo(void) {
+static void DisplayMainOnly(void) {
     char String[22];
     center_line = CENTER_LINE_NONE;
 
@@ -402,13 +389,13 @@ static void DisplayOneVfo(void) {
 
     if (gEeprom.KEY_LOCK && gKeypadLocked > 0)
     {   // tell user how to unlock the keyboard
-        UI_PrintStringSmallBold("UNLOCK KEYBOARD", 12, 0, FRAME_LINES - 1);
+        PrintSmallEx(12, LCD_HEIGHT, POS_C, C_FILL, "UNLOCK KEYBOARD");
+        // UI_PrintStringSmallBold("UNLOCK KEYBOARD", 12, 0, FRAME_LINES - 1);
     }
 
     unsigned int activeTxVFO = gRxVfoIsActive ? gEeprom.RX_VFO : gEeprom.TX_VFO;
     const uint8_t line0 = 1;  // text screen line
     uint8_t *p_line0    = gFrameBuffer[line0 + 0];
-    uint8_t *p_line1    = gFrameBuffer[line0 + 1];
     enum Vfo_txtr_mode mode       = VFO_MODE_NONE;   
 
 #ifdef ENABLE_SCAN_RANGES
@@ -422,8 +409,6 @@ static void DisplayOneVfo(void) {
         isMainOnlyInputDTMF = true;
         center_line = CENTER_LINE_IN_USE;
     }
-
-    memcpy(p_line0, BITMAP_VFO_Default, sizeof(BITMAP_VFO_Default));
 
     uint32_t frequency = gEeprom.VfoInfo[activeTxVFO].pRX->Frequency;
     enum VfoState_t state = VfoState[activeTxVFO];
@@ -566,26 +551,6 @@ static void DisplayOneVfo(void) {
                 memcpy(p_line0 + 120 + LCD_WIDTH, BITMAP_compand, sizeof(BITMAP_compand));
         }
     }
-
-    // show the TX/RX level
-    uint8_t Level = 0;
-
-    if (mode == VFO_MODE_TX) {   // TX power level
-        switch (gRxVfo->OUTPUT_POWER)
-        {
-            case OUTPUT_POWER_LOW1:     Level = 2; break;
-            case OUTPUT_POWER_LOW2:     Level = 2; break;
-            case OUTPUT_POWER_LOW3:     Level = 2; break;
-            case OUTPUT_POWER_LOW4:     Level = 2; break;
-            case OUTPUT_POWER_LOW5:     Level = 2; break;
-            case OUTPUT_POWER_MID:      Level = 4; break;
-            case OUTPUT_POWER_HIGH:     Level = 6; break;
-        }
-    } else if (mode == VFO_MODE_RX) {   // RX signal level
-    }
-    
-    if(Level)
-        DrawSmallAntennaAndBars(p_line1 + LCD_WIDTH, Level);
 
     String[0] = '\0';
     const VFO_Info_t *vfoInfo = &gEeprom.VfoInfo[activeTxVFO];
@@ -766,7 +731,7 @@ void UI_DisplayMain(void)
     }
 
     if(isMainOnly(false)) {
-        DisplayOneVfo();
+        DisplayMainOnly();
         return;
     };
 
@@ -805,7 +770,6 @@ void UI_DisplayMain(void)
         }
         const bool         isMainVFO  = (vfo_num == gEeprom.TX_VFO);
         uint8_t           *p_line0    = gFrameBuffer[line + 0];
-        uint8_t           *p_line1    = gFrameBuffer[line + 1];
         enum Vfo_txtr_mode mode       = VFO_MODE_NONE;      
 
         if (isMainOnly(false))
@@ -1104,33 +1068,6 @@ void UI_DisplayMain(void)
                 if (att.compander)
                     memcpy(p_line0 + 120 + LCD_WIDTH, BITMAP_compand, sizeof(BITMAP_compand));
             }
-        }
-
-        // ************
-
-        {   // show the TX/RX level
-            uint8_t Level = 0;
-
-            if (mode == VFO_MODE_TX)
-            {   // TX power level
-                switch (gRxVfo->OUTPUT_POWER)
-                {
-                    case OUTPUT_POWER_LOW1:     Level = 2; break;
-                    case OUTPUT_POWER_LOW2:     Level = 2; break;
-                    case OUTPUT_POWER_LOW3:     Level = 2; break;
-                    case OUTPUT_POWER_LOW4:     Level = 2; break;
-                    case OUTPUT_POWER_LOW5:     Level = 2; break;
-                    case OUTPUT_POWER_MID:      Level = 4; break;
-                    case OUTPUT_POWER_HIGH:     Level = 6; break;
-                }
-            }
-            else
-            if (mode == VFO_MODE_RX)
-            {   // RX signal level
-
-            }
-            if(Level)
-                DrawSmallAntennaAndBars(p_line1 + LCD_WIDTH, Level);
         }
 
         // ************

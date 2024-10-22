@@ -34,8 +34,8 @@ void UI_DisplayReleaseKeys(void)
     ST7565_ContrastAndInv();
     UI_DisplayClear();
 
-    UI_PrintString("RELEASE", 0, 127, 2, 10);
-    UI_PrintString("ALL KEYS", 0, 127, 4, 10);
+    PrintMediumBoldEx(LCD_XCENTER, 16, POS_C, C_FILL, "RELEASE");
+    PrintMediumBoldEx(LCD_XCENTER, 24, POS_C, C_FILL, "ALL KEYS");
 
     ST7565_BlitFullScreen();
 }
@@ -44,16 +44,14 @@ void UI_DisplayWelcome(void)
 {
     char WelcomeString0[16];
     char WelcomeString1[16];
-    char WelcomeString2[16];
-
-    memset(gFrameBuffer[0],  0, sizeof(gFrameBuffer[0]));
 
     ST7565_ContrastAndInv();
-    UI_DisplayClear();
+    UI_ClearStatus();
+    UI_ClearScreen();
 
     ST7565_BlitFullScreen();
     
-    if (gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_NONE || gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_SOUND) {
+    if (gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_NONE) {
         ST7565_FillScreen(0x00);
     } else {
         memset(WelcomeString0, 0, sizeof(WelcomeString0));
@@ -61,72 +59,25 @@ void UI_DisplayWelcome(void)
 
         EEPROM_ReadBuffer(0x0EB0, WelcomeString0, 16);
         EEPROM_ReadBuffer(0x0EC0, WelcomeString1, 16);
-
-        sprintf(WelcomeString2, "%u.%02uV %u%%",
-                gBatteryVoltageAverage / 100,
-                gBatteryVoltageAverage % 100,
-                BATTERY_VoltsToPercent(gBatteryVoltageAverage));
-
-        if (gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_VOLTAGE)
-        {
-            strcpy(WelcomeString0, "VOLTAGE");
-            strcpy(WelcomeString1, WelcomeString2);
-        }
-        else if(gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_ALL)
-        {
-            if(strlen(WelcomeString0) == 0 && strlen(WelcomeString1) == 0)
-            {
-                strcpy(WelcomeString0, "WELCOME");
-                strcpy(WelcomeString1, WelcomeString2);
-            }
-            else if(strlen(WelcomeString0) == 0 || strlen(WelcomeString1) == 0)
-            {
-                if(strlen(WelcomeString0) == 0)
-                {
-                    strcpy(WelcomeString0, WelcomeString1);
-                }
-                strcpy(WelcomeString1, WelcomeString2);
-            }
-        }
-        else if(gEeprom.POWER_ON_DISPLAY_MODE == POWER_ON_DISPLAY_MODE_MESSAGE)
-        {
-            if(strlen(WelcomeString0) == 0)
-            {
-                strcpy(WelcomeString0, "WELCOME");
-            }
-
-            if(strlen(WelcomeString1) == 0)
-            {
-                strcpy(WelcomeString1, "BIENVENUE");
-            }
+        
+        if(strlen(WelcomeString0) == 0) {
+            strcpy(WelcomeString0, "WELCOME");
         }
 
-        UI_PrintString(WelcomeString0, 0, 127, 1, 10);
-        UI_PrintString(WelcomeString1, 0, 127, 3, 10);
-
-        UI_PrintStringSmallNormal(Version, 0, 128, 5);
-
-        for (uint8_t i = 0; i < LCD_WIDTH; i++)
-        {
-            gFrameBuffer[4][i] ^= 0x80;
+        if(strlen(WelcomeString1) == 0) {
+            strcpy(WelcomeString1, "BIENVENUE");
         }
 
-        for (uint8_t i = 18; i < 110; i++)
-        {
-            gFrameBuffer[5][i] ^= 0xFF;
-        }
-
-        #ifdef ENABLE_SPECTRUM
-            #ifndef ENABLE_FMRADIO
-                    UI_PrintStringSmallNormal("Bandscope  ", 0, 127, 6);
-                    memcpy(gFrameBuffer[5] + 95, BITMAP_Ready, sizeof(BITMAP_Ready));
-                    UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 7);
-            #endif
-        #else
-            UI_PrintStringSmallNormal("Bandscope  ", 0, 127, 6);
-            UI_PrintStringSmallNormal("Broadcast  ", 0, 127, 7);
-            memcpy(gFrameBuffer[7] + 95, BITMAP_Ready, sizeof(BITMAP_Ready));
-        #endif
+        PrintMediumBoldEx(LCD_XCENTER, 16, POS_C, C_FILL, WelcomeString0);
+        PrintMediumBoldEx(LCD_XCENTER, 24, POS_C, C_FILL, WelcomeString1);
+       
+        PrintMediumEx(LCD_XCENTER, LCD_HEIGHT-14, POS_C, C_FILL,
+            "Voltage: %u.%02uV %u%%", 
+            gBatteryVoltageAverage / 100,
+            gBatteryVoltageAverage % 100,
+            BATTERY_VoltsToPercent(gBatteryVoltageAverage));
+        DrawHLine(0, LCD_HEIGHT-10, LCD_WIDTH, C_FILL);
+        PrintMediumEx(LCD_XCENTER, LCD_HEIGHT-1, POS_C, C_FILL, Version);
 
         ST7565_BlitFullScreen();
     }

@@ -26,10 +26,7 @@
 #include <driver/backlight.h>
 
 enum POWER_OnDisplayMode_t {
-    POWER_ON_DISPLAY_MODE_ALL,
-    POWER_ON_DISPLAY_MODE_SOUND,
     POWER_ON_DISPLAY_MODE_MESSAGE,
-    POWER_ON_DISPLAY_MODE_VOLTAGE,
     POWER_ON_DISPLAY_MODE_NONE
 };
 typedef enum POWER_OnDisplayMode_t POWER_OnDisplayMode_t;
