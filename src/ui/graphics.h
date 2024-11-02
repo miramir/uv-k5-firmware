@@ -26,6 +26,15 @@
 
 void UI_GenerateChannelString(char *pString, const uint8_t Channel);
 void UI_GenerateChannelStringEx(char *pString, const bool bShowPrefix, const uint8_t ChannelNumber);
+
+// TODO: Заменить использование UI_PrintString* в
+// src/app/spectrum.c
+// src/ui/fmradio.c
+// src/ui/main.c
+// src/ui/menu.c
+// src/ui/scanner.c
+// src/ui/status.c
+
 void UI_PrintString(const char *pString, uint8_t Start, uint8_t End, uint8_t Line, uint8_t Width);
 void UI_PrintStringSmallNormal(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);
 void UI_PrintStringSmallBold(const char *pString, uint8_t Start, uint8_t End, uint8_t Line);

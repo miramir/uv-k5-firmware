@@ -1,7 +1,5 @@
 #ifndef GFXFONT_H
 #define GFXFONT_H
-#ifndef _GFXFONT_H_
-#define _GFXFONT_H_
 
 // to use fonts w/o cleanup
 #define PROGMEM
@@ -21,8 +19,5 @@ typedef struct {       // Data stored for FONT AS A WHOLE:
   uint8_t first, last; // ASCII extents
   uint8_t yAdvance;    // Newline distance (y axis)
 } GFXfont;
-
-#endif // _GFXFONT_H_
-
 
 #endif

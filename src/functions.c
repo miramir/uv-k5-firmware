@@ -49,6 +49,10 @@ bool FUNCTION_IsRx()
            gCurrentFunction == FUNCTION_RECEIVE;
 }
 
+bool FUNCTION_IsTx() {
+    return gCurrentFunction == FUNCTION_TRANSMIT;
+}
+
 void FUNCTION_Init(void)
 {
     g_CxCSS_TAIL_Found = false;
