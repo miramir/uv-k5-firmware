@@ -66,7 +66,7 @@ void ST7565_DrawLine(const unsigned int column, const unsigned int line, const u
 // ST7565_BlitScreen(8) = ST7565_BlitFullScreen()
 //
 
-static void ST7565_BlitScreen(uint8_t line)
+void ST7565_BlitLine(uint8_t line)
 {
     SPI_ToggleMasterMode(&SPI0->CR, false);
     ST7565_WriteByte(0x40);
@@ -84,17 +84,12 @@ static void ST7565_BlitScreen(uint8_t line)
 
 void ST7565_BlitFullScreen(void)
 {
-    ST7565_BlitScreen(8);
-}
-
-void ST7565_BlitLine(unsigned line)
-{
-    ST7565_BlitScreen(line + 1);
+    ST7565_BlitLine(FRAME_LINES+1);
 }
 
 void ST7565_BlitStatusLine(void)
 {
-    ST7565_BlitScreen(0);
+    ST7565_BlitLine(0);
 }
 
 void ST7565_FillScreen(uint8_t value)
